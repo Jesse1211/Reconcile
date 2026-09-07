@@ -22,7 +22,7 @@ public struct RootTabView: View {
             placeholderTab(role: .today, title: "Today", systemImage: "sun.max")
             placeholderTab(role: .timer, title: "Timer", systemImage: "timer")
             libraryTab
-            placeholderTab(role: .summary, title: "Summary", systemImage: "chart.bar")
+            summaryTab
         }
     }
 
@@ -64,5 +64,18 @@ public struct RootTabView: View {
             scope: { settings.todayScope },
             setScope: { settings.todayScope = $0 }   // ADR-040: the Library is the scope writer
         )
+    }
+
+    /// The Summary tab (T10): the first real analytics screen — charts, mood, timeline,
+    /// and KPIs rendered from the read-model. Other tabs stay placeholders until they land.
+    @ViewBuilder
+    private var summaryTab: some View {
+        SummaryScreen()
+            // Order matters: declare the role first, then resolve tokens for it (ADR-037).
+            .screenRole(.summary)
+            .themed(settings.theme)
+            .tabItem {
+                Label("Summary", systemImage: "chart.bar")
+            }
     }
 }
