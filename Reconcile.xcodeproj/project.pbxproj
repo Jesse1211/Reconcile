@@ -13,6 +13,7 @@
 		257AE59302DAECBC5CF4CCE3 /* ClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F75D5B989AC31C8248689268 /* ClockTests.swift */; };
 		2E815E6204962E9AC70086AC /* DailyFeelingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2364A912A7F5F5D0050449D9 /* DailyFeelingService.swift */; };
 		33ED44C63610F2EABE70988B /* SummaryServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E605F1EC2B9902787DE5A6A2 /* SummaryServiceTests.swift */; };
+		35114B724E45DBB8A7123D79 /* TimerScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED28063DC7CA62AAE8AD655A /* TimerScreenTests.swift */; };
 		39F1336EABDB6A86185E8EB9 /* ScreenRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD5CABC035818F7F9259DC0 /* ScreenRole.swift */; };
 		3DB5321EE02B39D93EC798D5 /* DailyQuotePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F60A630C57971BDAF55F0A86 /* DailyQuotePicker.swift */; };
 		3E3F308CD4AF803B943D6620 /* QuoteServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8A868401C142D4378030F1 /* QuoteServiceTests.swift */; };
@@ -54,6 +55,7 @@
 		EBF7B7388D5EBED7D455E874 /* ThemeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 903BFC6FA30C8724E9962F80 /* ThemeEnvironment.swift */; };
 		EC31DFC0D0FF46CF0269ABC8 /* MITServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C5BC9E375AAD8692DAA93A /* MITServiceTests.swift */; };
 		F51FE1378E06230D913343B1 /* SummaryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737990BB1DEE6627E2ED1FB4 /* SummaryService.swift */; };
+		EEE282386DE6BEF0892C7770 /* TimerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB2F1B85F1F0D081968E19F /* TimerScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,6 +101,7 @@
 		903BFC6FA30C8724E9962F80 /* ThemeEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeEnvironment.swift; sourceTree = "<group>"; };
 		9543B94157F92F1BDEE222B4 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		A2DBCFE1D7BEAC704F279C94 /* SummaryScreenRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryScreenRenderTests.swift; sourceTree = "<group>"; };
+		9BB2F1B85F1F0D081968E19F /* TimerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerScreen.swift; sourceTree = "<group>"; };
 		A9F8D800BE0558CC2508FAB9 /* ModelInvariantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelInvariantTests.swift; sourceTree = "<group>"; };
 		B25A876860694F442510EE4E /* Quote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quote.swift; sourceTree = "<group>"; };
 		B3E8BAA55C572094C054D845 /* LibraryScreenRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreenRenderTests.swift; sourceTree = "<group>"; };
@@ -109,6 +112,7 @@
 		BEAB125A7363F64FBA9FFEA3 /* LiveZenQuotesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveZenQuotesClient.swift; sourceTree = "<group>"; };
 		E3F70D174BB356B3B01BC551 /* QuoteService+Mutations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuoteService+Mutations.swift"; sourceTree = "<group>"; };
 		E605F1EC2B9902787DE5A6A2 /* SummaryServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryServiceTests.swift; sourceTree = "<group>"; };
+		ED28063DC7CA62AAE8AD655A /* TimerScreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerScreenTests.swift; sourceTree = "<group>"; };
 		EF75DE5BF5A62D0ADD0CBC53 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		F3FBD8EE724234DA35CF755A /* DailyFeelingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeelingServiceTests.swift; sourceTree = "<group>"; };
 		F60A630C57971BDAF55F0A86 /* DailyQuotePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyQuotePicker.swift; sourceTree = "<group>"; };
@@ -233,6 +237,7 @@
 				A2DBCFE1D7BEAC704F279C94 /* SummaryScreenRenderTests.swift */,
 				E605F1EC2B9902787DE5A6A2 /* SummaryServiceTests.swift */,
 				40085B6A90B848BA21AB502D /* ThemeTokenContractTests.swift */,
+				ED28063DC7CA62AAE8AD655A /* TimerScreenTests.swift */,
 			);
 			path = ReconcileTests;
 			sourceTree = "<group>";
@@ -265,6 +270,7 @@
 				6587F17891D24A2D09EADFFA /* PlaceholderScreen.swift */,
 				FE048411577566FD3B33591C /* RootTabView.swift */,
 				6477DC7F03C75EC17D849A1F /* SummaryScreen.swift */,
+				9BB2F1B85F1F0D081968E19F /* TimerScreen.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -391,6 +397,7 @@
 				EBF7B7388D5EBED7D455E874 /* ThemeEnvironment.swift in Sources */,
 				04129C8E6EAC77659BD93909 /* ThemePalette.swift in Sources */,
 				B3C57CEFFD179B7A615A069F /* ThemeTokens.swift in Sources */,
+				EEE282386DE6BEF0892C7770 /* TimerScreen.swift in Sources */,
 				4E6098E9A8E2575C9045535E /* TodayScope.swift in Sources */,
 				BF9D0E518841DC204C082A14 /* ZenQuotesClient.swift in Sources */,
 			);
@@ -414,6 +421,7 @@
 				6F4F177A29250C4F6E6F9A26 /* SummaryScreenRenderTests.swift in Sources */,
 				33ED44C63610F2EABE70988B /* SummaryServiceTests.swift in Sources */,
 				49935AE0573C7CCCAC1BC056 /* ThemeTokenContractTests.swift in Sources */,
+				35114B724E45DBB8A7123D79 /* TimerScreenTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

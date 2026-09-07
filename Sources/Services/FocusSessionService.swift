@@ -117,6 +117,61 @@ public struct FocusSessionService {
         return try context.fetch(descriptor).first
     }
 
+    // MARK: - Today's saved sessions (ADR-032 / E3) — consumed by T9 (Timer screen)
+
+    /// The list of today's SAVED (stopped) focus sessions as **WHOLE, unsplit
+    /// records**, attributed to a single calendar day by `startedAt`'s day (ADR-032).
+    ///
+    /// This is the read the Timer screen (T9) shows beneath the live stopwatch. Per
+    /// ADR-032's *intentional divergence*: the Timer list attributes each session to
+    /// ONE day — the calendar day of its `startedAt` — and shows the record WHOLE
+    /// (never split at midnight), whereas the Summary aggregation
+    /// (``dailyTotals()``) splits a midnight-spanning session per day. The two views
+    /// are consistent-by-design (whole-record vs split), and because the Timer shows
+    /// **no summed "today total"** (ADR-032/E3) the divergence never surfaces here as
+    /// a contradiction.
+    ///
+    /// Only STOPPED sessions are returned — a currently-running session is the live
+    /// stopwatch, not yet a saved record (ADR-014). Results are newest-first
+    /// (`startedAt` descending) so the most recent session leads the list.
+    ///
+    /// The "today" key is the canonical LOCAL `startOfDay` from the injected clock
+    /// (ADR-038), so the attribution join lines up with every other by-day field.
+    ///
+    /// - Returns: today's stopped sessions, whole records, newest-first.
+    /// - Throws: any error raised by the context fetch.
+    public func todaysSessions() throws -> [FocusSession] {
+        try savedSessions(on: clock.today())
+    }
+
+    /// The SAVED (stopped) sessions whose `startedAt` falls on `day`'s calendar day,
+    /// as WHOLE records, newest-first (ADR-032 whole-record attribution).
+    ///
+    /// Split out from ``todaysSessions()`` so a caller (or test) can ask for any
+    /// day's saved-session list; `day` is normalised to its canonical `startOfDay`
+    /// (ADR-038) before the `[startOfDay, nextMidnight)` `startedAt` window is applied.
+    ///
+    /// - Parameter day: any instant on the target day; normalised to `startOfDay`.
+    /// - Returns: that day's stopped sessions, whole records, newest-first.
+    /// - Throws: any error raised by the context fetch.
+    public func savedSessions(on day: Date) throws -> [FocusSession] {
+        let dayStart = clock.startOfDay(for: day)
+        let nextDay = clock.calendar.date(byAdding: .day, value: 1, to: dayStart)
+            ?? dayStart.addingTimeInterval(86_400)
+        // Whole-record attribution (ADR-032): a session belongs to the calendar day
+        // of its `startedAt`, regardless of where `endedAt` lands (even across
+        // midnight). Only stopped sessions are saved records.
+        let descriptor = FetchDescriptor<FocusSession>(
+            predicate: #Predicate {
+                $0.endedAt != nil
+                    && $0.startedAt >= dayStart
+                    && $0.startedAt < nextDay
+            },
+            sortBy: [SortDescriptor(\.startedAt, order: .reverse)]
+        )
+        return try context.fetch(descriptor)
+    }
+
     // MARK: - Per-day aggregation (ADR-032) — consumed by T10
 
     /// Per-day focus totals (whole seconds) over ALL stored, STOPPED sessions,
