@@ -65,7 +65,10 @@ public struct TodayScreen: View {
             }
         }
         .task { await model.onAppear() }
-        .sheet(isPresented: $showRitual) {
+        // ADR-024: the intention ritual is a PINNED full-screen experience (entered from
+        // the dashed placeholder row). It must cover the whole screen — not a partial-height
+        // `.sheet` card — so it reads as a deliberate ritual rather than a generic sheet.
+        .fullScreenCover(isPresented: $showRitual) {
             NavigationStack {
                 IntentionRitualView(date: clock.today()) { text, reason in
                     _ = model.saveIntention(text: text, reason: reason)
