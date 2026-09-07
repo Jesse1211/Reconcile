@@ -21,8 +21,14 @@ public final class MIT {
     public var text: String
     /// Optional reason/context the user attached.
     public var reason: String?
-    /// Lifecycle status (ADR-002).
-    public var status: MITStatus
+    /// Backing store for the lifecycle status (ADR-002), persisted as the enum's
+    /// stable raw `String`. See ``status``.
+    ///
+    /// Stored under the raw name (not the enum) so `#Predicate` fetches can filter
+    /// by status: SwiftData's predicate compiler reliably compares a stored
+    /// `String`, whereas comparing the `MITStatus` enum inside a `#Predicate` is
+    /// fragile. The typed ``status`` accessor below preserves the T2 public API.
+    public var statusRaw: String
     /// The local start-of-day key the task was created on (ADR-038).
     public var createdOn: Date
     /// The local start-of-day key the task was completed on, or `nil` while open (INV-1).
@@ -54,7 +60,7 @@ public final class MIT {
         self.id = id
         self.text = text
         self.reason = reason
-        self.status = status
+        self.statusRaw = status.rawValue
         self.createdOn = createdOn
         self.completedOn = completedOn
         self.appearsOn = appearsOn
@@ -77,6 +83,16 @@ public extension MIT {
     var isDeleted: Bool {
         get { isSoftDeleted }
         set { isSoftDeleted = newValue }
+    }
+
+    /// The typed lifecycle status (ADR-002), over the ``statusRaw`` backing store.
+    ///
+    /// Preserves the T2 public `status` API (get/set with `MITStatus`). An unknown
+    /// stored raw (should never occur — writes go through this setter) falls back
+    /// to `.open` on read so the model never traps on decode.
+    var status: MITStatus {
+        get { MITStatus(rawValue: statusRaw) ?? .open }
+        set { statusRaw = newValue.rawValue }
     }
 
     /// Whether this MIT counts toward statistics (INV-6): live (not soft-deleted).
