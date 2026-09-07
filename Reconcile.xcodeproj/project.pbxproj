@@ -16,6 +16,7 @@
 		4651F5822A4DB00CABF68028 /* Quote.swift in Sources */ = {isa = PBXBuildFile; fileRef = B25A876860694F442510EE4E /* Quote.swift */; };
 		49935AE0573C7CCCAC1BC056 /* ThemeTokenContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40085B6A90B848BA21AB502D /* ThemeTokenContractTests.swift */; };
 		4AF805FFEBD7C16B82658287 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE048411577566FD3B33591C /* RootTabView.swift */; };
+		4BDA4F2FA2EF9A85511E31C5 /* FocusSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DB22075F098789BA4BB877 /* FocusSessionService.swift */; };
 		4CD52806E1B33936E19D37DA /* DailySelectedQuote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A974CCD0F9E9D70D1FAA4F8 /* DailySelectedQuote.swift */; };
 		4E6098E9A8E2575C9045535E /* TodayScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E10C0FE26A014144C6ACBD /* TodayScope.swift */; };
 		5D71DAF573EC3DEFCDB59F65 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9543B94157F92F1BDEE222B4 /* AppSettings.swift */; };
@@ -29,6 +30,7 @@
 		88194526C36B0BBC17E923B8 /* ReconcileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479E8E5D339EE93A7305EE21 /* ReconcileApp.swift */; };
 		ADCA6FEFDDFE75D2A584F983 /* ScreenRoleGradientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F49D6925087A69A2352195 /* ScreenRoleGradientTests.swift */; };
 		B3C57CEFFD179B7A615A069F /* ThemeTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA3E5676CF41C2D52DCC4DA /* ThemeTokens.swift */; };
+		B741436697909B188350CEAC /* FocusSessionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19DA98C07970D286C2B81A3C /* FocusSessionServiceTests.swift */; };
 		BCEB8842E646F93C92D1CCCB /* QuoteNormalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E16BD2F52BDD15F722A704 /* QuoteNormalization.swift */; };
 		C2E80D3319C1FC5138533117 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DD34430568BA7A08F4AEE3 /* Theme.swift */; };
 		CFAE582DBE02B54EDF9E05E5 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF75DE5BF5A62D0ADD0CBC53 /* PersistenceController.swift */; };
@@ -53,11 +55,13 @@
 /* Begin PBXFileReference section */
 		036300C4A1C343908CA2C8FD /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		14746A0E51113F8576CD3D66 /* ReconcileTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ReconcileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		19DA98C07970D286C2B81A3C /* FocusSessionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSessionServiceTests.swift; sourceTree = "<group>"; };
 		1A974CCD0F9E9D70D1FAA4F8 /* DailySelectedQuote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySelectedQuote.swift; sourceTree = "<group>"; };
 		2364A912A7F5F5D0050449D9 /* DailyFeelingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeelingService.swift; sourceTree = "<group>"; };
 		25E10C0FE26A014144C6ACBD /* TodayScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayScope.swift; sourceTree = "<group>"; };
 		267315F653F049E47CBD4A39 /* Reconcile.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Reconcile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34C5BC9E375AAD8692DAA93A /* MITServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MITServiceTests.swift; sourceTree = "<group>"; };
+		31DB22075F098789BA4BB877 /* FocusSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSessionService.swift; sourceTree = "<group>"; };
 		34DD34430568BA7A08F4AEE3 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		3A45066E8E73883540ED180E /* QuoteSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteSource.swift; sourceTree = "<group>"; };
 		3DA3E5676CF41C2D52DCC4DA /* ThemeTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTokens.swift; sourceTree = "<group>"; };
@@ -91,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				FD7D7258475F1F1ECF0B869E /* MITService.swift */,
+				31DB22075F098789BA4BB877 /* FocusSessionService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -189,6 +194,7 @@
 				F75D5B989AC31C8248689268 /* ClockTests.swift */,
 				34C5BC9E375AAD8692DAA93A /* MITServiceTests.swift */,
 				F3FBD8EE724234DA35CF755A /* DailyFeelingServiceTests.swift */,
+				19DA98C07970D286C2B81A3C /* FocusSessionServiceTests.swift */,
 				A9F8D800BE0558CC2508FAB9 /* ModelInvariantTests.swift */,
 				7E232D50EEF8714204E50AA0 /* PersistenceTests.swift */,
 				71F49D6925087A69A2352195 /* ScreenRoleGradientTests.swift */,
@@ -311,6 +317,7 @@
 				2E815E6204962E9AC70086AC /* DailyFeelingService.swift in Sources */,
 				4CD52806E1B33936E19D37DA /* DailySelectedQuote.swift in Sources */,
 				D87D560D7FFEE25501302171 /* FocusSession.swift in Sources */,
+				4BDA4F2FA2EF9A85511E31C5 /* FocusSessionService.swift in Sources */,
 				846FC2F262E073C6866C9A84 /* MIT.swift in Sources */,
 				82DC8ED1E29C51A609CFCDC5 /* MITService.swift in Sources */,
 				72A0E2C19624E3F615BEC205 /* MITStatus.swift in Sources */,
@@ -338,6 +345,7 @@
 				257AE59302DAECBC5CF4CCE3 /* ClockTests.swift in Sources */,
 				EC31DFC0D0FF46CF0269ABC8 /* MITServiceTests.swift in Sources */,
 				7324FBB02FC5356D3F0832CF /* DailyFeelingServiceTests.swift in Sources */,
+				B741436697909B188350CEAC /* FocusSessionServiceTests.swift in Sources */,
 				E44244D39CE0E49ABB232F87 /* ModelInvariantTests.swift in Sources */,
 				84D045358A864632FBADF5E4 /* PersistenceTests.swift in Sources */,
 				ADCA6FEFDDFE75D2A584F983 /* ScreenRoleGradientTests.swift in Sources */,
