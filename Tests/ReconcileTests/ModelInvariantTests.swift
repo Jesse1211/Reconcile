@@ -290,16 +290,56 @@ final class ModelInvariantTests: XCTestCase {
 
     // MARK: INV-7 — one DailyFeeling per day; scales in 0...5
 
-    func testDailyFeelingClampsScales() {
+    func testDailyFeelingRejectsOutOfRangeScales() throws {
         let clock = pinnedClock()
         let day = clock.today()
-        let f = DailyFeeling(day: day, mood: 9, stress: -3)
-        XCTAssertEqual(f.mood, 5)
-        XCTAssertEqual(f.stress, 0)
-        f.setMood(-1)
-        f.setStress(42)
+
+        // INV-7: out-of-range mood/stress are REJECTED, never clamped.
+        XCTAssertThrowsError(try DailyFeeling(day: day, mood: 6, stress: 3)) { error in
+            XCTAssertEqual(error as? DailyFeeling.InvariantError, .moodOutOfRange(6))
+        }
+        XCTAssertThrowsError(try DailyFeeling(day: day, mood: -1, stress: 3)) { error in
+            XCTAssertEqual(error as? DailyFeeling.InvariantError, .moodOutOfRange(-1))
+        }
+        XCTAssertThrowsError(try DailyFeeling(day: day, mood: 3, stress: 99)) { error in
+            XCTAssertEqual(error as? DailyFeeling.InvariantError, .stressOutOfRange(99))
+        }
+
+        // In-range boundary values (0 and 5) are accepted and stored verbatim.
+        let f = try DailyFeeling(day: day, mood: 0, stress: 5)
         XCTAssertEqual(f.mood, 0)
         XCTAssertEqual(f.stress, 5)
+
+        // Mutators reject out-of-range and leave the stored value untouched.
+        XCTAssertThrowsError(try f.setMood(-1))
+        XCTAssertEqual(f.mood, 0, "rejected mutation must not change the stored value")
+        XCTAssertThrowsError(try f.setStress(42))
+        XCTAssertEqual(f.stress, 5, "rejected mutation must not change the stored value")
+
+        // A later in-range mutation still succeeds.
+        try f.setMood(4)
+        try f.setStress(2)
+        XCTAssertEqual(f.mood, 4)
+        XCTAssertEqual(f.stress, 2)
+    }
+
+    func testDailyFeelingUpsertRejectsOutOfRangeWithoutMutating() throws {
+        let context = inMemoryContext()
+        let clock = pinnedClock()
+        let day = clock.today()
+
+        try DailyFeeling.upsert(day: day, mood: 3, stress: 3, whyText: "ok", in: context)
+        try context.save()
+
+        // INV-7: a rejected upsert must leave the existing row untouched.
+        XCTAssertThrowsError(
+            try DailyFeeling.upsert(day: day, mood: 6, stress: -1, whyText: "bad", in: context)
+        )
+        let all = try context.fetch(FetchDescriptor<DailyFeeling>())
+        XCTAssertEqual(all.count, 1)
+        XCTAssertEqual(all.first?.mood, 3)
+        XCTAssertEqual(all.first?.stress, 3)
+        XCTAssertEqual(all.first?.whyText, "ok")
     }
 
     func testDailyFeelingUpsertUpdatesInPlace() throws {
