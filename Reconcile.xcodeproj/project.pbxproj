@@ -7,12 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		019312FA1A8ACB7F5172D530 /* TodayQuoteCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE0D864956D233AE39CD7FD /* TodayQuoteCard.swift */; };
 		0255307EC94167F399F32A21 /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA41B3F57D6EA336B18DAD7 /* AppSettingsTests.swift */; };
 		04129C8E6EAC77659BD93909 /* ThemePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B10B24568BBE2505468093B /* ThemePalette.swift */; };
+		0C2C4322606A03E236C475A7 /* TodayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D0353BF273C2465683BDD86 /* TodayViewModel.swift */; };
 		11EF164159E22C44F00441C8 /* DailyFeeling.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65092E795F9B3E0C90AB5A0 /* DailyFeeling.swift */; };
+		195314576569C16E0F447411 /* TodayCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B2C7BF410696E698A7BA87 /* TodayCopy.swift */; };
+		20587E23A39EDB5A1124E13B /* TodayViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBE2A794E8C887D49499524 /* TodayViewModelTests.swift */; };
+		206295FC170180CBF27F0BC5 /* EveningFeelingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B12689AB852A5D0FF76FFA3 /* EveningFeelingSection.swift */; };
 		257AE59302DAECBC5CF4CCE3 /* ClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F75D5B989AC31C8248689268 /* ClockTests.swift */; };
 		2E815E6204962E9AC70086AC /* DailyFeelingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2364A912A7F5F5D0050449D9 /* DailyFeelingService.swift */; };
+		36682BAA308F1893212CFB09 /* TodayScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED582E374E3F2322A40C559 /* TodayScreen.swift */; };
 		39F1336EABDB6A86185E8EB9 /* ScreenRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD5CABC035818F7F9259DC0 /* ScreenRole.swift */; };
+		3D83AC59BC0C2020CE60567D /* IntentionRitualView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC166DE241402732F979F30 /* IntentionRitualView.swift */; };
 		3DB5321EE02B39D93EC798D5 /* DailyQuotePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F60A630C57971BDAF55F0A86 /* DailyQuotePicker.swift */; };
 		3E3F308CD4AF803B943D6620 /* QuoteServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8A868401C142D4378030F1 /* QuoteServiceTests.swift */; };
 		4651F5822A4DB00CABF68028 /* Quote.swift in Sources */ = {isa = PBXBuildFile; fileRef = B25A876860694F442510EE4E /* Quote.swift */; };
@@ -33,12 +40,14 @@
 		846FC2F262E073C6866C9A84 /* MIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D81C80B0A3FF15563E48F26 /* MIT.swift */; };
 		84D045358A864632FBADF5E4 /* PersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E232D50EEF8714204E50AA0 /* PersistenceTests.swift */; };
 		85CCB55A9453DD1A87D04418 /* LibraryScreenRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E8BAA55C572094C054D845 /* LibraryScreenRenderTests.swift */; };
+		87184A36B46BF1D8FA59D24D /* TodayCopyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2930B8413B58C8C305AAF9 /* TodayCopyTests.swift */; };
 		88194526C36B0BBC17E923B8 /* ReconcileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479E8E5D339EE93A7305EE21 /* ReconcileApp.swift */; };
 		891721B8D45058AEFD0135C7 /* QuoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD0ACC00E8F99E38887FC80 /* QuoteService.swift */; };
 		9C332EC2E1E397447E657F44 /* LibraryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264874C7DC61E19471EBD86F /* LibraryScreen.swift */; };
 		ADCA6FEFDDFE75D2A584F983 /* ScreenRoleGradientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F49D6925087A69A2352195 /* ScreenRoleGradientTests.swift */; };
 		B3C57CEFFD179B7A615A069F /* ThemeTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA3E5676CF41C2D52DCC4DA /* ThemeTokens.swift */; };
 		B741436697909B188350CEAC /* FocusSessionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19DA98C07970D286C2B81A3C /* FocusSessionServiceTests.swift */; };
+		BB04DE9D912E5B9221385589 /* MITListSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33BA96BF3B9492E5D4FDB82 /* MITListSection.swift */; };
 		BCEB8842E646F93C92D1CCCB /* QuoteNormalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E16BD2F52BDD15F722A704 /* QuoteNormalization.swift */; };
 		BF9D0E518841DC204C082A14 /* ZenQuotesClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5021BD7CB2B53583BC4AA8E /* ZenQuotesClient.swift */; };
 		C2E80D3319C1FC5138533117 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DD34430568BA7A08F4AEE3 /* Theme.swift */; };
@@ -46,6 +55,7 @@
 		D175B8F27D55581C113BF3BA /* ClockEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F2EE42D3C7D4146FE2BA7C /* ClockEnvironment.swift */; };
 		D25B8A88ABBF8A2122FB6774 /* LibraryViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00648DD72E121D14315E0C5D /* LibraryViewModelTests.swift */; };
 		D87D560D7FFEE25501302171 /* FocusSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540D408269ED649808BBAAB4 /* FocusSession.swift */; };
+		DCFA6A85459A1C25B294ABE2 /* IntentionRitualCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E724DD7675A8BD13DC8784B /* IntentionRitualCopy.swift */; };
 		E44244D39CE0E49ABB232F87 /* ModelInvariantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F8D800BE0558CC2508FAB9 /* ModelInvariantTests.swift */; };
 		EAA03CE88EA1C0CCE368ADE1 /* QuoteSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A45066E8E73883540ED180E /* QuoteSource.swift */; };
 		EBF7B7388D5EBED7D455E874 /* ThemeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 903BFC6FA30C8724E9962F80 /* ThemeEnvironment.swift */; };
@@ -69,6 +79,7 @@
 		14746A0E51113F8576CD3D66 /* ReconcileTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ReconcileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		19DA98C07970D286C2B81A3C /* FocusSessionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSessionServiceTests.swift; sourceTree = "<group>"; };
 		1A974CCD0F9E9D70D1FAA4F8 /* DailySelectedQuote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySelectedQuote.swift; sourceTree = "<group>"; };
+		1D0353BF273C2465683BDD86 /* TodayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewModel.swift; sourceTree = "<group>"; };
 		2364A912A7F5F5D0050449D9 /* DailyFeelingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeelingService.swift; sourceTree = "<group>"; };
 		25E10C0FE26A014144C6ACBD /* TodayScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayScope.swift; sourceTree = "<group>"; };
 		264874C7DC61E19471EBD86F /* LibraryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreen.swift; sourceTree = "<group>"; };
@@ -90,16 +101,25 @@
 		71F49D6925087A69A2352195 /* ScreenRoleGradientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRoleGradientTests.swift; sourceTree = "<group>"; };
 		7B10B24568BBE2505468093B /* ThemePalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePalette.swift; sourceTree = "<group>"; };
 		7E232D50EEF8714204E50AA0 /* PersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceTests.swift; sourceTree = "<group>"; };
+		8B12689AB852A5D0FF76FFA3 /* EveningFeelingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EveningFeelingSection.swift; sourceTree = "<group>"; };
+		8E2930B8413B58C8C305AAF9 /* TodayCopyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayCopyTests.swift; sourceTree = "<group>"; };
+		8E724DD7675A8BD13DC8784B /* IntentionRitualCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentionRitualCopy.swift; sourceTree = "<group>"; };
+		8EE0D864956D233AE39CD7FD /* TodayQuoteCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayQuoteCard.swift; sourceTree = "<group>"; };
 		903BFC6FA30C8724E9962F80 /* ThemeEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeEnvironment.swift; sourceTree = "<group>"; };
 		9543B94157F92F1BDEE222B4 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		96B2C7BF410696E698A7BA87 /* TodayCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayCopy.swift; sourceTree = "<group>"; };
+		9DC166DE241402732F979F30 /* IntentionRitualView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentionRitualView.swift; sourceTree = "<group>"; };
 		A9F8D800BE0558CC2508FAB9 /* ModelInvariantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelInvariantTests.swift; sourceTree = "<group>"; };
+		ACBE2A794E8C887D49499524 /* TodayViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewModelTests.swift; sourceTree = "<group>"; };
 		B25A876860694F442510EE4E /* Quote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quote.swift; sourceTree = "<group>"; };
+		B33BA96BF3B9492E5D4FDB82 /* MITListSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MITListSection.swift; sourceTree = "<group>"; };
 		B3E8BAA55C572094C054D845 /* LibraryScreenRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScreenRenderTests.swift; sourceTree = "<group>"; };
 		B4E16BD2F52BDD15F722A704 /* QuoteNormalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteNormalization.swift; sourceTree = "<group>"; };
 		B5021BD7CB2B53583BC4AA8E /* ZenQuotesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZenQuotesClient.swift; sourceTree = "<group>"; };
 		B65092E795F9B3E0C90AB5A0 /* DailyFeeling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeeling.swift; sourceTree = "<group>"; };
 		B6F2EE42D3C7D4146FE2BA7C /* ClockEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockEnvironment.swift; sourceTree = "<group>"; };
 		BEAB125A7363F64FBA9FFEA3 /* LiveZenQuotesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveZenQuotesClient.swift; sourceTree = "<group>"; };
+		DED582E374E3F2322A40C559 /* TodayScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayScreen.swift; sourceTree = "<group>"; };
 		E3F70D174BB356B3B01BC551 /* QuoteService+Mutations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuoteService+Mutations.swift"; sourceTree = "<group>"; };
 		EF75DE5BF5A62D0ADD0CBC53 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		F3FBD8EE724234DA35CF755A /* DailyFeelingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeelingServiceTests.swift; sourceTree = "<group>"; };
@@ -222,6 +242,8 @@
 				6C8A868401C142D4378030F1 /* QuoteServiceTests.swift */,
 				71F49D6925087A69A2352195 /* ScreenRoleGradientTests.swift */,
 				40085B6A90B848BA21AB502D /* ThemeTokenContractTests.swift */,
+				8E2930B8413B58C8C305AAF9 /* TodayCopyTests.swift */,
+				ACBE2A794E8C887D49499524 /* TodayViewModelTests.swift */,
 			);
 			path = ReconcileTests;
 			sourceTree = "<group>";
@@ -253,6 +275,7 @@
 				5A812E27F0F461B0C61ED29F /* LibraryViewModel.swift */,
 				6587F17891D24A2D09EADFFA /* PlaceholderScreen.swift */,
 				FE048411577566FD3B33591C /* RootTabView.swift */,
+				CDC5CDE1540040B28290B92C /* Today */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -272,6 +295,21 @@
 				34EF0B9A9E62D733091C6C5F /* Theming */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		CDC5CDE1540040B28290B92C /* Today */ = {
+			isa = PBXGroup;
+			children = (
+				8B12689AB852A5D0FF76FFA3 /* EveningFeelingSection.swift */,
+				8E724DD7675A8BD13DC8784B /* IntentionRitualCopy.swift */,
+				9DC166DE241402732F979F30 /* IntentionRitualView.swift */,
+				B33BA96BF3B9492E5D4FDB82 /* MITListSection.swift */,
+				96B2C7BF410696E698A7BA87 /* TodayCopy.swift */,
+				8EE0D864956D233AE39CD7FD /* TodayQuoteCard.swift */,
+				DED582E374E3F2322A40C559 /* TodayScreen.swift */,
+				1D0353BF273C2465683BDD86 /* TodayViewModel.swift */,
+			);
+			path = Today;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -355,12 +393,16 @@
 				2E815E6204962E9AC70086AC /* DailyFeelingService.swift in Sources */,
 				3DB5321EE02B39D93EC798D5 /* DailyQuotePicker.swift in Sources */,
 				4CD52806E1B33936E19D37DA /* DailySelectedQuote.swift in Sources */,
+				206295FC170180CBF27F0BC5 /* EveningFeelingSection.swift in Sources */,
 				D87D560D7FFEE25501302171 /* FocusSession.swift in Sources */,
 				4BDA4F2FA2EF9A85511E31C5 /* FocusSessionService.swift in Sources */,
+				DCFA6A85459A1C25B294ABE2 /* IntentionRitualCopy.swift in Sources */,
+				3D83AC59BC0C2020CE60567D /* IntentionRitualView.swift in Sources */,
 				9C332EC2E1E397447E657F44 /* LibraryScreen.swift in Sources */,
 				6AEC52BB2F62C33007BFD690 /* LibraryViewModel.swift in Sources */,
 				7FA0D93FFC00E35D9A3B3C08 /* LiveZenQuotesClient.swift in Sources */,
 				846FC2F262E073C6866C9A84 /* MIT.swift in Sources */,
+				BB04DE9D912E5B9221385589 /* MITListSection.swift in Sources */,
 				82DC8ED1E29C51A609CFCDC5 /* MITService.swift in Sources */,
 				72A0E2C19624E3F615BEC205 /* MITStatus.swift in Sources */,
 				CFAE582DBE02B54EDF9E05E5 /* PersistenceController.swift in Sources */,
@@ -377,7 +419,11 @@
 				EBF7B7388D5EBED7D455E874 /* ThemeEnvironment.swift in Sources */,
 				04129C8E6EAC77659BD93909 /* ThemePalette.swift in Sources */,
 				B3C57CEFFD179B7A615A069F /* ThemeTokens.swift in Sources */,
+				195314576569C16E0F447411 /* TodayCopy.swift in Sources */,
+				019312FA1A8ACB7F5172D530 /* TodayQuoteCard.swift in Sources */,
 				4E6098E9A8E2575C9045535E /* TodayScope.swift in Sources */,
+				36682BAA308F1893212CFB09 /* TodayScreen.swift in Sources */,
+				0C2C4322606A03E236C475A7 /* TodayViewModel.swift in Sources */,
 				BF9D0E518841DC204C082A14 /* ZenQuotesClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -398,6 +444,8 @@
 				3E3F308CD4AF803B943D6620 /* QuoteServiceTests.swift in Sources */,
 				ADCA6FEFDDFE75D2A584F983 /* ScreenRoleGradientTests.swift in Sources */,
 				49935AE0573C7CCCAC1BC056 /* ThemeTokenContractTests.swift in Sources */,
+				87184A36B46BF1D8FA59D24D /* TodayCopyTests.swift in Sources */,
+				20587E23A39EDB5A1124E13B /* TodayViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,8 +8,8 @@ import SwiftData
 /// themselves stay theme-agnostic. The active `Theme` comes from `AppSettings`
 /// (ADR-040), so switching theme re-styles the shell live without a restart.
 ///
-/// The Library tab (T8) is wired to the real ``LibraryScreen``; the others remain T1
-/// placeholders until their tasks land.
+/// The Today tab (T7) and the Library tab (T8) are wired to their real screens; the
+/// others remain T1 placeholders until their tasks land.
 public struct RootTabView: View {
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.modelContext) private var modelContext
@@ -19,7 +19,18 @@ public struct RootTabView: View {
 
     public var body: some View {
         TabView {
-            placeholderTab(role: .today, title: "Today", systemImage: "sun.max")
+            // Today (T7) — the real screen.
+            TodayScreen(
+                context: modelContext,
+                clock: clock,
+                settings: settings,
+                client: LiveZenQuotesClient()
+            )
+            // Order matters: declare the role first, then resolve tokens for it.
+            .screenRole(.today)
+            .themed(settings.theme)
+            .tabItem { Label("Today", systemImage: "sun.max") }
+
             placeholderTab(role: .timer, title: "Timer", systemImage: "timer")
             libraryTab
             placeholderTab(role: .summary, title: "Summary", systemImage: "chart.bar")
