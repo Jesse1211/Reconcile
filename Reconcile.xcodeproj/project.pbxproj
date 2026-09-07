@@ -11,6 +11,7 @@
 		04129C8E6EAC77659BD93909 /* ThemePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B10B24568BBE2505468093B /* ThemePalette.swift */; };
 		11EF164159E22C44F00441C8 /* DailyFeeling.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65092E795F9B3E0C90AB5A0 /* DailyFeeling.swift */; };
 		257AE59302DAECBC5CF4CCE3 /* ClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F75D5B989AC31C8248689268 /* ClockTests.swift */; };
+		2E815E6204962E9AC70086AC /* DailyFeelingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2364A912A7F5F5D0050449D9 /* DailyFeelingService.swift */; };
 		39F1336EABDB6A86185E8EB9 /* ScreenRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD5CABC035818F7F9259DC0 /* ScreenRole.swift */; };
 		4651F5822A4DB00CABF68028 /* Quote.swift in Sources */ = {isa = PBXBuildFile; fileRef = B25A876860694F442510EE4E /* Quote.swift */; };
 		49935AE0573C7CCCAC1BC056 /* ThemeTokenContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40085B6A90B848BA21AB502D /* ThemeTokenContractTests.swift */; };
@@ -22,6 +23,7 @@
 		6FC256D836C5C1EBDAD39893 /* PlaceholderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6587F17891D24A2D09EADFFA /* PlaceholderScreen.swift */; };
 		72A0E2C19624E3F615BEC205 /* MITStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 485F4D4A88A71E4CB7F6E8C4 /* MITStatus.swift */; };
 		82DC8ED1E29C51A609CFCDC5 /* MITService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD7D7258475F1F1ECF0B869E /* MITService.swift */; };
+		7324FBB02FC5356D3F0832CF /* DailyFeelingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FBD8EE724234DA35CF755A /* DailyFeelingServiceTests.swift */; };
 		846FC2F262E073C6866C9A84 /* MIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D81C80B0A3FF15563E48F26 /* MIT.swift */; };
 		84D045358A864632FBADF5E4 /* PersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E232D50EEF8714204E50AA0 /* PersistenceTests.swift */; };
 		88194526C36B0BBC17E923B8 /* ReconcileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479E8E5D339EE93A7305EE21 /* ReconcileApp.swift */; };
@@ -52,6 +54,7 @@
 		036300C4A1C343908CA2C8FD /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		14746A0E51113F8576CD3D66 /* ReconcileTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ReconcileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A974CCD0F9E9D70D1FAA4F8 /* DailySelectedQuote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySelectedQuote.swift; sourceTree = "<group>"; };
+		2364A912A7F5F5D0050449D9 /* DailyFeelingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeelingService.swift; sourceTree = "<group>"; };
 		25E10C0FE26A014144C6ACBD /* TodayScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayScope.swift; sourceTree = "<group>"; };
 		267315F653F049E47CBD4A39 /* Reconcile.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Reconcile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34C5BC9E375AAD8692DAA93A /* MITServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MITServiceTests.swift; sourceTree = "<group>"; };
@@ -76,6 +79,7 @@
 		B65092E795F9B3E0C90AB5A0 /* DailyFeeling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeeling.swift; sourceTree = "<group>"; };
 		B6F2EE42D3C7D4146FE2BA7C /* ClockEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockEnvironment.swift; sourceTree = "<group>"; };
 		EF75DE5BF5A62D0ADD0CBC53 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		F3FBD8EE724234DA35CF755A /* DailyFeelingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeelingServiceTests.swift; sourceTree = "<group>"; };
 		F75D5B989AC31C8248689268 /* ClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockTests.swift; sourceTree = "<group>"; };
 		FBD5CABC035818F7F9259DC0 /* ScreenRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRole.swift; sourceTree = "<group>"; };
 		FD7D7258475F1F1ECF0B869E /* MITService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MITService.swift; sourceTree = "<group>"; };
@@ -144,6 +148,14 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		5876661981EF3FC7B8DF30D5 /* Feeling */ = {
+			isa = PBXGroup;
+			children = (
+				2364A912A7F5F5D0050449D9 /* DailyFeelingService.swift */,
+			);
+			path = Feeling;
+			sourceTree = "<group>";
+		};
 		691C7E3620FEA7F86E509054 = {
 			isa = PBXGroup;
 			children = (
@@ -176,6 +188,7 @@
 				3EA41B3F57D6EA336B18DAD7 /* AppSettingsTests.swift */,
 				F75D5B989AC31C8248689268 /* ClockTests.swift */,
 				34C5BC9E375AAD8692DAA93A /* MITServiceTests.swift */,
+				F3FBD8EE724234DA35CF755A /* DailyFeelingServiceTests.swift */,
 				A9F8D800BE0558CC2508FAB9 /* ModelInvariantTests.swift */,
 				7E232D50EEF8714204E50AA0 /* PersistenceTests.swift */,
 				71F49D6925087A69A2352195 /* ScreenRoleGradientTests.swift */,
@@ -206,6 +219,7 @@
 			children = (
 				9368CD8DA3433C785D44DE66 /* App */,
 				302E4F255DA5A49497062D0D /* Clock */,
+				5876661981EF3FC7B8DF30D5 /* Feeling */,
 				329688E89749A599FFFADD7D /* Models */,
 				7513D7BCD9129F608ABAFAFF /* Persistence */,
 				C191277A68E51C14CDF966F3 /* Screens */,
@@ -294,6 +308,7 @@
 				65AF075B4A02DFF2D744376E /* Clock.swift in Sources */,
 				D175B8F27D55581C113BF3BA /* ClockEnvironment.swift in Sources */,
 				11EF164159E22C44F00441C8 /* DailyFeeling.swift in Sources */,
+				2E815E6204962E9AC70086AC /* DailyFeelingService.swift in Sources */,
 				4CD52806E1B33936E19D37DA /* DailySelectedQuote.swift in Sources */,
 				D87D560D7FFEE25501302171 /* FocusSession.swift in Sources */,
 				846FC2F262E073C6866C9A84 /* MIT.swift in Sources */,
@@ -322,6 +337,7 @@
 				0255307EC94167F399F32A21 /* AppSettingsTests.swift in Sources */,
 				257AE59302DAECBC5CF4CCE3 /* ClockTests.swift in Sources */,
 				EC31DFC0D0FF46CF0269ABC8 /* MITServiceTests.swift in Sources */,
+				7324FBB02FC5356D3F0832CF /* DailyFeelingServiceTests.swift in Sources */,
 				E44244D39CE0E49ABB232F87 /* ModelInvariantTests.swift in Sources */,
 				84D045358A864632FBADF5E4 /* PersistenceTests.swift in Sources */,
 				ADCA6FEFDDFE75D2A584F983 /* ScreenRoleGradientTests.swift in Sources */,
