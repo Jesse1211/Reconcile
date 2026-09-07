@@ -120,12 +120,17 @@ public extension QuoteService {
     @discardableResult
     func refresh() async -> TodaysQuote {
         let day = clock.today()
+        let resolved: TodaysQuote
         switch scope {
         case .mine:
-            return refreshMine(day: day)
+            resolved = refreshMine(day: day)
         case .online:
-            return await refreshOnline(day: day)
+            resolved = await refreshOnline(day: day)
         }
+        // T12/ADR-042 (b): a refresh is a quote transition → mirror the refreshed
+        // quote into the widget snapshot (the app's resolved value, ADR-025/-026).
+        mirrorToWidget(resolved)
+        return resolved
     }
 
     private func refreshMine(day: Date) -> TodaysQuote {

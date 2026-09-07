@@ -15,10 +15,20 @@ public final class AppSettings: ObservableObject {
     }
 
     private let defaults: UserDefaults
+    /// The app-side widget snapshot writer (T12/ADR-042 (c) / ADR-044), invoked on
+    /// theme change so the Home widget can render in the selected theme. Optional and
+    /// defaulting to `nil` so existing callers/tests are unaffected (additive). T12
+    /// OWNS the writer; this flow only INVOKES it at the theme transition.
+    private let widgetWriter: WidgetSnapshotWriter?
 
     /// The selected visual theme (ADR-022). Persisted across launch.
     @Published public var theme: Theme {
-        didSet { defaults.set(theme.rawValue, forKey: Keys.theme) }
+        didSet {
+            defaults.set(theme.rawValue, forKey: Keys.theme)
+            // T12/ADR-044: mirror the persisted theme into the widget snapshot so the
+            // Home widget follows it. Only fires on an actual change.
+            if theme != oldValue { widgetWriter?.themeChanged(theme) }
+        }
     }
 
     /// The current quote scope (ADR-040). Persisted; defaults to `online` (ADR-034).
@@ -26,8 +36,9 @@ public final class AppSettings: ObservableObject {
         didSet { defaults.set(todayScope.rawValue, forKey: Keys.todayScope) }
     }
 
-    public init(defaults: UserDefaults = .standard) {
+    public init(defaults: UserDefaults = .standard, widgetWriter: WidgetSnapshotWriter? = nil) {
         self.defaults = defaults
+        self.widgetWriter = widgetWriter
 
         // Theme default: Ledger on first run.
         if let raw = defaults.string(forKey: Keys.theme), let stored = Theme(rawValue: raw) {

@@ -21,6 +21,9 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - path: Sources
+    dependencies:
+      - target: ReconcileWidgetExtension
+        embed: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.reconcile.app
@@ -29,6 +32,36 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGNING_ALLOWED: NO
+        CODE_SIGN_ENTITLEMENTS: Sources/App/Reconcile.entitlements
+
+  # T12 (ADR-041–ADR-045): the WidgetKit app-extension target. It compiles ONLY the
+  # read-side shared snapshot code (AppGroup, snapshot model, store, loader) + the
+  # Theme enum + its own widget views/provider. It does NOT compile the app-side
+  # WidgetSnapshotWriter — the widget is READ-ONLY (ADR-042), so no write path lives
+  # in the extension binary.
+  ReconcileWidgetExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: WidgetExtension
+        excludes:
+          - "Info.plist"
+          - "*.entitlements"
+          - "*.md"
+      - path: Sources/Theming/Theme.swift
+      - path: Sources/WidgetShared/AppGroup.swift
+      - path: Sources/WidgetShared/WidgetSnapshot.swift
+      - path: Sources/WidgetShared/WidgetSnapshotStore.swift
+      - path: Sources/WidgetShared/WidgetSnapshotLoader.swift
+      - path: Sources/WidgetShared/WidgetLayout.swift
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: WidgetExtension/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.reconcile.app.widget
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGN_ENTITLEMENTS: WidgetExtension/ReconcileWidget.entitlements
 
   ReconcileTests:
     type: bundle.unit-test
@@ -48,6 +81,7 @@ schemes:
     build:
       targets:
         Reconcile: all
+        ReconcileWidgetExtension: all
         ReconcileTests: [test]
     run:
       config: Debug
@@ -56,3 +90,10 @@ schemes:
       gatherCoverageData: false
       targets:
         - ReconcileTests
+
+  ReconcileWidget:
+    build:
+      targets:
+        ReconcileWidgetExtension: all
+    run:
+      config: Debug

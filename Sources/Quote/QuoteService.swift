@@ -55,6 +55,12 @@ public final class QuoteService {
     /// Reads the current scope from T1's settings layer (ADR-040). Injected so the
     /// service does not depend on `AppSettings` directly and stays testable.
     let scopeProvider: () -> TodayScope
+    /// The app-side widget snapshot writer (T12/ADR-042), invoked on quote
+    /// pick/refresh/scope-change to mirror today's resolved quote into the widget
+    /// (ADR-042 (b)). Optional and defaulting to `nil` so existing callers/tests are
+    /// unaffected (additive/backward-compatible). T12 OWNS the writer; this flow only
+    /// INVOKES it with the already-resolved quote (DESIGN T12 §2).
+    let widgetWriter: WidgetSnapshotWriter?
 
     // MARK: Transient online cache (ADR-013)
 
@@ -67,12 +73,34 @@ public final class QuoteService {
         context: ModelContext,
         clock: Clock,
         client: ZenQuotesClient,
-        scope: @escaping () -> TodayScope
+        scope: @escaping () -> TodayScope,
+        widgetWriter: WidgetSnapshotWriter? = nil
     ) {
         self.context = context
         self.clock = clock
         self.client = client
         self.scopeProvider = scope
+        self.widgetWriter = widgetWriter
+    }
+
+    /// Mirror a resolved `TodaysQuote` into the widget snapshot (T12/ADR-042 (b)).
+    ///
+    /// Called at the pick/refresh/scope-change transition points with the value the
+    /// app itself shows — the writer does NOT re-derive or re-pick (ADR-041). A
+    /// `.quote` writes its `text`+`author`; `.empty` (scope=`mine`, empty library,
+    /// ADR-034) clears the quote → the widget shows the ADR-045 placeholder; an
+    /// `.error` leaves the last-written quote intact (a transient online failure is
+    /// not a reason to blank the widget). No-op when no writer is injected.
+    func mirrorToWidget(_ resolved: TodaysQuote) {
+        guard let widgetWriter else { return }
+        switch resolved {
+        case .quote(let q):
+            widgetWriter.todaysQuoteResolved(text: q.text, author: q.author)
+        case .empty:
+            widgetWriter.todaysQuoteCleared()
+        case .error:
+            break   // keep last snapshot; ADR-013 error is transient, ADR-045 not blank
+        }
     }
 
     /// The currently-selected scope, READ from T1's settings layer (ADR-040).
@@ -96,6 +124,17 @@ public final class QuoteService {
     /// override precedence (ADR-026), the dangling-`quoteRef` fallthrough (ADR-026 C3),
     /// and the `online` transient fetch + cache (ADR-013). `mine` NEVER fetches (ADR-013).
     public func todaysQuote() async -> TodaysQuote {
+        let resolved = await resolveTodaysQuote()
+        // T12/ADR-042 (b): mirror the resolved pick (or scope-change re-resolution)
+        // into the widget snapshot — the SAME value the app shows (ADR-011/-026).
+        mirrorToWidget(resolved)
+        return resolved
+    }
+
+    /// The pure resolution of today's quote, WITHOUT the widget-mirror side effect —
+    /// so internal callers (e.g. refresh's current-state probes) can resolve without
+    /// re-triggering a snapshot write.
+    private func resolveTodaysQuote() async -> TodaysQuote {
         let day = clock.today()
         let scope = self.scope
 

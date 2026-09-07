@@ -28,6 +28,11 @@ import SwiftData
 public struct FocusSessionService {
     private let context: ModelContext
     private let clock: Clock
+    /// The app-side widget snapshot writer (T12/ADR-042), invoked at start/stop/
+    /// discard transitions. Optional and defaulting to `nil` so existing callers and
+    /// tests are unaffected (additive/backward-compatible) — when absent, no widget
+    /// write occurs. T12 OWNS the writer; this flow only INVOKES it (DESIGN T12 §2).
+    private let widgetWriter: WidgetSnapshotWriter?
 
     /// Create a service bound to a persistence context and a clock.
     ///
@@ -35,9 +40,12 @@ public struct FocusSessionService {
     ///   - context: the SwiftData context sessions are read from / written to.
     ///   - clock: the injectable time source (ADR-038); its `now()` stamps
     ///     `startedAt` / `endedAt`, and its `calendar` drives the per-day split.
-    public init(context: ModelContext, clock: Clock) {
+    ///   - widgetWriter: the app-side widget snapshot writer (T12/ADR-042), or `nil`
+    ///     to disable widget writes (default). Invoked on start/stop/discard only.
+    public init(context: ModelContext, clock: Clock, widgetWriter: WidgetSnapshotWriter? = nil) {
         self.context = context
         self.clock = clock
+        self.widgetWriter = widgetWriter
     }
 
     // MARK: - Lifecycle: start / stop / discard
@@ -56,6 +64,9 @@ public struct FocusSessionService {
         let session = FocusSession(startedAt: clock.now())
         context.insert(session)
         try context.save()
+        // T12/ADR-042 (a): a session started → write the running `startedAt` so the
+        // widget shows the live self-advancing timer (ADR-043). Never re-derives.
+        widgetWriter?.focusSessionStarted(startedAt: session.startedAt)
         return session
     }
 
@@ -72,6 +83,9 @@ public struct FocusSessionService {
     public func stop(_ session: FocusSession) throws {
         session.stop(at: clock.now())
         try context.save()
+        // T12/ADR-042 (a): a session stopped → clear the running figure and write
+        // today's accumulated stopped seconds (the same aggregation T6 computes).
+        writeEndedSnapshot()
     }
 
     /// Discard a session WITHOUT saving it (ADR-014).
@@ -85,6 +99,40 @@ public struct FocusSessionService {
     public func discard(_ session: FocusSession) throws {
         context.delete(session)
         try context.save()
+        // T12/ADR-042 (a): a session discarded → re-project the focus figure. If
+        // another session is still running the widget stays in the running layout;
+        // otherwise it flips to today's accumulated (idle layout, ADR-041).
+        writeFocusSnapshot()
+    }
+
+    // MARK: - Widget snapshot projection (T12 / ADR-042 (a))
+
+    /// Re-project the focus figure into the widget snapshot from the CURRENT store
+    /// state (T12/ADR-042). If a session is still running, write its `startedAt`
+    /// (running layout); otherwise clear it and write today's accumulated stopped
+    /// seconds (idle layout). Called after stop/discard. A no-op when no widget
+    /// writer is injected. Failures are swallowed — a snapshot write must never
+    /// break a focus mutation (the snapshot is a read-only projection, DESIGN §2).
+    private func writeFocusSnapshot() {
+        guard let widgetWriter else { return }
+        if let running = try? runningSession() {
+            widgetWriter.focusSessionStarted(startedAt: running.startedAt)
+        } else {
+            widgetWriter.focusSessionEnded(accumulatedSecondsToday: todaysAccumulatedSeconds())
+        }
+    }
+
+    /// The stop path always ends any running-to-stopped transition it triggered; but
+    /// another independent session (ADR-014) could still be running, so it defers to
+    /// the same current-state projection.
+    private func writeEndedSnapshot() { writeFocusSnapshot() }
+
+    /// Today's total STOPPED focus seconds — the pre-computed portion of
+    /// `dailyTotals()` (ADR-032) attributed to today's canonical day key (ADR-038).
+    /// Running sessions are excluded (ADR-032). Zero when today has no stopped focus.
+    private func todaysAccumulatedSeconds() -> Int {
+        let totals = (try? dailyTotals()) ?? [:]
+        return totals[clock.today()] ?? 0
     }
 
     // MARK: - Live display (ADR-014 / ADR-032)
