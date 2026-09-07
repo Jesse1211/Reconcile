@@ -65,6 +65,21 @@ public extension QuoteService {
         try context.save()
     }
 
+    // MARK: - Browse-to-like (ADR-012 / T8)
+
+    /// Fetch a fresh online quote to BROWSE for the Library's browse-and-like flow
+    /// (ADR-012: browse-to-like uses ZenQuotes `/random`, NEVER `/today`).
+    ///
+    /// The returned quote is TRANSIENT (ADR-013): it is NOT persisted and does NOT write
+    /// a (day, scope) override — browsing is a pure discovery read, distinct from the
+    /// `online`-scope daily pick (`/today`, ADR-011) and the `online`-scope refresh
+    /// override (`/random` written as the day's pick, ADR-025/-026). It becomes a `Quote`
+    /// row only when the user ♡ likes it via ``like(_:)`` (ADR-010). Failures throw a
+    /// ``ZenQuotesError`` for the caller to surface as error + retry (ADR-013).
+    func browseRandom() async throws -> FetchedQuote {
+        try await client.random()
+    }
+
     // MARK: - Lookup
 
     /// The first persisted `Quote` whose `dedupKey` matches (INV-4), or `nil`.
