@@ -1,0 +1,46 @@
+import SwiftUI
+import Combine
+
+/// The persisted settings layer (ADR-040): the SINGLE source of truth for BOTH the
+/// selected `Theme` (ADR-022) AND the current `TodayScope` (ADR-040/ADR-034).
+///
+/// Both selections persist across launch (UserDefaults-backed). The scope defaults to
+/// `online` on first run (ADR-034). Later tasks: T5 READS `todayScope`; T8 WRITES it;
+/// the settings UI writes `theme`. No other component persists these.
+@MainActor
+public final class AppSettings: ObservableObject {
+    private enum Keys {
+        static let theme = "settings.theme"
+        static let todayScope = "settings.todayScope"
+    }
+
+    private let defaults: UserDefaults
+
+    /// The selected visual theme (ADR-022). Persisted across launch.
+    @Published public var theme: Theme {
+        didSet { defaults.set(theme.rawValue, forKey: Keys.theme) }
+    }
+
+    /// The current quote scope (ADR-040). Persisted; defaults to `online` (ADR-034).
+    @Published public var todayScope: TodayScope {
+        didSet { defaults.set(todayScope.rawValue, forKey: Keys.todayScope) }
+    }
+
+    public init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+
+        // Theme default: Ledger on first run.
+        if let raw = defaults.string(forKey: Keys.theme), let stored = Theme(rawValue: raw) {
+            self.theme = stored
+        } else {
+            self.theme = .ledger
+        }
+
+        // Scope default: online on first run (ADR-034).
+        if let raw = defaults.string(forKey: Keys.todayScope), let stored = TodayScope(rawValue: raw) {
+            self.todayScope = stored
+        } else {
+            self.todayScope = .online
+        }
+    }
+}
