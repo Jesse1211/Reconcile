@@ -13,16 +13,29 @@ public struct RootTabView: View {
 
     public var body: some View {
         TabView {
-            tab(role: .today, title: "Today", systemImage: "sun.max")
-            tab(role: .timer, title: "Timer", systemImage: "timer")
-            tab(role: .library, title: "Library", systemImage: "books.vertical")
-            tab(role: .summary, title: "Summary", systemImage: "chart.bar")
+            tab(role: .today, title: "Today", systemImage: "sun.max") {
+                PlaceholderScreen(title: "Today")
+            }
+            tab(role: .timer, title: "Timer", systemImage: "timer") {
+                TimerScreen()
+            }
+            tab(role: .library, title: "Library", systemImage: "books.vertical") {
+                PlaceholderScreen(title: "Library")
+            }
+            tab(role: .summary, title: "Summary", systemImage: "chart.bar") {
+                PlaceholderScreen(title: "Summary")
+            }
         }
     }
 
     @ViewBuilder
-    private func tab(role: ScreenRole, title: String, systemImage: String) -> some View {
-        PlaceholderScreen(title: title)
+    private func tab<Content: View>(
+        role: ScreenRole,
+        title: String,
+        systemImage: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        content()
             // Order matters: declare the role first, then resolve tokens for it.
             .screenRole(role)
             .themed(settings.theme)
