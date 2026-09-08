@@ -18,6 +18,7 @@ public struct TodayScreen: View {
     @StateObject private var model: TodayViewModel
 
     @State private var showRitual = false
+    @State private var showFeeling = false
     @State private var editingMIT: MIT?
 
     /// Build the screen, constructing the view model from the environment's context,
@@ -55,7 +56,7 @@ public struct TodayScreen: View {
                         onOpenRitual: { showRitual = true },
                         onEdit: { editingMIT = $0 }
                     )
-                    EveningFeelingSection(model: model)
+                    EveningFeelingSection(model: model, onOpen: { showFeeling = true })
                 }
                 .padding(20)
             }
@@ -80,6 +81,23 @@ public struct TodayScreen: View {
             NavigationStack {
                 MITEditSheet(mit: mit) { newText, newReason in
                     model.editMIT(mit, text: newText, reason: .some(newReason))
+                }
+            }
+            .themed(settings.theme, role: .today)
+        }
+        // ADR-046b: the evening feeling is a full-screen entry (like the intention ritual),
+        // opened from the small feeling card. Seed from today's saved entry, or the 3/3
+        // midpoint for a fresh one.
+        .fullScreenCover(isPresented: $showFeeling) {
+            NavigationStack {
+                FeelingSheetView(
+                    date: clock.today(),
+                    editable: model.feelingEditable,
+                    initialMood: model.feeling?.mood ?? 3,
+                    initialStress: model.feeling?.stress ?? 3,
+                    initialWhy: model.feeling?.whyText ?? ""
+                ) { mood, stress, why in
+                    model.saveFeeling(mood: mood, stress: stress, why: why)
                 }
             }
             .themed(settings.theme, role: .today)

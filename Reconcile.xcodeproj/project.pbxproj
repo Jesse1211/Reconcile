@@ -23,6 +23,7 @@
 		2A4F5945D80EBCF290DE468F /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FD113EA0D74E5DED72302C /* AppGroup.swift */; };
 		2E815E6204962E9AC70086AC /* DailyFeelingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2364A912A7F5F5D0050449D9 /* DailyFeelingService.swift */; };
 		2EA40959E00A812EE2368CAC /* ReconcileWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = E826FDEA81B982EAB4CF6F1D /* ReconcileWidgets.swift */; };
+		30035401E089054B40DE3367 /* FeelingSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCFC139189455BC4440926EB /* FeelingSheetView.swift */; };
 		32C6D6382E8BF78397899F8B /* WidgetSnapshotLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503896317B32D24B7548775D /* WidgetSnapshotLoader.swift */; };
 		339AC82F8418399C27ED366B /* WidgetSnapshotWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2909F8B630DE37740E892395 /* WidgetSnapshotWriter.swift */; };
 		33ED44C63610F2EABE70988B /* SummaryServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E605F1EC2B9902787DE5A6A2 /* SummaryServiceTests.swift */; };
@@ -183,6 +184,7 @@
 		B65092E795F9B3E0C90AB5A0 /* DailyFeeling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeeling.swift; sourceTree = "<group>"; };
 		B6F2EE42D3C7D4146FE2BA7C /* ClockEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockEnvironment.swift; sourceTree = "<group>"; };
 		BEAB125A7363F64FBA9FFEA3 /* LiveZenQuotesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveZenQuotesClient.swift; sourceTree = "<group>"; };
+		CCFC139189455BC4440926EB /* FeelingSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeelingSheetView.swift; sourceTree = "<group>"; };
 		D9B735283FDDB85E0F936D5F /* WidgetSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotTests.swift; sourceTree = "<group>"; };
 		DED582E374E3F2322A40C559 /* TodayScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayScreen.swift; sourceTree = "<group>"; };
 		E3F70D174BB356B3B01BC551 /* QuoteService+Mutations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuoteService+Mutations.swift"; sourceTree = "<group>"; };
@@ -406,6 +408,7 @@
 			isa = PBXGroup;
 			children = (
 				8B12689AB852A5D0FF76FFA3 /* EveningFeelingSection.swift */,
+				CCFC139189455BC4440926EB /* FeelingSheetView.swift */,
 				8E724DD7675A8BD13DC8784B /* IntentionRitualCopy.swift */,
 				9DC166DE241402732F979F30 /* IntentionRitualView.swift */,
 				B33BA96BF3B9492E5D4FDB82 /* MITListSection.swift */,
@@ -538,6 +541,7 @@
 				3DB5321EE02B39D93EC798D5 /* DailyQuotePicker.swift in Sources */,
 				4CD52806E1B33936E19D37DA /* DailySelectedQuote.swift in Sources */,
 				206295FC170180CBF27F0BC5 /* EveningFeelingSection.swift in Sources */,
+				30035401E089054B40DE3367 /* FeelingSheetView.swift in Sources */,
 				D87D560D7FFEE25501302171 /* FocusSession.swift in Sources */,
 				4BDA4F2FA2EF9A85511E31C5 /* FocusSessionService.swift in Sources */,
 				DCFA6A85459A1C25B294ABE2 /* IntentionRitualCopy.swift in Sources */,
