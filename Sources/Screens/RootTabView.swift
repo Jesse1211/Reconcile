@@ -37,6 +37,15 @@ public struct RootTabView: View {
             case .settings: return "gearshape"
             }
         }
+        var screenRole: ScreenRole {
+            switch self {
+            case .today: return .today
+            case .timer: return .timer
+            case .library: return .library
+            case .summary: return .summary
+            case .settings: return .settings
+            }
+        }
     }
 
     /// Vertical room the overlaid nav capsule occupies above the bottom safe area — the
@@ -51,53 +60,44 @@ public struct RootTabView: View {
     public init() {}
 
     public var body: some View {
-        ZStack(alignment: .bottom) {
-            // Active screen fills the whole shell (its ThemeBackground ignores safe area).
-            // A per-selection id + opacity transition gives a gentle cross-fade on switch.
-            activeScreen
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                // Reserve room for the overlaid nav capsule so scrollable content can scroll
-                // ABOVE it instead of being hidden behind it (the system TabView reserved
-                // this automatically; our custom overlay must do it explicitly).
-                .safeAreaInset(edge: .bottom, spacing: 0) {
-                    Color.clear.frame(height: Self.navBarReservedHeight)
+        // A once-a-minute timeline re-renders the shell so the Day Arc background, nav-bar
+        // tint, and adaptive text keep pace with the REAL time of day (ADR-037c/d) even while
+        // a screen sits idle — not only when some other change forces a re-render.
+        TimelineView(.periodic(from: .now, by: 60)) { _ in
+            ZStack(alignment: .bottom) {
+                // A real TabView keeps EVERY tab's view (and @StateObject/@State) alive across
+                // switches — no teardown, no re-running .task, no repeat network fetch. The
+                // system bar is hidden; our own capsule is overlaid instead.
+                TabView(selection: $selection) {
+                    tabScreen(.today) {
+                        TodayScreen(context: modelContext, clock: clock,
+                                    settings: settings, client: LiveZenQuotesClient())
+                    }
+                    tabScreen(.timer) { TimerScreen() }
+                    tabScreen(.library) { LibraryScreen(model: makeLibraryModel()) }
+                    tabScreen(.summary) { SummaryScreen() }
+                    tabScreen(.settings) { SettingsScreen() }
                 }
-                .id(selection)
-                .transition(.opacity)
+                .toolbar(.hidden, for: .tabBar)
 
-            // Our own fixed nav bar, overlaid at the bottom — same look in every background.
-            navBar
+                // Our own fixed nav bar, overlaid at the bottom.
+                navBar
+            }
         }
-        // Animate both the screen cross-fade and the pill slide on selection change
-        // (respecting Reduce Motion).
-        .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.86),
-                   value: selection)
     }
 
+    /// One tab: theme it for its role, reserve room for the overlaid capsule, and tag it
+    /// with its `Tab` for the `TabView` selection binding.
     @ViewBuilder
-    private var activeScreen: some View {
-        switch selection {
-        case .today:
-            TodayScreen(
-                context: modelContext,
-                clock: clock,
-                settings: settings,
-                client: LiveZenQuotesClient()
-            )
-            .themed(settings.theme, role: .today)
-        case .timer:
-            TimerScreen()
-                .themed(settings.theme, role: .timer)
-        case .library:
-            LibraryScreen(model: makeLibraryModel())
-                .themed(settings.theme, role: .library)
-        case .summary:
-            SummaryScreen()
-                .themed(settings.theme, role: .summary)
-        case .settings:
-            SettingsScreen()
-                .themed(settings.theme, role: .settings)
-        }
+    private func tabScreen<Content: View>(_ tab: Tab, @ViewBuilder _ content: () -> Content) -> some View {
+        content()
+            .themed(settings.theme, role: tab.screenRole)
+            // Reserve room for the overlaid nav capsule so scrollable content scrolls ABOVE
+            // it rather than behind it (a real TabView would reserve this for its own bar).
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                Color.clear.frame(height: Self.navBarReservedHeight)
+            }
+            .tag(tab)
     }
 
     // MARK: Capsule nav bar (ADR-037b/-037d)
@@ -128,7 +128,14 @@ public struct RootTabView: View {
             ForEach(Tab.allCases, id: \.self) { tab in
                 let isSelected = tab == selection
                 Button {
-                    selection = tab   // animated by the body-level .animation(value: selection)
+                    // Slide the selected pill (matchedGeometry) unless Reduce Motion is on.
+                    if reduceMotion {
+                        selection = tab
+                    } else {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
+                            selection = tab
+                        }
+                    }
                 } label: {
                     VStack(spacing: 3) {
                         Image(systemName: tab.systemImage)

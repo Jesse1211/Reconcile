@@ -24,6 +24,7 @@ public enum QuoteNormalization {
     ///  3. Collapse every run of Unicode whitespace to a single ASCII space.
     ///  4. Trim leading/trailing whitespace.
     ///  5. Strip a single trailing period (`.`), if present.
+    ///  6. Trim again (a space before the stripped period must not linger, e.g. "word .").
     public static func normalize(_ text: String) -> String {
         var s = foldQuotes(text)
         s = s.lowercased()
@@ -34,9 +35,11 @@ public enum QuoteNormalization {
             .filter { !$0.isEmpty }
             .joined(separator: " ")
         s = collapsed
-        // Strip a single trailing period.
+        // Strip a single trailing period, then re-trim so a space that preceded it (e.g.
+        // "word .") does not leave a stray trailing space that breaks dedup (INV-4).
         if s.hasSuffix(".") {
             s.removeLast()
+            s = s.trimmingCharacters(in: .whitespaces)
         }
         return s
     }
