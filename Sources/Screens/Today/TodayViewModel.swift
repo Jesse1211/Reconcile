@@ -153,9 +153,17 @@ public final class TodayViewModel: ObservableObject {
             return nil
         }
         let fetched = FetchedQuote(text: resolved.text, author: resolved.author)
-        let row = try? quoteService.like(fetched)
-        // Re-resolve so the ♡ reflects the now-saved state (source unchanged: api).
-        await resolveQuote()
+        guard let row = try? quoteService.like(fetched) else { return nil }
+        // Reflect the now-saved state IN PLACE: keep showing the same quote, but carry the
+        // persisted row's identity so `currentQuoteIsSaved` flips true and the ♡ fills.
+        // (Do NOT re-resolve: for an online scope that would fetch a fresh TRANSIENT quote,
+        // which has no persistedID and would leave the heart empty — the original bug.)
+        quoteState = .quote(ResolvedQuote(
+            text: resolved.text,
+            author: resolved.author,
+            source: .api,
+            persistedID: row.persistentModelID
+        ))
         return row
     }
 

@@ -149,6 +149,10 @@ final class TodayViewModelTests: XCTestCase {
         XCTAssertEqual(count, 1, "♡ like persists exactly one Quote row (ADR-010)")
         XCTAssertEqual(row?.source, .api)
         XCTAssertNotNil(row?.likedAt)
+        // After liking, the SAME displayed quote must read as saved (heart fills), and it
+        // must no longer be offered as likeable — it is now a persisted row, not transient.
+        XCTAssertTrue(model.currentQuoteIsSaved, "after ♡ the current quote reads as saved (heart fills)")
+        XCTAssertFalse(model.canLikeCurrentQuote, "a saved quote is no longer a transient likeable one")
     }
 
     func testMineQuoteIsNotLikeableFromToday() async throws {
