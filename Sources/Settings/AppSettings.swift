@@ -12,6 +12,7 @@ public final class AppSettings: ObservableObject {
     private enum Keys {
         static let theme = "settings.theme"
         static let todayScope = "settings.todayScope"
+        static let quoteCategory = "settings.quoteCategory"
     }
 
     private let defaults: UserDefaults
@@ -36,6 +37,13 @@ public final class AppSettings: ObservableObject {
         didSet { defaults.set(todayScope.rawValue, forKey: Keys.todayScope) }
     }
 
+    /// The current online quote CATEGORY (ADR-047). Persisted; defaults to `.any`.
+    /// Affects the `online` source ONLY — T5 reads it like scope; the Settings screen
+    /// writes it.
+    @Published public var quoteCategory: QuoteCategory {
+        didSet { defaults.set(quoteCategory.rawValue, forKey: Keys.quoteCategory) }
+    }
+
     public init(defaults: UserDefaults = .standard, widgetWriter: WidgetSnapshotWriter? = nil) {
         self.defaults = defaults
         self.widgetWriter = widgetWriter
@@ -52,6 +60,13 @@ public final class AppSettings: ObservableObject {
             self.todayScope = stored
         } else {
             self.todayScope = .online
+        }
+
+        // Category default: Any on first run (ADR-047).
+        if let raw = defaults.string(forKey: Keys.quoteCategory), let stored = QuoteCategory(rawValue: raw) {
+            self.quoteCategory = stored
+        } else {
+            self.quoteCategory = .any
         }
     }
 }

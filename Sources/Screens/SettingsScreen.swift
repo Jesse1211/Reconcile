@@ -40,7 +40,7 @@ public struct SettingsScreen: View {
                     settingBlock(
                         eyebrow: "TODAY'S QUOTE",
                         title: "Source",
-                        caption: "Mine shows your saved & liked quotes; Online pulls a fresh one from ZenQuotes."
+                        caption: "Mine shows your saved & liked quotes; Online pulls a fresh one from the web."
                     ) {
                         Picker("Today's quote source", selection: $settings.todayScope) {
                             ForEach(TodayScope.allCases, id: \.self) { scope in
@@ -49,6 +49,23 @@ public struct SettingsScreen: View {
                         }
                         .pickerStyle(.segmented)
                         .accessibilityIdentifier("settings.scope")
+                    }
+
+                    // ADR-047: the online quote CATEGORY. Applies to the Online source only
+                    // (Mine ignores it) — disabled unless the source is Online.
+                    settingBlock(
+                        eyebrow: "TODAY'S QUOTE",
+                        title: "Category",
+                        caption: "Filters the Online quote by theme. Applies to Online only."
+                    ) {
+                        Picker("Today's quote category", selection: $settings.quoteCategory) {
+                            ForEach(QuoteCategory.allCases, id: \.self) { category in
+                                Text(category.displayName).tag(category)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .disabled(settings.todayScope != .online)
+                        .accessibilityIdentifier("settings.category")
                     }
 
                     Spacer(minLength: 0)

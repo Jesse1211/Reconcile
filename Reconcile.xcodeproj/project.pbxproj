@@ -31,6 +31,7 @@
 		36682BAA308F1893212CFB09 /* TodayScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED582E374E3F2322A40C559 /* TodayScreen.swift */; };
 		389E7CECA847760D6AE93E42 /* HomeWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2267BBAB05765674EB6412E3 /* HomeWidgetView.swift */; };
 		39F1336EABDB6A86185E8EB9 /* ScreenRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD5CABC035818F7F9259DC0 /* ScreenRole.swift */; };
+		39F244C42476F14EBE413304 /* LiveQuoteClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155EDB9F8B96F50937ECCC97 /* LiveQuoteClientTests.swift */; };
 		3D83AC59BC0C2020CE60567D /* IntentionRitualView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC166DE241402732F979F30 /* IntentionRitualView.swift */; };
 		3DB5321EE02B39D93EC798D5 /* DailyQuotePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F60A630C57971BDAF55F0A86 /* DailyQuotePicker.swift */; };
 		3E3F308CD4AF803B943D6620 /* QuoteServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8A868401C142D4378030F1 /* QuoteServiceTests.swift */; };
@@ -66,6 +67,7 @@
 		ADCA6FEFDDFE75D2A584F983 /* ScreenRoleGradientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F49D6925087A69A2352195 /* ScreenRoleGradientTests.swift */; };
 		B01D8D80178024CD78AC0F33 /* WidgetSnapshotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD74CF353C6B475B299C103 /* WidgetSnapshotStore.swift */; };
 		B1A03E841BA50C8CB59A7763 /* WidgetTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B13F538D27C94AF813C146 /* WidgetTheme.swift */; };
+		B312E3494801D7BC7F3F6A16 /* QuoteCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9561926B702AC88E065FB18 /* QuoteCategory.swift */; };
 		B3C57CEFFD179B7A615A069F /* ThemeTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA3E5676CF41C2D52DCC4DA /* ThemeTokens.swift */; };
 		B741436697909B188350CEAC /* FocusSessionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19DA98C07970D286C2B81A3C /* FocusSessionServiceTests.swift */; };
 		BB04DE9D912E5B9221385589 /* MITListSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33BA96BF3B9492E5D4FDB82 /* MITListSection.swift */; };
@@ -126,6 +128,7 @@
 		0B35BADD38FDD61C413A84D4 /* WidgetLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLayout.swift; sourceTree = "<group>"; };
 		0BD0ACC00E8F99E38887FC80 /* QuoteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteService.swift; sourceTree = "<group>"; };
 		14746A0E51113F8576CD3D66 /* ReconcileTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ReconcileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		155EDB9F8B96F50937ECCC97 /* LiveQuoteClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveQuoteClientTests.swift; sourceTree = "<group>"; };
 		19DA98C07970D286C2B81A3C /* FocusSessionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSessionServiceTests.swift; sourceTree = "<group>"; };
 		1A974CCD0F9E9D70D1FAA4F8 /* DailySelectedQuote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySelectedQuote.swift; sourceTree = "<group>"; };
 		1D0353BF273C2465683BDD86 /* TodayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewModel.swift; sourceTree = "<group>"; };
@@ -183,6 +186,7 @@
 		B5021BD7CB2B53583BC4AA8E /* ZenQuotesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZenQuotesClient.swift; sourceTree = "<group>"; };
 		B65092E795F9B3E0C90AB5A0 /* DailyFeeling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeeling.swift; sourceTree = "<group>"; };
 		B6F2EE42D3C7D4146FE2BA7C /* ClockEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockEnvironment.swift; sourceTree = "<group>"; };
+		B9561926B702AC88E065FB18 /* QuoteCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteCategory.swift; sourceTree = "<group>"; };
 		BEAB125A7363F64FBA9FFEA3 /* LiveZenQuotesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveZenQuotesClient.swift; sourceTree = "<group>"; };
 		CCFC139189455BC4440926EB /* FeelingSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeelingSheetView.swift; sourceTree = "<group>"; };
 		D9B735283FDDB85E0F936D5F /* WidgetSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotTests.swift; sourceTree = "<group>"; };
@@ -334,6 +338,7 @@
 				19DA98C07970D286C2B81A3C /* FocusSessionServiceTests.swift */,
 				B3E8BAA55C572094C054D845 /* LibraryScreenRenderTests.swift */,
 				00648DD72E121D14315E0C5D /* LibraryViewModelTests.swift */,
+				155EDB9F8B96F50937ECCC97 /* LiveQuoteClientTests.swift */,
 				34C5BC9E375AAD8692DAA93A /* MITServiceTests.swift */,
 				A9F8D800BE0558CC2508FAB9 /* ModelInvariantTests.swift */,
 				7E232D50EEF8714204E50AA0 /* PersistenceTests.swift */,
@@ -365,6 +370,7 @@
 			children = (
 				F60A630C57971BDAF55F0A86 /* DailyQuotePicker.swift */,
 				BEAB125A7363F64FBA9FFEA3 /* LiveZenQuotesClient.swift */,
+				B9561926B702AC88E065FB18 /* QuoteCategory.swift */,
 				0BD0ACC00E8F99E38887FC80 /* QuoteService.swift */,
 				E3F70D174BB356B3B01BC551 /* QuoteService+Mutations.swift */,
 				B5021BD7CB2B53583BC4AA8E /* ZenQuotesClient.swift */,
@@ -555,6 +561,7 @@
 				72A0E2C19624E3F615BEC205 /* MITStatus.swift in Sources */,
 				CFAE582DBE02B54EDF9E05E5 /* PersistenceController.swift in Sources */,
 				4651F5822A4DB00CABF68028 /* Quote.swift in Sources */,
+				B312E3494801D7BC7F3F6A16 /* QuoteCategory.swift in Sources */,
 				BCEB8842E646F93C92D1CCCB /* QuoteNormalization.swift in Sources */,
 				4A298A208532D34CC3E26DEF /* QuoteService+Mutations.swift in Sources */,
 				891721B8D45058AEFD0135C7 /* QuoteService.swift in Sources */,
@@ -595,6 +602,7 @@
 				B741436697909B188350CEAC /* FocusSessionServiceTests.swift in Sources */,
 				85CCB55A9453DD1A87D04418 /* LibraryScreenRenderTests.swift in Sources */,
 				D25B8A88ABBF8A2122FB6774 /* LibraryViewModelTests.swift in Sources */,
+				39F244C42476F14EBE413304 /* LiveQuoteClientTests.swift in Sources */,
 				EC31DFC0D0FF46CF0269ABC8 /* MITServiceTests.swift in Sources */,
 				E44244D39CE0E49ABB232F87 /* ModelInvariantTests.swift in Sources */,
 				84D045358A864632FBADF5E4 /* PersistenceTests.swift in Sources */,

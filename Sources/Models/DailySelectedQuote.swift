@@ -16,6 +16,12 @@ public final class DailySelectedQuote {
     public var day: Date
     /// Which pool this selection belongs to (ADR-040).
     public var scope: TodayScope
+    /// The online CATEGORY this selection belongs to (ADR-047). The (day, scope)
+    /// override key is extended to (day, scope, category) so an `online` refresh
+    /// under one category does not apply after the user switches category. `mine`
+    /// selections are category-agnostic and always store `.any` (category does not
+    /// affect the local pool, ADR-047). Defaults to `.any` for older records.
+    public var category: QuoteCategory = QuoteCategory.any
 
     /// The Codable-encoded backing store for ``quoteRef``.
     ///
@@ -41,6 +47,7 @@ public final class DailySelectedQuote {
         id: UUID = UUID(),
         day: Date,
         scope: TodayScope,
+        category: QuoteCategory = .any,
         quoteRef: PersistentIdentifier? = nil,
         inlineText: String? = nil,
         inlineAuthor: String? = nil,
@@ -50,6 +57,7 @@ public final class DailySelectedQuote {
         self.id = id
         self.day = day
         self.scope = scope
+        self.category = category
         self.quoteRefData = DailySelectedQuote.encode(quoteRef)
         self.inlineText = inlineText
         self.inlineAuthor = inlineAuthor
@@ -90,6 +98,7 @@ public extension DailySelectedQuote {
     static func inline(
         day: Date,
         scope: TodayScope,
+        category: QuoteCategory = .any,
         text: String,
         author: String?,
         isManualOverride: Bool = false
@@ -97,6 +106,7 @@ public extension DailySelectedQuote {
         DailySelectedQuote(
             day: day,
             scope: scope,
+            category: category,
             quoteRef: nil,
             inlineText: text,
             inlineAuthor: author,

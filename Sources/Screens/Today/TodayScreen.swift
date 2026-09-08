@@ -31,7 +31,8 @@ public struct TodayScreen: View {
         client: ZenQuotesClient
     ) {
         let quoteService = QuoteService(
-            context: context, clock: clock, client: client, scope: { settings.todayScope }
+            context: context, clock: clock, client: client,
+            scope: { settings.todayScope }, category: { settings.quoteCategory }   // ADR-047
         )
         let vm = TodayViewModel(
             context: context,

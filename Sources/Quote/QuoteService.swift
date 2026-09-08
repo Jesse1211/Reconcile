@@ -55,6 +55,11 @@ public final class QuoteService {
     /// Reads the current scope from T1's settings layer (ADR-040). Injected so the
     /// service does not depend on `AppSettings` directly and stays testable.
     let scopeProvider: () -> TodayScope
+    /// Reads the current online ``QuoteCategory`` from T1's settings layer (ADR-047),
+    /// the SAME way scope is read. Injected (defaulting to `.any`) so the service does
+    /// not depend on `AppSettings` directly and stays testable. Affects the `online`
+    /// source ONLY — `mine` ignores it (ADR-047).
+    let categoryProvider: () -> QuoteCategory
     /// The app-side widget snapshot writer (T12/ADR-042), invoked on quote
     /// pick/refresh/scope-change to mirror today's resolved quote into the widget
     /// (ADR-042 (b)). Optional and defaulting to `nil` so existing callers/tests are
@@ -64,9 +69,12 @@ public final class QuoteService {
 
     // MARK: Transient online cache (ADR-013)
 
-    /// One same-day `/today` result per (day). Held in memory only — NOT a `Quote`
-    /// row (ADR-013). Reset when the day key changes (a new day fetches once).
+    /// One same-day online daily result per (day, category) (ADR-013/-047). Held in
+    /// memory only — NOT a `Quote` row (ADR-013). Reset when the day OR category key
+    /// changes (a new day, or a category switch, fetches once). Scope is implicit:
+    /// only `online` fetches/caches (`mine` never fetches, ADR-013).
     private var cachedTodayDay: Date?
+    private var cachedTodayCategory: QuoteCategory?
     private var cachedTodayQuote: FetchedQuote?
 
     public init(
@@ -74,12 +82,14 @@ public final class QuoteService {
         clock: Clock,
         client: ZenQuotesClient,
         scope: @escaping () -> TodayScope,
+        category: @escaping () -> QuoteCategory = { .any },
         widgetWriter: WidgetSnapshotWriter? = nil
     ) {
         self.context = context
         self.clock = clock
         self.client = client
         self.scopeProvider = scope
+        self.categoryProvider = category
         self.widgetWriter = widgetWriter
     }
 
@@ -105,6 +115,10 @@ public final class QuoteService {
 
     /// The currently-selected scope, READ from T1's settings layer (ADR-040).
     public var scope: TodayScope { scopeProvider() }
+
+    /// The currently-selected online category, READ from T1's settings layer (ADR-047).
+    /// Affects the `online` source only.
+    public var category: QuoteCategory { categoryProvider() }
 
     // MARK: - mine pool (ADR-011)
 
@@ -137,10 +151,13 @@ public final class QuoteService {
     private func resolveTodaysQuote() async -> TodaysQuote {
         let day = clock.today()
         let scope = self.scope
+        // The override/cache key includes category for `online` (ADR-047); `mine` is
+        // category-agnostic (always `.any`) since category does not affect the pool.
+        let category = self.overrideCategory(for: scope)
 
-        // (1) A same-day (day, scope) override takes precedence (ADR-026), unless its
-        //     local target row was hard-deleted same-day — then treat as ABSENT (C3).
-        if let override = fetchOverrideRow(day: day, scope: scope) {
+        // (1) A same-day (day, scope, category) override takes precedence (ADR-026/-047),
+        //     unless its local target row was hard-deleted same-day — ABSENT (C3).
+        if let override = fetchOverrideRow(day: day, scope: scope, category: category) {
             if let resolved = resolveOverride(override) {
                 return .quote(resolved)
             }
@@ -151,8 +168,14 @@ public final class QuoteService {
         case .mine:
             return resolveMineDeterministic(day: day)
         case .online:
-            return await resolveOnlineDaily(day: day)
+            return await resolveOnlineDaily(day: day, category: category)
         }
+    }
+
+    /// The category component of the (day, scope, category) override/cache key (ADR-047):
+    /// the selected category for `online`, always `.any` for `mine` (category-agnostic).
+    func overrideCategory(for scope: TodayScope) -> QuoteCategory {
+        scope == .online ? category : .any
     }
 
     /// The deterministic `mine` pick (ADR-011): empty pool → `.empty` (guiding state,
@@ -173,13 +196,15 @@ public final class QuoteService {
     /// The `online` daily pick (ADR-011/-012): the `/today` quote, served from the
     /// transient same-day cache when present (ADR-013), else fetched once and cached.
     /// A transient online quote is NEVER persisted as a `Quote` row (ADR-013/-034).
-    private func resolveOnlineDaily(day: Date) async -> TodaysQuote {
-        if let cached = cachedTodayFetch(for: day) {
+    private func resolveOnlineDaily(day: Date, category: QuoteCategory) async -> TodaysQuote {
+        if let cached = cachedTodayFetch(for: day, category: category) {
             return .quote(Self.transientResolved(cached))
         }
         do {
-            let fetched = try await client.today()          // ADR-012: /today, deterministic
-            storeTodayCache(fetched, day: day)               // ADR-013: transient in-memory only
+            // ADR-047: the mirror has no /today — the daily pick fetches /random for the
+            // category and is CACHED per (day, category) to stay fixed for the day.
+            let fetched = try await client.today(category: category)
+            storeTodayCache(fetched, day: day, category: category)   // ADR-013: transient only
             return .quote(Self.transientResolved(fetched))
         } catch {
             return .error((error as? ZenQuotesError) ?? .offline)   // ADR-013: error + retry
@@ -214,11 +239,12 @@ public final class QuoteService {
         return all.first { $0.persistentModelID == id }
     }
 
-    /// The (day, scope) override row (ADR-026), or `nil`. Stale (day < today) records
-    /// are INERT (never matched here) and are not pruned.
-    func fetchOverrideRow(day: Date, scope: TodayScope) -> DailySelectedQuote? {
+    /// The (day, scope, category) override row (ADR-026/-047), or `nil`. Stale
+    /// (day < today) records are INERT (never matched here) and are not pruned.
+    /// The category component is `.any` for `mine` (category-agnostic, ADR-047).
+    func fetchOverrideRow(day: Date, scope: TodayScope, category: QuoteCategory) -> DailySelectedQuote? {
         let all = (try? context.fetch(FetchDescriptor<DailySelectedQuote>())) ?? []
-        return all.first { $0.day == day && $0.scope == scope }
+        return all.first { $0.day == day && $0.scope == scope && $0.category == category }
     }
 
     /// Resolve a stored override to a display quote, or `nil` when its local `quoteRef`
@@ -232,13 +258,14 @@ public final class QuoteService {
 
     // MARK: - Transient online cache helpers (ADR-013)
 
-    private func cachedTodayFetch(for day: Date) -> FetchedQuote? {
-        guard cachedTodayDay == day else { return nil }
+    private func cachedTodayFetch(for day: Date, category: QuoteCategory) -> FetchedQuote? {
+        guard cachedTodayDay == day, cachedTodayCategory == category else { return nil }
         return cachedTodayQuote
     }
 
-    private func storeTodayCache(_ quote: FetchedQuote, day: Date) {
+    private func storeTodayCache(_ quote: FetchedQuote, day: Date, category: QuoteCategory) {
         cachedTodayDay = day
+        cachedTodayCategory = category
         cachedTodayQuote = quote
     }
 

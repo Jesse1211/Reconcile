@@ -309,12 +309,12 @@ final class WidgetSnapshotTests: XCTestCase {
             self.throwsError = throwsError
         }
 
-        func today() async throws -> FetchedQuote {
+        func today(category: QuoteCategory) async throws -> FetchedQuote {
             if let e = throwsError { throw e }
             return todayQuote
         }
 
-        func random() async throws -> FetchedQuote {
+        func random(category: QuoteCategory) async throws -> FetchedQuote {
             if let e = throwsError { throw e }
             defer { randomIdx += 1 }
             return randomQuotes[randomIdx % randomQuotes.count]

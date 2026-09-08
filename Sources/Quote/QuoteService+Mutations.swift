@@ -77,7 +77,8 @@ public extension QuoteService {
     /// row only when the user ♡ likes it via ``like(_:)`` (ADR-010). Failures throw a
     /// ``ZenQuotesError`` for the caller to surface as error + retry (ADR-013).
     func browseRandom() async throws -> FetchedQuote {
-        try await client.random()
+        // ADR-047: browse honours the selected online category (affects `online` reads).
+        try await client.random(category: category)
     }
 
     // MARK: - Lookup
@@ -159,7 +160,8 @@ public extension QuoteService {
         ) else {
             return resolveCurrentForNoOp(day: day)
         }
-        writeOverride(day: day, scope: .mine, localTarget: picked, inline: nil)
+        // ADR-047: `mine` is category-agnostic → key the override on `.any`.
+        writeOverride(day: day, scope: .mine, category: .any, localTarget: picked, inline: nil)
         return .quote(ResolvedQuote(
             text: picked.text, author: picked.author, source: picked.source,
             persistedID: picked.persistentModelID
@@ -167,10 +169,13 @@ public extension QuoteService {
     }
 
     private func refreshOnline(day: Date) async -> TodaysQuote {
+        let category = self.category   // ADR-047: refresh honours the selected category
         do {
-            let fetched = try await client.random()   // ADR-012/-025: /random, genuinely different
-            // ADR-026: store the transient online quote INLINE (quoteRef nil); NOT a Quote row.
-            writeOverride(day: day, scope: .online, localTarget: nil, inline: fetched)
+            // ADR-012/-025/-047: /random for the category, genuinely different.
+            let fetched = try await client.random(category: category)
+            // ADR-026/-047: store the transient online quote INLINE (quoteRef nil), keyed
+            // on (day, online, category); NOT a Quote row.
+            writeOverride(day: day, scope: .online, category: category, localTarget: nil, inline: fetched)
             return .quote(ResolvedQuote(text: fetched.text, author: fetched.author, source: .api, persistedID: nil))
         } catch {
             return .error((error as? ZenQuotesError) ?? .offline)   // ADR-013
@@ -180,19 +185,22 @@ public extension QuoteService {
     /// Write (upsert) the (day, scope) manual override (ADR-026, `isManualOverride=true`).
     /// A `mine` override references the local target via `quoteRef`; an `online` override
     /// stores the fetched quote INLINE (`inlineText`/`inlineAuthor`/`inlineDedupKey`).
-    private func writeOverride(day: Date, scope: TodayScope, localTarget: Quote?, inline: FetchedQuote?) {
-        // Replace any existing same-day (day, scope) override so it does not accumulate.
-        if let existing = fetchOverrideRow(day: day, scope: scope) {
+    private func writeOverride(day: Date, scope: TodayScope, category: QuoteCategory, localTarget: Quote?, inline: FetchedQuote?) {
+        // Replace any existing same-day (day, scope, category) override so it does not
+        // accumulate (ADR-047).
+        if let existing = fetchOverrideRow(day: day, scope: scope, category: category) {
             context.delete(existing)
         }
         let record: DailySelectedQuote
         if let target = localTarget {
             record = DailySelectedQuote(
-                day: day, scope: scope, quoteRef: target.persistentModelID, isManualOverride: true
+                day: day, scope: scope, category: category,
+                quoteRef: target.persistentModelID, isManualOverride: true
             )
         } else if let fetched = inline {
             record = DailySelectedQuote.inline(
-                day: day, scope: scope, text: fetched.text, author: fetched.author, isManualOverride: true
+                day: day, scope: scope, category: category,
+                text: fetched.text, author: fetched.author, isManualOverride: true
             )
         } else {
             return
@@ -206,7 +214,8 @@ public extension QuoteService {
     /// The current resolved quote for a scope WITHOUT triggering an online fetch —
     /// used by `mine` refresh to know which quote to exclude.
     private func currentResolvedQuote(day: Date, scope: TodayScope) -> ResolvedQuote? {
-        if let override = fetchOverrideRow(day: day, scope: scope),
+        // Used by `mine` refresh only → category is `.any` (category-agnostic, ADR-047).
+        if let override = fetchOverrideRow(day: day, scope: scope, category: overrideCategory(for: scope)),
            let resolved = resolvedFromOverride(override) {
             return resolved
         }

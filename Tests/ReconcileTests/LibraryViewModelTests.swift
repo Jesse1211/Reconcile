@@ -20,6 +20,9 @@ final class LibraryViewModelTests: XCTestCase {
         var throwsError: ZenQuotesError?
         private(set) var todayCalls = 0
         private(set) var randomCalls = 0
+        // ADR-047: last category requested per endpoint (recorded for assertions).
+        private(set) var lastTodayCategory: QuoteCategory?
+        private(set) var lastRandomCategory: QuoteCategory?
 
         init(
             today: FetchedQuote = FetchedQuote(text: "The daily one", author: "Daily"),
@@ -31,15 +34,17 @@ final class LibraryViewModelTests: XCTestCase {
             self.throwsError = throwsError
         }
 
-        func today() async throws -> FetchedQuote {
+        func today(category: QuoteCategory) async throws -> FetchedQuote {
             todayCalls += 1
+            lastTodayCategory = category
             if let e = throwsError { throw e }
             return todayQuote
         }
 
-        func random() async throws -> FetchedQuote {
+        func random(category: QuoteCategory) async throws -> FetchedQuote {
             let idx = randomCalls
             randomCalls += 1
+            lastRandomCategory = category
             if let e = throwsError { throw e }
             return randomQuotes[idx % randomQuotes.count]
         }

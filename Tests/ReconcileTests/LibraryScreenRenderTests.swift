@@ -13,8 +13,8 @@ import SwiftData
 final class LibraryScreenRenderTests: XCTestCase {
 
     final class FakeClient: ZenQuotesClient {
-        func today() async throws -> FetchedQuote { FetchedQuote(text: "t", author: "a") }
-        func random() async throws -> FetchedQuote { FetchedQuote(text: "r", author: "a") }
+        func today(category: QuoteCategory) async throws -> FetchedQuote { FetchedQuote(text: "t", author: "a") }
+        func random(category: QuoteCategory) async throws -> FetchedQuote { FetchedQuote(text: "r", author: "a") }
     }
     final class ScopeBox { var scope: TodayScope; init(_ s: TodayScope) { scope = s } }
 

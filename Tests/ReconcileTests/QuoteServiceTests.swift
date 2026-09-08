@@ -21,6 +21,9 @@ final class QuoteServiceTests: XCTestCase {
         var throwsError: ZenQuotesError?
         private(set) var todayCalls = 0
         private(set) var randomCalls = 0
+        // ADR-047: last category requested per endpoint (recorded for assertions).
+        private(set) var lastTodayCategory: QuoteCategory?
+        private(set) var lastRandomCategory: QuoteCategory?
 
         init(
             today: FetchedQuote = FetchedQuote(text: "The daily one", author: "Daily"),
@@ -32,15 +35,17 @@ final class QuoteServiceTests: XCTestCase {
             self.throwsError = throwsError
         }
 
-        func today() async throws -> FetchedQuote {
+        func today(category: QuoteCategory) async throws -> FetchedQuote {
             todayCalls += 1
+            lastTodayCategory = category
             if let e = throwsError { throw e }
             return todayQuote
         }
 
-        func random() async throws -> FetchedQuote {
+        func random(category: QuoteCategory) async throws -> FetchedQuote {
             let idx = randomCalls
             randomCalls += 1
+            lastRandomCategory = category
             if let e = throwsError { throw e }
             return randomQuotes[idx % randomQuotes.count]
         }
@@ -90,7 +95,16 @@ final class QuoteServiceTests: XCTestCase {
         QuoteService(context: context, clock: clock, client: client, scope: { scopeBox.scope })
     }
 
+    /// Build a service with a fixed scope + a mutable CATEGORY box (ADR-047).
+    private func service(scope: TodayScope, categoryBox: CategoryBox, client: FakeClient = FakeClient()) -> QuoteService {
+        QuoteService(
+            context: context, clock: clock, client: client,
+            scope: { scope }, category: { categoryBox.category }
+        )
+    }
+
     final class ScopeBox { var scope: TodayScope; init(_ s: TodayScope) { scope = s } }
+    final class CategoryBox { var category: QuoteCategory; init(_ c: QuoteCategory) { category = c } }
 
     private func quoteCount() throws -> Int {
         try context.fetch(FetchDescriptor<Quote>()).count
@@ -490,5 +504,94 @@ final class QuoteServiceTests: XCTestCase {
         XCTAssertNotNil(rows.first?.likedAt)
         container = reopened
         context = freshContext
+    }
+
+    // MARK: - Category (ADR-047)
+
+    /// Slug mapping: `.any` → nil (no tag filter); `.humor` → `"humorous"`; the rest
+    /// map to their own lowercase raw value.
+    func testCategorySlugMapping() {
+        XCTAssertNil(QuoteCategory.any.tagSlug)
+        XCTAssertEqual(QuoteCategory.humor.tagSlug, "humorous")
+        XCTAssertEqual(QuoteCategory.wisdom.tagSlug, "wisdom")
+        XCTAssertEqual(QuoteCategory.love.tagSlug, "love")
+        XCTAssertEqual(QuoteCategory.motivational.tagSlug, "motivational")
+        // Every non-any case has a non-nil slug; only humor differs from its raw value.
+        for c in QuoteCategory.allCases where c != .any {
+            XCTAssertNotNil(c.tagSlug)
+            if c != .humor { XCTAssertEqual(c.tagSlug, c.rawValue) }
+        }
+    }
+
+    /// The online daily fetch passes the SELECTED category to the client (ADR-047).
+    func testOnlineDailyFetchPassesSelectedCategory() async throws {
+        let client = FakeClient(today: FetchedQuote(text: "WisdomPick", author: "W"))
+        let svc = service(scope: .online, categoryBox: CategoryBox(.wisdom), client: client)
+        _ = await svc.todaysQuote()
+        XCTAssertEqual(client.lastTodayCategory, .wisdom)
+    }
+
+    /// Same day + SAME category → same cached quote, fetched only once (ADR-013/-047).
+    func testOnlineDailyCachedPerCategorySameCategory() async throws {
+        let client = FakeClient(today: FetchedQuote(text: "Cached", author: "C"))
+        let svc = service(scope: .online, categoryBox: CategoryBox(.success), client: client)
+        _ = await svc.todaysQuote()
+        _ = await svc.todaysQuote()
+        XCTAssertEqual(client.todayCalls, 1, "same (day, category) hits the network once")
+    }
+
+    /// Changing the category the SAME day fetches AGAIN (a new (day, category) key),
+    /// and the daily fetch carries the new category (ADR-047).
+    func testChangingCategorySameDayRefetches() async throws {
+        let box = CategoryBox(.wisdom)
+        let client = FakeClient(today: FetchedQuote(text: "Any/Wisdom", author: "X"))
+        let svc = service(scope: .online, categoryBox: box, client: client)
+
+        _ = await svc.todaysQuote()
+        XCTAssertEqual(client.todayCalls, 1)
+        XCTAssertEqual(client.lastTodayCategory, .wisdom)
+
+        box.category = .humor                    // user switches category, same day
+        _ = await svc.todaysQuote()
+        XCTAssertEqual(client.todayCalls, 2, "a category switch is a new (day, category) → refetch")
+        XCTAssertEqual(client.lastTodayCategory, .humor)
+    }
+
+    /// `mine` scope IGNORES the category — it never fetches and never keys on category
+    /// (ADR-047). The client is untouched regardless of the selected category.
+    func testMineScopeIgnoresCategory() async throws {
+        try seedUser("MineOnly")
+        let client = FakeClient()
+        let svc = service(scope: .mine, categoryBox: CategoryBox(.love), client: client)
+        let result = await svc.todaysQuote()
+        guard case let .quote(q) = result else { return XCTFail("expected quote") }
+        XCTAssertEqual(q.text, "MineOnly")
+        XCTAssertEqual(client.todayCalls, 0, "mine never fetches (category irrelevant)")
+        XCTAssertEqual(client.randomCalls, 0)
+    }
+
+    /// The (day, scope, category) override is category-scoped: an `online` refresh under
+    /// one category does NOT apply after the user switches to another category (ADR-047).
+    func testOnlineRefreshOverrideKeyedByCategory() async throws {
+        let box = CategoryBox(.wisdom)
+        let client = FakeClient(
+            today: FetchedQuote(text: "DailyWisdom", author: "D"),
+            random: [FetchedQuote(text: "RefreshedWisdom", author: "R")]
+        )
+        let svc = service(scope: .online, categoryBox: box, client: client)
+
+        _ = await svc.todaysQuote()               // daily for wisdom
+        let refreshed = await svc.refresh()       // wisdom override
+        guard case let .quote(r) = refreshed, r.text == "RefreshedWisdom" else {
+            return XCTFail("expected refreshed wisdom quote")
+        }
+
+        // Switch category same day → the wisdom override must NOT apply; a fresh daily
+        // fetch for the new category happens instead.
+        box.category = .humor
+        let humor = await svc.todaysQuote()
+        guard case let .quote(h) = humor else { return XCTFail("expected quote") }
+        XCTAssertNotEqual(h.text, "RefreshedWisdom", "wisdom override must not leak into humor")
+        XCTAssertEqual(client.lastTodayCategory, .humor)
     }
 }

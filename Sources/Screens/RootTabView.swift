@@ -179,7 +179,8 @@ public struct RootTabView: View {
             context: modelContext,
             clock: clock,
             client: LiveZenQuotesClient(),
-            scope: { settings.todayScope }
+            scope: { settings.todayScope },
+            category: { settings.quoteCategory }   // ADR-047
         )
         return LibraryViewModel(
             service: service,

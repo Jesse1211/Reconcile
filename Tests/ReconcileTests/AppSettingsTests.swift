@@ -13,11 +13,23 @@ final class AppSettingsTests: XCTestCase {
         return d
     }
 
-    /// Fresh install: scope defaults to online (ADR-034), theme defaults to ledger.
+    /// Fresh install: scope defaults to online (ADR-034), theme defaults to ledger,
+    /// category defaults to any (ADR-047).
     func testDefaultsOnFreshInstall() {
         let settings = AppSettings(defaults: freshDefaults())
         XCTAssertEqual(settings.todayScope, .online)
         XCTAssertEqual(settings.theme, .ledger)
+        XCTAssertEqual(settings.quoteCategory, .any)
+    }
+
+    /// Category selection persists across a simulated relaunch (ADR-047).
+    func testQuoteCategoryPersistsAcrossLaunch() {
+        let defaults = freshDefaults()
+        let first = AppSettings(defaults: defaults)
+        first.quoteCategory = .wisdom
+
+        let relaunched = AppSettings(defaults: defaults)
+        XCTAssertEqual(relaunched.quoteCategory, .wisdom)
     }
 
     /// Scope selection persists across a simulated relaunch (ADR-040).
