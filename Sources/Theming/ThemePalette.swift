@@ -192,12 +192,12 @@ public struct DayArcPalette: ThemePalette {
 
     // Adaptive text colors — chosen by whether the current gradient is light or dark, so
     // text stays legible from bright midday through deep night (ADR-037d).
-    // Dark text for light (daytime) backgrounds. Secondary/muted are kept fairly deep so
-    // they stay legible on the mid-brightness daytime sky (a pale grey washes out there).
+    // Dark text for light (daytime) backgrounds. Kept close to black so it reads strongly
+    // on the mid-brightness daytime sky (a pale grey washes out there).
     private static let darkText = (
-        primary: Color(red: 0.10, green: 0.11, blue: 0.16),
-        secondary: Color(red: 0.18, green: 0.20, blue: 0.26),
-        muted: Color(red: 0.28, green: 0.30, blue: 0.36)
+        primary: Color(red: 0.04, green: 0.05, blue: 0.08),
+        secondary: Color(red: 0.10, green: 0.11, blue: 0.16),
+        muted: Color(red: 0.18, green: 0.20, blue: 0.26)
     )
     private static let lightText = (
         primary: textPrimary,
