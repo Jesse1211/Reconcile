@@ -15,7 +15,32 @@ public struct RootTabView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.clock) private var clock
 
-    public init() {}
+    public init() {
+        // The nav (tab) bar is FIXED: always a white background with dark icons, and the
+        // selected item highlighted in near-black. It does NOT follow the app theme or the
+        // system light/dark mode — this keeps it stable while the per-screen Day Arc
+        // gradients change behind it (owner decision).
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+
+        let selected = UIColor(white: 0.10, alpha: 1.0)      // near-black for the chosen tab
+        let normal = UIColor(white: 0.45, alpha: 1.0)        // dark grey for the rest
+        for item in [appearance.stackedLayoutAppearance,
+                     appearance.inlineLayoutAppearance,
+                     appearance.compactInlineLayoutAppearance] {
+            item.selected.iconColor = selected
+            item.selected.titleTextAttributes = [.foregroundColor: selected]
+            item.normal.iconColor = normal
+            item.normal.titleTextAttributes = [.foregroundColor: normal]
+        }
+
+        let bar = UITabBar.appearance()
+        bar.standardAppearance = appearance
+        bar.scrollEdgeAppearance = appearance
+        // Ignore system Dark Mode so the bar stays white in both.
+        bar.overrideUserInterfaceStyle = .light
+    }
 
     public var body: some View {
         TabView {
@@ -36,11 +61,8 @@ public struct RootTabView: View {
             summaryTab
             settingsTab
         }
-        // Tint the tab bar's SELECTED item with the active theme's accent (ADR-022) so it
-        // reads as part of the theme instead of the system default blue. Resolved at the
-        // shell level from the persisted Theme; the per-screen role doesn't matter for the
-        // accent, so `.today` is a fine anchor.
-        .tint(settings.theme.tokens(for: .today).colors.accent)
+        // The tab bar's fixed white/dark appearance is configured once in `init()` via
+        // UITabBarAppearance — it deliberately does NOT follow the theme accent.
     }
 
     /// The Settings tab: the single place to change the visual theme (ADR-022) and the
