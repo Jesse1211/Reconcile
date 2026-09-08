@@ -90,16 +90,29 @@ public struct RootTabView: View {
         }
     }
 
-    // MARK: Fixed capsule nav bar (ADR-037b)
+    // MARK: Capsule nav bar (ADR-037b/-037d)
 
-    /// A light-grey capsule with dark icons; the selected item sits on a darker pill. These
-    /// colors are FIXED constants (not theme/dark-mode driven) so the bar reads identically
-    /// on every screen's background.
+    /// The nav capsule tracks the current time-of-day gradient like the rest of Day Arc
+    /// (ADR-037d): its ground is the current gradient mid tone as a translucent glass, and
+    /// its icon colors ADAPT to that tone's brightness (dark icons over a light bar, light
+    /// icons over a dark bar) so it stays legible from midday to midnight. Ledger resolves to
+    /// its fixed paper tones. Colors come from the active theme's tokens at the current hour.
+    private var navTokens: ThemeTokens {
+        settings.theme.palette.tokens(for: .today, atHour: currentHour)
+    }
+    private var currentHour: Double {
+        let c = clock.calendar.dateComponents([.hour, .minute], from: clock.now())
+        return Double(c.hour ?? 0) + Double(c.minute ?? 0) / 60
+    }
+
     private var navBar: some View {
-        let capsule = Color(white: 0.93)            // light-grey capsule ground
-        let icon = Color(white: 0.45)               // unselected dark grey
-        let iconSelected = Color(white: 0.10)       // selected near-black
-        let selectedPill = Color(white: 0.82)       // darker pill behind the selected item
+        let t = navTokens
+        // Glass capsule tinted by the current sky; icons adapt to its brightness.
+        let capsule = t.colors.gradientMid.opacity(0.72)
+        let onDark = !t.isLightBackground
+        let icon = (onDark ? Color.white : Color.black).opacity(0.55)
+        let iconSelected = (onDark ? Color.white : Color.black).opacity(0.95)
+        let selectedPill = (onDark ? Color.white : Color.black).opacity(0.16)
 
         return HStack(spacing: 0) {
             ForEach(Tab.allCases, id: \.self) { tab in

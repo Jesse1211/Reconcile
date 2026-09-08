@@ -91,16 +91,22 @@ public struct ThemeTokens: Sendable {
     public let screenRole: ScreenRole
     public let colors: ThemeColors
     public let typography: ThemeTypography
+    /// Whether the current background is LIGHT (high luminance). Fonts and the nav bar read
+    /// this to pick dark-on-light vs light-on-dark treatment as the Day Arc background drifts
+    /// from bright midday to deep night (ADR-037d). Ledger sets it from its fixed paper.
+    public let isLightBackground: Bool
 
     public init(
         theme: Theme,
         screenRole: ScreenRole,
         colors: ThemeColors,
-        typography: ThemeTypography
+        typography: ThemeTypography,
+        isLightBackground: Bool
     ) {
         self.theme = theme
         self.screenRole = screenRole
         self.colors = colors
         self.typography = typography
+        self.isLightBackground = isLightBackground
     }
 }

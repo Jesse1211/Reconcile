@@ -79,12 +79,13 @@ public struct LedgerPalette: ThemePalette {
     )
 
     public func tokens(for role: ScreenRole) -> ThemeTokens {
-        // Ledger IGNORES role (ADR-037): same tokens for every screen.
+        // Ledger IGNORES role and time (ADR-037): same paper tokens for every screen.
         ThemeTokens(
             theme: theme,
             screenRole: role,
             colors: Self.colors,
-            typography: Self.typography
+            typography: Self.typography,
+            isLightBackground: true   // paper is always light → dark ink text
         )
     }
 }
@@ -186,6 +187,19 @@ public struct DayArcPalette: ThemePalette {
                 a.bottom.mixed(with: b.bottom, t))
     }
 
+    // Adaptive text colors — chosen by whether the current gradient is light or dark, so
+    // text stays legible from bright midday through deep night (ADR-037d).
+    private static let darkText = (
+        primary: Color(red: 0.12, green: 0.13, blue: 0.18),
+        secondary: Color(red: 0.26, green: 0.28, blue: 0.34),
+        muted: Color(red: 0.40, green: 0.42, blue: 0.48)
+    )
+    private static let lightText = (
+        primary: textPrimary,
+        secondary: textSecondary,
+        muted: textMuted
+    )
+
     public func tokens(for role: ScreenRole) -> ThemeTokens {
         // Time-independent fallback (previews/tests that don't inject an hour): use dawn.
         tokens(for: role, atHour: 6)
@@ -193,13 +207,21 @@ public struct DayArcPalette: ThemePalette {
 
     public func tokens(for role: ScreenRole, atHour hour: Double) -> ThemeTokens {
         let anchors = gradientAnchors(atHour: hour)
+        // Text/cards sit mostly over the TOP–MID region, so judge legibility against the
+        // average of those two bands. Threshold 0.42 (not 0.5): mid-brightness daytime
+        // skies (dawn/midday blues) read as "light" and get dark text, while dusk/night
+        // fall to light text. Tuned so text is legible across the whole arc.
+        let sampled = (Self.relativeLuminance(anchors.top)
+                       + Self.relativeLuminance(anchors.mid)) / 2
+        let isLight = sampled > 0.42
+        let text = isLight ? Self.darkText : Self.lightText
         let colors = ThemeColors(
             background: Self.background,
             surface: Self.surface,
             surfaceRaised: Self.surfaceRaised,
-            textPrimary: Self.textPrimary,
-            textSecondary: Self.textSecondary,
-            textMuted: Self.textMuted,
+            textPrimary: text.primary,
+            textSecondary: text.secondary,
+            textMuted: text.muted,
             accent: Self.accent,
             accentCarried: Self.accentCarried,
             divider: Self.divider,
@@ -211,7 +233,14 @@ public struct DayArcPalette: ThemePalette {
             theme: theme,
             screenRole: role,
             colors: colors,
-            typography: Self.typography
+            typography: Self.typography,
+            isLightBackground: isLight
         )
+    }
+
+    /// Perceived (relative) luminance of a color in 0...1 (Rec. 709 weights).
+    private static func relativeLuminance(_ color: Color) -> Double {
+        let c = UIColor(color).rgba
+        return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
     }
 }
