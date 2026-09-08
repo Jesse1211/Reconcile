@@ -29,12 +29,26 @@ private struct ThemedModifier: ViewModifier {
     /// default `.today` role and share one gradient — the ordering trap this avoids.
     let role: ScreenRole
 
+    /// The injected clock (ADR-038) supplies the current instant so Day Arc can pick the
+    /// gradient for the REAL time of day (ADR-037, revised). Ledger ignores it.
+    @Environment(\.clock) private var clock
+
     func body(content: Content) -> some View {
         content
-            // Inject BOTH the resolved tokens for (theme, role) AND the role itself, so
-            // any child that reads `\.screenRole` (or re-derives) sees the right role.
-            .environment(\.theme, theme.tokens(for: role))
+            // Resolve tokens for (theme, role, current hour-of-day). Day Arc interpolates
+            // its whole-app gradient by the hour; Ledger ignores the hour.
+            .environment(\.theme, theme.palette.tokens(for: role, atHour: currentHour))
             .environment(\.screenRole, role)
+    }
+
+    /// Fractional hour-of-day (0..<24) from the injected clock's calendar.
+    private var currentHour: Double {
+        let now = clock.now()
+        let c = clock.calendar.dateComponents([.hour, .minute, .second], from: now)
+        let h = Double(c.hour ?? 0)
+        let m = Double(c.minute ?? 0)
+        let s = Double(c.second ?? 0)
+        return h + m / 60 + s / 3600
     }
 }
 
