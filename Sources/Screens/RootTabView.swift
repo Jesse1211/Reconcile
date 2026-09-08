@@ -1,101 +1,132 @@
 import SwiftUI
 import SwiftData
 
-/// The bottom-tab shell: Today / Timer / Library / Summary (T1).
+/// The bottom-tab shell: Today / Timer / Library / Summary / Settings (T1).
 ///
-/// Each tab declares its `screenRole` (ADR-037) and THEN resolves theme tokens via
-/// `.themed(_:role:)`, so Day Arc paints the correct per-screen gradient while the screens
-/// themselves stay theme-agnostic. The active `Theme` comes from `AppSettings`
-/// (ADR-040), so switching theme re-styles the shell live without a restart.
+/// Each screen resolves theme tokens via `.themed(_:role:)`, so Day Arc paints the correct
+/// per-screen gradient while the screens stay theme-agnostic. The active `Theme` comes from
+/// `AppSettings` (ADR-040), so switching theme re-styles the shell live without a restart.
 ///
-/// The Today tab (T7), Timer tab (T9), Library tab (T8), and Summary tab (T10) are all
-/// wired to their real screens.
+/// **Nav bar (ADR-037b, owner decision):** a FIXED light-grey capsule with dark icons and a
+/// darker "pill" behind the selected item — the SAME in every background, theme, and system
+/// light/dark mode. The system `TabView` bar on iOS 26 is a floating glass capsule that
+/// ignores `UITabBarAppearance`, so we hide it and draw our own fixed capsule instead.
 public struct RootTabView: View {
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.modelContext) private var modelContext
     @Environment(\.clock) private var clock
 
-    public init() {
-        // The nav (tab) bar is FIXED: always a white background with dark icons, and the
-        // selected item highlighted in near-black. It does NOT follow the app theme or the
-        // system light/dark mode — this keeps it stable while the per-screen Day Arc
-        // gradients change behind it (owner decision).
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
-
-        let selected = UIColor(white: 0.10, alpha: 1.0)      // near-black for the chosen tab
-        let normal = UIColor(white: 0.45, alpha: 1.0)        // dark grey for the rest
-        for item in [appearance.stackedLayoutAppearance,
-                     appearance.inlineLayoutAppearance,
-                     appearance.compactInlineLayoutAppearance] {
-            item.selected.iconColor = selected
-            item.selected.titleTextAttributes = [.foregroundColor: selected]
-            item.normal.iconColor = normal
-            item.normal.titleTextAttributes = [.foregroundColor: normal]
+    /// The bottom tabs, in order.
+    private enum Tab: CaseIterable {
+        case today, timer, library, summary, settings
+        var title: String {
+            switch self {
+            case .today: return "Today"
+            case .timer: return "Timer"
+            case .library: return "Library"
+            case .summary: return "Summary"
+            case .settings: return "Settings"
+            }
         }
-
-        let bar = UITabBar.appearance()
-        bar.standardAppearance = appearance
-        bar.scrollEdgeAppearance = appearance
-        // Ignore system Dark Mode so the bar stays white in both.
-        bar.overrideUserInterfaceStyle = .light
+        var systemImage: String {
+            switch self {
+            case .today: return "sun.max"
+            case .timer: return "timer"
+            case .library: return "books.vertical"
+            case .summary: return "chart.bar"
+            case .settings: return "gearshape"
+            }
+        }
     }
 
+    @State private var selection: Tab = .today
+
+    public init() {}
+
     public var body: some View {
-        TabView {
-            // Today (T7) — the real screen.
+        ZStack(alignment: .bottom) {
+            // Active screen fills the whole shell (its ThemeBackground ignores safe area).
+            activeScreen
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            // Our own fixed nav bar, overlaid at the bottom — same look in every background.
+            navBar
+        }
+    }
+
+    @ViewBuilder
+    private var activeScreen: some View {
+        switch selection {
+        case .today:
             TodayScreen(
                 context: modelContext,
                 clock: clock,
                 settings: settings,
                 client: LiveZenQuotesClient()
             )
-            // Resolve tokens for this screen's role (ADR-037) — role is explicit so it
-            // never depends on modifier order.
             .themed(settings.theme, role: .today)
-            .tabItem { Label("Today", systemImage: "sun.max") }
-
-            timerTab
-            libraryTab
-            summaryTab
-            settingsTab
+        case .timer:
+            TimerScreen()
+                .themed(settings.theme, role: .timer)
+        case .library:
+            LibraryScreen(model: makeLibraryModel())
+                .themed(settings.theme, role: .library)
+        case .summary:
+            SummaryScreen()
+                .themed(settings.theme, role: .summary)
+        case .settings:
+            SettingsScreen()
+                .themed(settings.theme, role: .settings)
         }
-        // The tab bar's fixed white/dark appearance is configured once in `init()` via
-        // UITabBarAppearance — it deliberately does NOT follow the theme accent.
     }
 
-    /// The Settings tab: the single place to change the visual theme (ADR-022) and the
-    /// today's-quote source (`TodayScope`, ADR-040). Both write straight to `AppSettings`.
-    @ViewBuilder
-    private var settingsTab: some View {
-        SettingsScreen()
-            .themed(settings.theme, role: .settings)
-            .tabItem {
-                Label("Settings", systemImage: "gearshape")
-            }
-    }
+    // MARK: Fixed capsule nav bar (ADR-037b)
 
-    /// The Timer tab (T9): the real stopwatch screen with today's saved sessions.
-    @ViewBuilder
-    private var timerTab: some View {
-        TimerScreen()
-            .themed(settings.theme, role: .timer)
-            .tabItem {
-                Label("Timer", systemImage: "timer")
-            }
-    }
+    /// A light-grey capsule with dark icons; the selected item sits on a darker pill. These
+    /// colors are FIXED constants (not theme/dark-mode driven) so the bar reads identically
+    /// on every screen's background.
+    private var navBar: some View {
+        let capsule = Color(white: 0.93)            // light-grey capsule ground
+        let icon = Color(white: 0.45)               // unselected dark grey
+        let iconSelected = Color(white: 0.10)       // selected near-black
+        let selectedPill = Color(white: 0.82)       // darker pill behind the selected item
 
-    /// The Library tab (T8): builds the T5 quote service from the live model context and
-    /// the production ZenQuotes client, wires the scope reader/writer to T1's settings
-    /// layer (ADR-040 — the Library WRITES the persisted scope), and shows ``LibraryScreen``.
-    @ViewBuilder
-    private var libraryTab: some View {
-        LibraryScreen(model: makeLibraryModel())
-            .themed(settings.theme, role: .library)
-            .tabItem {
-                Label("Library", systemImage: "books.vertical")
+        return HStack(spacing: 0) {
+            ForEach(Tab.allCases, id: \.self) { tab in
+                let isSelected = tab == selection
+                Button {
+                    selection = tab
+                } label: {
+                    VStack(spacing: 3) {
+                        Image(systemName: tab.systemImage)
+                            .font(.system(size: 18, weight: .semibold))
+                        Text(tab.title)
+                            .font(.system(size: 10, weight: .medium))
+                    }
+                    .foregroundStyle(isSelected ? iconSelected : icon)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background {
+                        if isSelected {
+                            Capsule(style: .continuous)
+                                .fill(selectedPill)
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(tab.title)
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
             }
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
+        .background(
+            Capsule(style: .continuous)
+                .fill(capsule)
+                .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
+        )
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
     }
 
     @MainActor
@@ -112,16 +143,5 @@ public struct RootTabView: View {
             scope: { settings.todayScope },
             setScope: { settings.todayScope = $0 }   // ADR-040: the Library is the scope writer
         )
-    }
-
-    /// The Summary tab (T10): the first real analytics screen — charts, mood, timeline,
-    /// and KPIs rendered from the read-model.
-    @ViewBuilder
-    private var summaryTab: some View {
-        SummaryScreen()
-            .themed(settings.theme, role: .summary)
-            .tabItem {
-                Label("Summary", systemImage: "chart.bar")
-            }
     }
 }
