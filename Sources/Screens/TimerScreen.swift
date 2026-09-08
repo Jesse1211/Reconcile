@@ -104,13 +104,13 @@ struct TimerScreen: View {
     private var controls: some View {
         if running == nil {
             Button(action: startSession) {
-                controlLabel("Start", systemImage: "play.fill", color: tokens.colors.accent)
+                controlLabel("Start", systemImage: "play.fill", color: tokens.colors.accentOnBackground)
             }
             .accessibilityIdentifier("timer.control.start")
         } else {
             HStack(spacing: 16) {
                 Button(action: stopSession) {
-                    controlLabel("Stop", systemImage: "stop.fill", color: tokens.colors.accent)
+                    controlLabel("Stop", systemImage: "stop.fill", color: tokens.colors.accentOnBackground)
                 }
                 .accessibilityIdentifier("timer.control.stop")
 

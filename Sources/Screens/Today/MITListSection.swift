@@ -45,7 +45,7 @@ struct MITListSection: View {
                 model.toggleComplete(mit)
             } label: {
                 Image(systemName: mit.status == .completed ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(mit.status == .completed ? tokens.colors.accent : tokens.colors.textMuted)
+                    .foregroundStyle(mit.status == .completed ? tokens.colors.accentOnBackground : tokens.colors.textMuted)
             }
             .accessibilityIdentifier("mit.toggle")
 

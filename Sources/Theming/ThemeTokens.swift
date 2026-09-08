@@ -22,6 +22,16 @@ public struct ThemeColors: Sendable {
     public let accent: Color
     /// The ledger-red / rolled-over "carried" color (ADR-036).
     public let accentCarried: Color
+    /// Fill color for solid buttons & selected chips (ADR-037e). On Day Arc this is a
+    /// near-white; the label on top MUST stay `background` (dark) so it never vanishes.
+    public let accentFill: Color
+    /// Adaptive accent for glyphs/charts painted on the sky (ADR-037e): dark on a light
+    /// background, light on a dark one — reuses `isLightBackground`. Never flat white
+    /// (which disappears on a bright daytime sky).
+    public let accentOnBackground: Color
+    /// The "liked / favorited" hue — kept a saturated color so the state reads at a glance
+    /// (ADR-037e); does NOT go white/adaptive.
+    public let likedAccent: Color
     public let divider: Color
 
     // Day-Arc gradient-anchor set (ADR-036/037). The Day Arc theme selects these per
@@ -39,6 +49,9 @@ public struct ThemeColors: Sendable {
         textMuted: Color,
         accent: Color,
         accentCarried: Color,
+        accentFill: Color,
+        accentOnBackground: Color,
+        likedAccent: Color,
         divider: Color,
         gradientTop: Color,
         gradientMid: Color,
@@ -52,6 +65,9 @@ public struct ThemeColors: Sendable {
         self.textMuted = textMuted
         self.accent = accent
         self.accentCarried = accentCarried
+        self.accentFill = accentFill
+        self.accentOnBackground = accentOnBackground
+        self.likedAccent = likedAccent
         self.divider = divider
         self.gradientTop = gradientTop
         self.gradientMid = gradientMid

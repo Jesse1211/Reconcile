@@ -95,7 +95,7 @@ struct IntentionRitualView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .foregroundStyle(tokens.colors.background)
-                        .background(tokens.colors.accent, in: RoundedRectangle(cornerRadius: 12))
+                        .background(tokens.colors.accentFill, in: RoundedRectangle(cornerRadius: 12))
                 }
                 .disabled(!canSave)
                 .opacity(canSave ? 1 : 0.5)

@@ -63,6 +63,9 @@ public struct LedgerPalette: ThemePalette {
         textMuted: inkMuted,
         accent: ledgerRed,
         accentCarried: ledgerRed,
+        accentFill: ledgerRed,          // Ledger buttons stay the ledger-red fill…
+        accentOnBackground: ledgerRed,  // …and glyphs/charts use the same ink-red on paper.
+        likedAccent: ledgerRed,
         divider: rule,
         // Flat/neutral values so the gradient-anchor set is total in Ledger too.
         gradientTop: paper,
@@ -224,6 +227,12 @@ public struct DayArcPalette: ThemePalette {
             textMuted: text.muted,
             accent: Self.accent,
             accentCarried: Self.accentCarried,
+            // Solid buttons/chips: near-white fill (label on top stays dark `background`).
+            accentFill: Color(white: 0.96),
+            // Glyphs/charts on the sky: adaptive ink (dark on light bg, light on dark).
+            accentOnBackground: isLight ? Self.darkText.primary : Self.textPrimary,
+            // "Liked" keeps its warm amber hue so the favorited state reads at a glance.
+            likedAccent: Self.accent,
             divider: Self.divider,
             gradientTop: anchors.top,
             gradientMid: anchors.mid,

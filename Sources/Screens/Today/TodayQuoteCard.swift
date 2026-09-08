@@ -41,7 +41,11 @@ struct TodayQuoteCard: View {
                     Task { await model.likeCurrentQuote() }
                 } label: {
                     Image(systemName: model.currentQuoteIsSaved ? "heart.fill" : "heart")
-                        .foregroundStyle(tokens.colors.accent)
+                        // Saved → the "liked" hue (a real color so favorited reads);
+                        // unsaved → adaptive ink like the other glyphs.
+                        .foregroundStyle(model.currentQuoteIsSaved
+                                         ? tokens.colors.likedAccent
+                                         : tokens.colors.accentOnBackground)
                 }
                 .disabled(!model.canLikeCurrentQuote)
                 .accessibilityIdentifier("quote.like")
@@ -52,7 +56,7 @@ struct TodayQuoteCard: View {
                 Task { await model.refreshQuote() }
             } label: {
                 Image(systemName: "arrow.clockwise")
-                    .foregroundStyle(model.refreshDisabled ? tokens.colors.textMuted : tokens.colors.accent)
+                    .foregroundStyle(model.refreshDisabled ? tokens.colors.textMuted : tokens.colors.accentOnBackground)
             }
             .disabled(model.refreshDisabled)
             .accessibilityIdentifier("quote.refresh")
@@ -66,7 +70,7 @@ struct TodayQuoteCard: View {
         switch model.quoteState {
         case .loading:
             ProgressView()
-                .tint(tokens.colors.accent)
+                .tint(tokens.colors.accentOnBackground)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical, 12)
                 .accessibilityIdentifier("quote.loading")
@@ -102,7 +106,7 @@ struct TodayQuoteCard: View {
                 } label: {
                     Label("Retry", systemImage: "arrow.clockwise")
                         .font(tokens.typography.body)
-                        .foregroundStyle(tokens.colors.accent)
+                        .foregroundStyle(tokens.colors.accentOnBackground)
                 }
                 .accessibilityIdentifier("quote.retry")
             }

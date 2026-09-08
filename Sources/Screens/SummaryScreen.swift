@@ -86,7 +86,7 @@ public struct SummaryScreen: View {
                         .padding(.horizontal, 14)
                         .background(
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .fill(option == range ? tokens.colors.accent : tokens.colors.surface)
+                                .fill(option == range ? tokens.colors.accentFill : tokens.colors.surface)
                         )
                 }
                 .buttonStyle(.plain)
@@ -147,7 +147,7 @@ public struct SummaryScreen: View {
                     x: .value("Day", point.day, unit: .day),
                     y: .value("Completed", point.value)
                 )
-                .foregroundStyle(tokens.colors.accent)
+                .foregroundStyle(tokens.colors.accentOnBackground)
             }
             .chartYAxis { AxisMarks(position: .leading) }
             .frame(height: 160)
@@ -164,7 +164,7 @@ public struct SummaryScreen: View {
                     x: .value("Day", point.day, unit: .day),
                     y: .value("Minutes", Double(point.value) / 60.0)
                 )
-                .foregroundStyle(tokens.colors.accent)
+                .foregroundStyle(tokens.colors.accentOnBackground)
             }
             .chartYAxis { AxisMarks(position: .leading) }
             .frame(height: 160)
@@ -186,12 +186,12 @@ public struct SummaryScreen: View {
                             y: .value("Mood", mood),
                             series: .value("Series", "Mood")
                         )
-                        .foregroundStyle(tokens.colors.accent)
+                        .foregroundStyle(tokens.colors.accentOnBackground)
                         PointMark(
                             x: .value("Day", point.day, unit: .day),
                             y: .value("Mood", mood)
                         )
-                        .foregroundStyle(tokens.colors.accent)
+                        .foregroundStyle(tokens.colors.accentOnBackground)
                     }
                     if let stress = point.stress {
                         LineMark(
@@ -255,7 +255,7 @@ public struct SummaryScreen: View {
             ForEach(Array(row.segments.enumerated()), id: \.offset) { _, seg in
                 let frac = max(0, seg.end.timeIntervalSince(seg.start)) / total
                 RoundedRectangle(cornerRadius: 3, style: .continuous)
-                    .fill(seg.isGap ? tokens.colors.divider : tokens.colors.accent)
+                    .fill(seg.isGap ? tokens.colors.divider : tokens.colors.accentOnBackground)
                     .opacity(seg.isGap ? 0.4 : 1.0)
                     .frame(width: max(2, width * CGFloat(frac)))
             }

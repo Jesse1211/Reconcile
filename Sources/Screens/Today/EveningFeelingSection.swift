@@ -41,7 +41,7 @@ struct EveningFeelingSection: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .foregroundStyle(tokens.colors.background)
-                    .background(tokens.colors.accent, in: RoundedRectangle(cornerRadius: 12))
+                    .background(tokens.colors.accentFill, in: RoundedRectangle(cornerRadius: 12))
             }
             .disabled(!model.feelingEditable)
             .opacity(model.feelingEditable ? 1 : 0.5)
@@ -83,7 +83,7 @@ struct EveningFeelingSection: View {
                                 value.wrappedValue == n ? tokens.colors.background : tokens.colors.textPrimary
                             )
                             .background(
-                                value.wrappedValue == n ? tokens.colors.accent : tokens.colors.surfaceRaised,
+                                value.wrappedValue == n ? tokens.colors.accentFill : tokens.colors.surfaceRaised,
                                 in: Circle()
                             )
                     }

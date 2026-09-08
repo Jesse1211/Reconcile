@@ -65,14 +65,14 @@ public struct LibraryScreen: View {
                 showingBrowse = true
             } label: {
                 Image(systemName: "sparkles")
-                    .foregroundStyle(tokens.colors.accent)
+                    .foregroundStyle(tokens.colors.accentOnBackground)
             }
             .accessibilityLabel("Browse online quotes")
             Button {
                 showingAdd = true
             } label: {
                 Image(systemName: "plus")
-                    .foregroundStyle(tokens.colors.accent)
+                    .foregroundStyle(tokens.colors.accentOnBackground)
             }
             .accessibilityLabel("Add a quote")
         }
@@ -114,9 +114,9 @@ public struct LibraryScreen: View {
                 .padding(.horizontal, 32)
             HStack(spacing: 12) {
                 Button("Write one") { showingAdd = true }
-                    .foregroundStyle(tokens.colors.accent)
+                    .foregroundStyle(tokens.colors.accentOnBackground)
                 Button("Discover online") { showingBrowse = true }
-                    .foregroundStyle(tokens.colors.accent)
+                    .foregroundStyle(tokens.colors.accentOnBackground)
             }
             .font(tokens.typography.body)
             .padding(.top, 4)
@@ -181,7 +181,7 @@ private struct LibraryRow: View {
             }
             Spacer()
             Image(systemName: quote.liked ? "heart.fill" : "heart")
-                .foregroundStyle(quote.liked ? tokens.colors.accent : tokens.colors.textMuted)
+                .foregroundStyle(quote.liked ? tokens.colors.likedAccent : tokens.colors.textMuted)
                 .accessibilityLabel(quote.liked ? "Liked" : "Not liked")
         }
         .padding(.vertical, 4)
@@ -227,7 +227,7 @@ private struct AddQuoteSheet: View {
                         onSave(text, author)
                         dismiss()
                     }
-                    .foregroundStyle(canSave ? tokens.colors.accent : tokens.colors.textMuted)
+                    .foregroundStyle(canSave ? tokens.colors.accentOnBackground : tokens.colors.textMuted)
                     .disabled(!canSave)
                 }
                 .font(tokens.typography.body)
@@ -257,7 +257,7 @@ private struct BrowseQuoteSheet: View {
 
                 if model.isBrowsing {
                     ProgressView()
-                        .tint(tokens.colors.accent)
+                        .tint(tokens.colors.accentOnBackground)
                 } else if let error = model.browseError {
                     errorState(error)
                 } else if let quote = model.browsing {
@@ -306,7 +306,7 @@ private struct BrowseQuoteSheet: View {
                 .font(tokens.typography.body)
                 .foregroundStyle(tokens.colors.textSecondary)
             Button("Retry") { Task { await model.browseNext() } }
-                .foregroundStyle(tokens.colors.accent)
+                .foregroundStyle(tokens.colors.accentOnBackground)
         }
     }
 
@@ -323,7 +323,7 @@ private struct BrowseQuoteSheet: View {
             } label: {
                 Label("Next", systemImage: "arrow.clockwise")
             }
-            .foregroundStyle(tokens.colors.accent)
+            .foregroundStyle(tokens.colors.accentOnBackground)
             .disabled(model.isBrowsing)
             Spacer()
             // ♡ like → persist the transient quote (ADR-010). Enabled only when browsing one.
@@ -333,7 +333,7 @@ private struct BrowseQuoteSheet: View {
             } label: {
                 Label("Like", systemImage: "heart")
             }
-            .foregroundStyle(model.browsing == nil ? tokens.colors.textMuted : tokens.colors.accent)
+            .foregroundStyle(model.browsing == nil ? tokens.colors.textMuted : tokens.colors.accentOnBackground)
             .disabled(model.browsing == nil)
         }
         .font(tokens.typography.body)

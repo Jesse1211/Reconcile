@@ -99,7 +99,7 @@ public struct TodayScreen: View {
                 Spacer()
                 Button("Undo") { model.undoDelete() }
                     .font(tokens.typography.body)
-                    .foregroundStyle(tokens.colors.accent)
+                    .foregroundStyle(tokens.colors.accentOnBackground)
                     .accessibilityIdentifier("mit.undo")
             }
             .padding(16)
@@ -158,7 +158,7 @@ struct MITEditSheet: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .foregroundStyle(tokens.colors.background)
-                        .background(tokens.colors.accent, in: RoundedRectangle(cornerRadius: 12))
+                        .background(tokens.colors.accentFill, in: RoundedRectangle(cornerRadius: 12))
                 }
             }
             .padding(24)
