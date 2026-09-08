@@ -39,6 +39,10 @@ public struct RootTabView: View {
         }
     }
 
+    /// Vertical room the overlaid nav capsule occupies above the bottom safe area — the
+    /// amount scrollable content must reserve so it can scroll above the bar (ADR-037b).
+    private static let navBarReservedHeight: CGFloat = 76
+
     @State private var selection: Tab = .today
     /// Namespace for the selected-tab pill so it SLIDES between tabs (matchedGeometry).
     @Namespace private var pill
@@ -52,6 +56,12 @@ public struct RootTabView: View {
             // A per-selection id + opacity transition gives a gentle cross-fade on switch.
             activeScreen
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                // Reserve room for the overlaid nav capsule so scrollable content can scroll
+                // ABOVE it instead of being hidden behind it (the system TabView reserved
+                // this automatically; our custom overlay must do it explicitly).
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    Color.clear.frame(height: Self.navBarReservedHeight)
+                }
                 .id(selection)
                 .transition(.opacity)
 
