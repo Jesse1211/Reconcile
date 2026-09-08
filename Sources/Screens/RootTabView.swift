@@ -37,17 +37,6 @@ public struct RootTabView: View {
         }
     }
 
-    @ViewBuilder
-    private func placeholderTab(role: ScreenRole, title: String, systemImage: String) -> some View {
-        PlaceholderScreen(title: title)
-            // Order matters: declare the role first, then resolve tokens for it.
-            .screenRole(role)
-            .themed(settings.theme)
-            .tabItem {
-                Label(title, systemImage: systemImage)
-            }
-    }
-
     /// The Timer tab (T9): the real stopwatch screen with today's saved sessions.
     @ViewBuilder
     private var timerTab: some View {
@@ -90,7 +79,7 @@ public struct RootTabView: View {
     }
 
     /// The Summary tab (T10): the first real analytics screen — charts, mood, timeline,
-    /// and KPIs rendered from the read-model. Other tabs stay placeholders until they land.
+    /// and KPIs rendered from the read-model.
     @ViewBuilder
     private var summaryTab: some View {
         SummaryScreen()
