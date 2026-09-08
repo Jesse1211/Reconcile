@@ -85,6 +85,7 @@
 		F24BB30A294A59733856AFB6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DD34430568BA7A08F4AEE3 /* Theme.swift */; };
 		F51FE1378E06230D913343B1 /* SummaryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737990BB1DEE6627E2ED1FB4 /* SummaryService.swift */; };
 		F7505238F8DC7953415D9039 /* LockWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A53A02A4D688E37EB728D6A /* LockWidgetView.swift */; };
+		FCA9894F07BA2AC59B8FEFFA /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BDD4E903B06F869DCF8252C /* SettingsScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -138,6 +139,7 @@
 		34DD34430568BA7A08F4AEE3 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		39B13F538D27C94AF813C146 /* WidgetTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetTheme.swift; sourceTree = "<group>"; };
 		3A45066E8E73883540ED180E /* QuoteSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteSource.swift; sourceTree = "<group>"; };
+		3BDD4E903B06F869DCF8252C /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
 		3C72FA0F009B490639818401 /* WidgetSnapshotWriterEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotWriterEnvironment.swift; sourceTree = "<group>"; };
 		3DA3E5676CF41C2D52DCC4DA /* ThemeTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTokens.swift; sourceTree = "<group>"; };
 		3EA41B3F57D6EA336B18DAD7 /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
@@ -374,6 +376,7 @@
 				264874C7DC61E19471EBD86F /* LibraryScreen.swift */,
 				5A812E27F0F461B0C61ED29F /* LibraryViewModel.swift */,
 				FE048411577566FD3B33591C /* RootTabView.swift */,
+				3BDD4E903B06F869DCF8252C /* SettingsScreen.swift */,
 				6477DC7F03C75EC17D849A1F /* SummaryScreen.swift */,
 				9BB2F1B85F1F0D081968E19F /* TimerScreen.swift */,
 				CDC5CDE1540040B28290B92C /* Today */,
@@ -555,6 +558,7 @@
 				88194526C36B0BBC17E923B8 /* ReconcileApp.swift in Sources */,
 				4AF805FFEBD7C16B82658287 /* RootTabView.swift in Sources */,
 				39F1336EABDB6A86185E8EB9 /* ScreenRole.swift in Sources */,
+				FCA9894F07BA2AC59B8FEFFA /* SettingsScreen.swift in Sources */,
 				4F59348CC70409735BA0A525 /* SummaryScreen.swift in Sources */,
 				F51FE1378E06230D913343B1 /* SummaryService.swift in Sources */,
 				C2E80D3319C1FC5138533117 /* Theme.swift in Sources */,

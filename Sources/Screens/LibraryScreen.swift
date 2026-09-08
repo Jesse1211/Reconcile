@@ -31,7 +31,6 @@ public struct LibraryScreen: View {
 
             VStack(spacing: 0) {
                 header
-                sourcePicker
                 Divider().background(tokens.colors.divider)
                 content
             }
@@ -84,33 +83,9 @@ public struct LibraryScreen: View {
         .padding(.bottom, 8)
     }
 
-    // MARK: Source picker (ADR-040)
-
-    /// The `TodayScope {mine, online}` picker. WRITES the persisted current scope owned by
-    /// T1's settings layer (ADR-040) via ``LibraryViewModel/setScope(_:)``; T5 reads it.
-    private var sourcePicker: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("TODAY'S QUOTE SOURCE")
-                .font(tokens.typography.eyebrow)
-                .foregroundStyle(tokens.colors.textMuted)
-            Picker("Today's quote source", selection: scopeBinding) {
-                Text("Mine").tag(TodayScope.mine)
-                Text("Online").tag(TodayScope.online)
-            }
-            .pickerStyle(.segmented)
-        }
-        .padding(.horizontal)
-        .padding(.bottom, 10)
-    }
-
-    /// A binding whose setter WRITES the persisted scope (ADR-040). Reads reflect the
-    /// current persisted value.
-    private var scopeBinding: Binding<TodayScope> {
-        Binding(
-            get: { model.scope },
-            set: { model.setScope($0) }
-        )
-    }
+    // Note: the "today's quote source" (`TodayScope`) picker moved to the Settings screen
+    // (ADR-040) — it is the single place the user changes theme + quote source. The Library
+    // no longer hosts a source picker.
 
     // MARK: Content — empty state (ADR-033) or list
 

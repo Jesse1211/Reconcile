@@ -13,6 +13,7 @@ public enum ScreenRole: String, CaseIterable, Sendable {
     case timer
     case library
     case summary
+    case settings
 }
 
 private struct ScreenRoleKey: EnvironmentKey {

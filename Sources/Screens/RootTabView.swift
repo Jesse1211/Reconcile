@@ -34,7 +34,21 @@ public struct RootTabView: View {
             timerTab
             libraryTab
             summaryTab
+            settingsTab
         }
+    }
+
+    /// The Settings tab: the single place to change the visual theme (ADR-022) and the
+    /// today's-quote source (`TodayScope`, ADR-040). Both write straight to `AppSettings`.
+    @ViewBuilder
+    private var settingsTab: some View {
+        SettingsScreen()
+            // Order matters: declare the role first, then resolve tokens for it (ADR-037).
+            .screenRole(.settings)
+            .themed(settings.theme)
+            .tabItem {
+                Label("Settings", systemImage: "gearshape")
+            }
     }
 
     /// The Timer tab (T9): the real stopwatch screen with today's saved sessions.

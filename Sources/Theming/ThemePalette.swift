@@ -131,6 +131,12 @@ public struct DayArcPalette: ThemePalette {
                 Color(red: 0.44, green: 0.26, blue: 0.52),
                 Color(red: 0.10, green: 0.10, blue: 0.24)
             )
+        case .settings: // night — a calm, deep ground for configuration
+            return (
+                Color(red: 0.16, green: 0.16, blue: 0.28),
+                Color(red: 0.10, green: 0.10, blue: 0.20),
+                Color(red: 0.05, green: 0.05, blue: 0.12)
+            )
         }
     }
 
