@@ -155,6 +155,21 @@ final class TodayViewModelTests: XCTestCase {
         XCTAssertFalse(model.canLikeCurrentQuote, "a saved quote is no longer a transient likeable one")
     }
 
+    /// A transient online quote whose equivalent is ALREADY in the library (liked before)
+    /// reads as saved from the library mapping alone — the ♡ fills on display, no session
+    /// state needed, and it is not offered as likeable again.
+    func testOnlineQuoteAlreadyInLibraryReadsAsSaved() async throws {
+        // Pre-seed the library with a liked api quote.
+        let service = QuoteService(context: context, clock: clock, client: FakeClient(), scope: { .online })
+        _ = try service.like(FetchedQuote(text: "Persist me", author: "Zed"))
+        // A fresh model whose online /today returns the SAME quote (by dedupKey).
+        scope = .online
+        let model = makeModel(client: FakeClient(today: FetchedQuote(text: "Persist me", author: "Zed")))
+        await model.resolveQuote()
+        XCTAssertTrue(model.currentQuoteIsSaved, "an online quote already in the library shows as saved")
+        XCTAssertFalse(model.canLikeCurrentQuote, "an already-saved online quote is not offered to like again")
+    }
+
     func testMineQuoteIsNotLikeableFromToday() async throws {
         // Seed a user quote so mine has a pool.
         let q = Quote(text: "Mine one", author: "Me", source: .user)

@@ -128,17 +128,26 @@ public final class TodayViewModel: ObservableObject {
 
     /// Whether the currently-shown quote can be ♡ liked/saved (ADR-010).
     ///
-    /// Only a TRANSIENT online quote is likeable-into-the-library from Today — a quote
-    /// already resolved from a persisted library row is, by definition, already saved.
+    /// Only a TRANSIENT online quote that is NOT already in the library is likeable — a
+    /// quote resolved from a library row, or one whose equivalent is already saved
+    /// (`currentQuoteIsSaved`), is by definition already saved and offers no like.
     public var canLikeCurrentQuote: Bool {
-        if case .quote(let resolved) = quoteState { return resolved.isTransientOnline }
-        return false
+        guard case .quote(let resolved) = quoteState, resolved.isTransientOnline else {
+            return false
+        }
+        return !currentQuoteIsSaved
     }
 
-    /// Whether the currently-shown quote is already a persisted (saved) library row.
+    /// Whether the currently-shown quote is SAVED — determined by looking it up in the
+    /// library by `dedupKey` (ADR-010/INV-4), not by session state. So the ♡ fills whenever
+    /// an equivalent quote already lives in the library (liked before, or user-authored),
+    /// and stays filled across re-resolve / reopen.
     public var currentQuoteIsSaved: Bool {
-        if case .quote(let resolved) = quoteState { return resolved.persistedID != nil }
-        return false
+        guard case .quote(let resolved) = quoteState else { return false }
+        // A locally-resolved library row is saved by construction; otherwise consult the
+        // library by dedupKey so a transient online quote also reflects prior saves.
+        if resolved.persistedID != nil { return true }
+        return quoteService.isSavedInLibrary(text: resolved.text, author: resolved.author)
     }
 
     /// ♡ Save (like) the currently-shown transient online quote into the library

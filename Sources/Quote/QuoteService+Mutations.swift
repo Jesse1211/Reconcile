@@ -87,6 +87,17 @@ public extension QuoteService {
         let all = try context.fetch(FetchDescriptor<Quote>())
         return all.first { $0.dedupKey == dedupKey }
     }
+
+    /// Whether a quote with this text/author is ALREADY saved (liked) in the library
+    /// (ADR-010/INV-9). Matched by `dedupKey` (INV-4) so a displayed online quote reads
+    /// as saved whenever an equivalent row was liked before — the ♡ fills purely from the
+    /// library, not from session state. `source == user` rows count as saved (inherently
+    /// in the library); an api row counts only when `liked` (it exists only once liked).
+    func isSavedInLibrary(text: String, author: String?) -> Bool {
+        let key = QuoteNormalization.dedupKey(text: text, author: author)
+        guard let row = try? firstQuote(dedupKey: key) else { return false }
+        return row.source == .user || row.liked
+    }
 }
 
 // MARK: - Refresh (ADR-025/-026/-027)
