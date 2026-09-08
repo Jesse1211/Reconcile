@@ -59,8 +59,7 @@ final class LibraryScreenRenderTests: XCTestCase {
     private func render(_ theme: Theme, populated: Bool) {
         let model = makeModel(populated: populated)
         let view = LibraryScreen(model: model)
-            .screenRole(.library)
-            .themed(theme)
+            .themed(theme, role: .library)
             .modelContainer(container)
         let host = UIHostingController(rootView: view)
         host.view.frame = CGRect(x: 0, y: 0, width: 390, height: 844)

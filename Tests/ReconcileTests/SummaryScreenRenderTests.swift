@@ -23,8 +23,7 @@ final class SummaryScreenRenderTests: XCTestCase {
         let settings = AppSettings(defaults: UserDefaults(suiteName: "test-\(UUID())")!)
         settings.theme = theme
         let view = SummaryScreen()
-            .screenRole(.summary)
-            .themed(theme)
+            .themed(theme, role: .summary)
             .environment(\.clock, clock)
             .environmentObject(settings)
             .modelContainer(container)

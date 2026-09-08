@@ -4,7 +4,7 @@ import SwiftData
 /// The bottom-tab shell: Today / Timer / Library / Summary (T1).
 ///
 /// Each tab declares its `screenRole` (ADR-037) and THEN resolves theme tokens via
-/// `.themed(_:)`, so Day Arc paints the correct per-screen gradient while the screens
+/// `.themed(_:role:)`, so Day Arc paints the correct per-screen gradient while the screens
 /// themselves stay theme-agnostic. The active `Theme` comes from `AppSettings`
 /// (ADR-040), so switching theme re-styles the shell live without a restart.
 ///
@@ -26,9 +26,9 @@ public struct RootTabView: View {
                 settings: settings,
                 client: LiveZenQuotesClient()
             )
-            // Order matters: declare the role first, then resolve tokens for it.
-            .screenRole(.today)
-            .themed(settings.theme)
+            // Resolve tokens for this screen's role (ADR-037) — role is explicit so it
+            // never depends on modifier order.
+            .themed(settings.theme, role: .today)
             .tabItem { Label("Today", systemImage: "sun.max") }
 
             timerTab
@@ -36,6 +36,11 @@ public struct RootTabView: View {
             summaryTab
             settingsTab
         }
+        // Tint the tab bar's SELECTED item with the active theme's accent (ADR-022) so it
+        // reads as part of the theme instead of the system default blue. Resolved at the
+        // shell level from the persisted Theme; the per-screen role doesn't matter for the
+        // accent, so `.today` is a fine anchor.
+        .tint(settings.theme.tokens(for: .today).colors.accent)
     }
 
     /// The Settings tab: the single place to change the visual theme (ADR-022) and the
@@ -43,9 +48,7 @@ public struct RootTabView: View {
     @ViewBuilder
     private var settingsTab: some View {
         SettingsScreen()
-            // Order matters: declare the role first, then resolve tokens for it (ADR-037).
-            .screenRole(.settings)
-            .themed(settings.theme)
+            .themed(settings.theme, role: .settings)
             .tabItem {
                 Label("Settings", systemImage: "gearshape")
             }
@@ -55,9 +58,7 @@ public struct RootTabView: View {
     @ViewBuilder
     private var timerTab: some View {
         TimerScreen()
-            // Order matters: declare the role first, then resolve tokens for it (ADR-037).
-            .screenRole(.timer)
-            .themed(settings.theme)
+            .themed(settings.theme, role: .timer)
             .tabItem {
                 Label("Timer", systemImage: "timer")
             }
@@ -69,8 +70,7 @@ public struct RootTabView: View {
     @ViewBuilder
     private var libraryTab: some View {
         LibraryScreen(model: makeLibraryModel())
-            .screenRole(.library)
-            .themed(settings.theme)
+            .themed(settings.theme, role: .library)
             .tabItem {
                 Label("Library", systemImage: "books.vertical")
             }
@@ -97,9 +97,7 @@ public struct RootTabView: View {
     @ViewBuilder
     private var summaryTab: some View {
         SummaryScreen()
-            // Order matters: declare the role first, then resolve tokens for it (ADR-037).
-            .screenRole(.summary)
-            .themed(settings.theme)
+            .themed(settings.theme, role: .summary)
             .tabItem {
                 Label("Summary", systemImage: "chart.bar")
             }

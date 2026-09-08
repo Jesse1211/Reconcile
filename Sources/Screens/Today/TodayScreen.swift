@@ -74,8 +74,7 @@ public struct TodayScreen: View {
                     _ = model.saveIntention(text: text, reason: reason)
                 }
             }
-            .themed(settings.theme)
-            .screenRole(.today)
+            .themed(settings.theme, role: .today)
         }
         .sheet(item: $editingMIT) { mit in
             NavigationStack {
@@ -83,8 +82,7 @@ public struct TodayScreen: View {
                     model.editMIT(mit, text: newText, reason: .some(newReason))
                 }
             }
-            .themed(settings.theme)
-            .screenRole(.today)
+            .themed(settings.theme, role: .today)
         }
     }
 

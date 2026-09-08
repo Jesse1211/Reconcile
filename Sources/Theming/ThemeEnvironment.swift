@@ -22,17 +22,27 @@ public extension EnvironmentValues {
 /// the token set stays consistent with the declared role.
 private struct ThemedModifier: ViewModifier {
     let theme: Theme
-    @Environment(\.screenRole) private var screenRole
+    /// The role is passed in explicitly (not read from the environment) so token
+    /// resolution never depends on modifier ordering. A separate `.screenRole` read
+    /// would resolve against the PARENT environment (the value this modifier's own
+    /// `.screenRole(_:)` injects flows only to children), so every screen would get the
+    /// default `.today` role and share one gradient — the ordering trap this avoids.
+    let role: ScreenRole
 
     func body(content: Content) -> some View {
-        content.environment(\.theme, theme.tokens(for: screenRole))
+        content
+            // Inject BOTH the resolved tokens for (theme, role) AND the role itself, so
+            // any child that reads `\.screenRole` (or re-derives) sees the right role.
+            .environment(\.theme, theme.tokens(for: role))
+            .environment(\.screenRole, role)
     }
 }
 
 public extension View {
-    /// Resolve and inject `ThemeTokens` for `theme` using the current `screenRole`.
-    func themed(_ theme: Theme) -> some View {
-        modifier(ThemedModifier(theme: theme))
+    /// Resolve and inject `ThemeTokens` for `theme` at the given screen `role` (ADR-037).
+    /// The role is explicit so the result never depends on modifier order.
+    func themed(_ theme: Theme, role: ScreenRole) -> some View {
+        modifier(ThemedModifier(theme: theme, role: role))
     }
 }
 

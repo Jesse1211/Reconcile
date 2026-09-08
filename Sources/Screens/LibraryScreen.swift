@@ -40,13 +40,11 @@ public struct LibraryScreen: View {
             AddQuoteSheet { text, author in
                 model.addUserQuote(text: text, author: author)
             }
-            .themed(tokens.theme)
-            .screenRole(.library)
+            .themed(tokens.theme, role: .library)
         }
         .sheet(isPresented: $showingBrowse) {
             BrowseQuoteSheet(model: model)
-                .themed(tokens.theme)
-                .screenRole(.library)
+                .themed(tokens.theme, role: .library)
         }
     }
 
