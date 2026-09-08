@@ -40,18 +40,28 @@ public struct RootTabView: View {
     }
 
     @State private var selection: Tab = .today
+    /// Namespace for the selected-tab pill so it SLIDES between tabs (matchedGeometry).
+    @Namespace private var pill
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     public init() {}
 
     public var body: some View {
         ZStack(alignment: .bottom) {
             // Active screen fills the whole shell (its ThemeBackground ignores safe area).
+            // A per-selection id + opacity transition gives a gentle cross-fade on switch.
             activeScreen
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .id(selection)
+                .transition(.opacity)
 
             // Our own fixed nav bar, overlaid at the bottom — same look in every background.
             navBar
         }
+        // Animate both the screen cross-fade and the pill slide on selection change
+        // (respecting Reduce Motion).
+        .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.86),
+                   value: selection)
     }
 
     @ViewBuilder
@@ -95,7 +105,7 @@ public struct RootTabView: View {
             ForEach(Tab.allCases, id: \.self) { tab in
                 let isSelected = tab == selection
                 Button {
-                    selection = tab
+                    selection = tab   // animated by the body-level .animation(value: selection)
                 } label: {
                     VStack(spacing: 3) {
                         Image(systemName: tab.systemImage)
@@ -108,8 +118,11 @@ public struct RootTabView: View {
                     .padding(.vertical, 8)
                     .background {
                         if isSelected {
+                            // The SAME pill view moves between tabs via matchedGeometry,
+                            // so it slides rather than popping in/out.
                             Capsule(style: .continuous)
                                 .fill(selectedPill)
+                                .matchedGeometryEffect(id: "selectedPill", in: pill)
                         }
                     }
                 }
