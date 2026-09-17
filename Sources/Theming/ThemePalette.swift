@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 /// Resolves the frozen token contract (ADR-036) for a concrete theme and screen role.
 ///
@@ -8,9 +7,10 @@ import UIKit
 public protocol ThemePalette: Sendable {
     var theme: Theme { get }
     func tokens(for role: ScreenRole) -> ThemeTokens
-    /// Resolve tokens for a role AND a fractional hour-of-day (0..<24). Day Arc uses the
-    /// hour to interpolate its whole-app gradient across the day (ADR-037, revised); themes
-    /// whose background does not depend on time ignore it. Defaults to `tokens(for:)`.
+    /// Resolve tokens for a role AND a fractional hour-of-day (0..<24). The contract is kept
+    /// (Day Arc once interpolated a whole-app gradient by the hour, ADR-037); the only
+    /// remaining theme, Ledger, has a time-independent background and ignores it. Defaults
+    /// to `tokens(for:)`.
     func tokens(for role: ScreenRole, atHour hour: Double) -> ThemeTokens
 }
 
@@ -26,7 +26,6 @@ public extension Theme {
     var palette: ThemePalette {
         switch self {
         case .ledger: return LedgerPalette()
-        case .dayArc: return DayArcPalette()
         }
     }
 
@@ -90,168 +89,5 @@ public struct LedgerPalette: ThemePalette {
             typography: Self.typography,
             isLightBackground: true   // paper is always light → dark ink text
         )
-    }
-}
-
-// MARK: - Color interpolation (Day Arc time-of-day gradient)
-
-private extension Color {
-    /// Linearly interpolate this color toward `other` by `t` (0...1) in sRGB space.
-    func mixed(with other: Color, _ t: Double) -> Color {
-        let a = UIColor(self).rgba
-        let b = UIColor(other).rgba
-        let t = min(max(t, 0), 1)
-        return Color(
-            red:   a.r + (b.r - a.r) * t,
-            green: a.g + (b.g - a.g) * t,
-            blue:  a.b + (b.b - a.b) * t,
-            opacity: a.a + (b.a - a.a) * t
-        )
-    }
-}
-
-private extension UIColor {
-    var rgba: (r: Double, g: Double, b: Double, a: Double) {
-        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        getRed(&r, green: &g, blue: &b, alpha: &a)
-        return (Double(r), Double(g), Double(b), Double(a))
-    }
-}
-
-// MARK: - Day Arc (ADR-022)
-
-/// A time-of-day gradient ground + glass cards. The gradient is driven by the REAL
-/// current time (ADR-037, revised): the SAME background on every screen, interpolated
-/// continuously across the day — dawn → midday → dusk → night → (next) dawn. `screenRole`
-/// no longer varies the background (every page shares "the colour of the sky right now").
-public struct DayArcPalette: ThemePalette {
-    public let theme: Theme = .dayArc
-    public init() {}
-
-    private static let background = Color(red: 0.06, green: 0.07, blue: 0.11)
-    private static let surface = Color(white: 1.0, opacity: 0.06)
-    private static let surfaceRaised = Color(white: 1.0, opacity: 0.12)
-    private static let textPrimary = Color(red: 0.96, green: 0.96, blue: 0.98)
-    private static let textSecondary = Color(red: 0.78, green: 0.80, blue: 0.86)
-    private static let textMuted = Color(red: 0.55, green: 0.58, blue: 0.66)
-    private static let accent = Color(red: 0.98, green: 0.72, blue: 0.36)
-    private static let accentCarried = Color(red: 0.90, green: 0.40, blue: 0.42)
-    private static let divider = Color(white: 1.0, opacity: 0.14)
-
-    private static let typography = ThemeTypography(
-        display: .system(.largeTitle, design: .rounded).weight(.bold),
-        title: .system(.title2, design: .rounded).weight(.semibold),
-        body: .system(.body, design: .default),
-        mono: .system(.body, design: .monospaced),
-        eyebrow: .system(.caption, design: .rounded).weight(.semibold)
-    )
-
-    /// Keyed gradient anchors at four times of day (fractional hour → triple). The live
-    /// gradient interpolates between the two surrounding keys, wrapping across midnight.
-    /// Times: dawn 06:00, midday 13:00, dusk 19:00, night 23:00.
-    private typealias Triple = (top: Color, mid: Color, bottom: Color)
-    private static let keyframes: [(hour: Double, colors: Triple)] = [
-        (6,  (Color(red: 0.98, green: 0.66, blue: 0.42),   // dawn
-              Color(red: 0.60, green: 0.44, blue: 0.62),
-              Color(red: 0.12, green: 0.14, blue: 0.30))),
-        (13, (Color(red: 0.42, green: 0.72, blue: 0.98),   // midday
-              Color(red: 0.30, green: 0.52, blue: 0.82),
-              Color(red: 0.10, green: 0.20, blue: 0.42))),
-        (19, (Color(red: 0.86, green: 0.40, blue: 0.44),   // dusk
-              Color(red: 0.44, green: 0.26, blue: 0.52),
-              Color(red: 0.10, green: 0.10, blue: 0.24))),
-        (23, (Color(red: 0.10, green: 0.10, blue: 0.22),   // night
-              Color(red: 0.06, green: 0.06, blue: 0.14),
-              Color(red: 0.03, green: 0.03, blue: 0.08)))
-    ]
-
-    /// The gradient anchors for a fractional hour-of-day (0..<24), interpolated between the
-    /// two surrounding keyframes. Between the last (23:00) and first (06:00) keys the
-    /// interpolation wraps across midnight, so the whole day is one continuous loop.
-    private func gradientAnchors(atHour hour: Double) -> Triple {
-        let keys = Self.keyframes
-        // Find the segment [a, b] that `hour` falls in; else it's in the wrap segment.
-        for i in 0..<(keys.count - 1) where hour >= keys[i].hour && hour < keys[i + 1].hour {
-            let t = (hour - keys[i].hour) / (keys[i + 1].hour - keys[i].hour)
-            return Self.lerp(keys[i].colors, keys[i + 1].colors, t)
-        }
-        // Wrap segment: from night (23:00) around to dawn (06:00) — span = 24 - 23 + 6 = 7h.
-        let last = keys[keys.count - 1]
-        let first = keys[0]
-        let span = (24 - last.hour) + first.hour
-        let elapsed = hour >= last.hour ? (hour - last.hour) : (hour + (24 - last.hour))
-        return Self.lerp(last.colors, first.colors, elapsed / span)
-    }
-
-    private static func lerp(_ a: Triple, _ b: Triple, _ t: Double) -> Triple {
-        let t = min(max(t, 0), 1)
-        return (a.top.mixed(with: b.top, t),
-                a.mid.mixed(with: b.mid, t),
-                a.bottom.mixed(with: b.bottom, t))
-    }
-
-    // Adaptive text colors — chosen by whether the current gradient is light or dark, so
-    // text stays legible from bright midday through deep night (ADR-037d).
-    // Dark text for light (daytime) backgrounds. Kept close to black so it reads strongly
-    // on the mid-brightness daytime sky (a pale grey washes out there).
-    private static let darkText = (
-        primary: Color(red: 0.04, green: 0.05, blue: 0.08),
-        secondary: Color(red: 0.10, green: 0.11, blue: 0.16),
-        muted: Color(red: 0.18, green: 0.20, blue: 0.26)
-    )
-    private static let lightText = (
-        primary: textPrimary,
-        secondary: textSecondary,
-        muted: textMuted
-    )
-
-    public func tokens(for role: ScreenRole) -> ThemeTokens {
-        // Time-independent fallback (previews/tests that don't inject an hour): use dawn.
-        tokens(for: role, atHour: 6)
-    }
-
-    public func tokens(for role: ScreenRole, atHour hour: Double) -> ThemeTokens {
-        let anchors = gradientAnchors(atHour: hour)
-        // Text/cards sit mostly over the TOP–MID region, so judge legibility against the
-        // average of those two bands. Threshold 0.42 (not 0.5): mid-brightness daytime
-        // skies (dawn/midday blues) read as "light" and get dark text, while dusk/night
-        // fall to light text. Tuned so text is legible across the whole arc.
-        let sampled = (Self.relativeLuminance(anchors.top)
-                       + Self.relativeLuminance(anchors.mid)) / 2
-        let isLight = sampled > 0.42
-        let text = isLight ? Self.darkText : Self.lightText
-        let colors = ThemeColors(
-            background: Self.background,
-            surface: Self.surface,
-            surfaceRaised: Self.surfaceRaised,
-            textPrimary: text.primary,
-            textSecondary: text.secondary,
-            textMuted: text.muted,
-            accent: Self.accent,
-            accentCarried: Self.accentCarried,
-            // Solid buttons/chips: near-white fill (label on top stays dark `background`).
-            accentFill: Color(white: 0.96),
-            // Glyphs/charts on the sky: adaptive ink (dark on light bg, light on dark).
-            accentOnBackground: isLight ? Self.darkText.primary : Self.textPrimary,
-            // "Liked" keeps its warm amber hue so the favorited state reads at a glance.
-            likedAccent: Self.accent,
-            divider: Self.divider,
-            gradientTop: anchors.top,
-            gradientMid: anchors.mid,
-            gradientBottom: anchors.bottom
-        )
-        return ThemeTokens(
-            theme: theme,
-            screenRole: role,
-            colors: colors,
-            typography: Self.typography,
-            isLightBackground: isLight
-        )
-    }
-
-    /// Perceived (relative) luminance of a color in 0...1 (Rec. 709 weights).
-    private static func relativeLuminance(_ color: Color) -> Double {
-        let c = UIColor(color).rgba
-        return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
     }
 }

@@ -25,8 +25,8 @@ import SwiftData
 /// ## Theming (ADR-022 / ADR-036 / ADR-037)
 /// The screen is theme-agnostic: it declares `screenRole = .timer` (the shell applies
 /// it via `RootTabView`) and reads every color/font BY ROLE from the `\.theme` token
-/// set — no hard-coded color or font. Day Arc paints its midday gradient; Ledger paints
-/// flat paper. Both light and dark are supported through the token set.
+/// set — no hard-coded color or font. Ledger (the only theme) paints flat paper. Both
+/// light and dark are supported through the token set.
 struct TimerScreen: View {
     @Environment(\.theme) private var tokens
     @Environment(\.clock) private var clock

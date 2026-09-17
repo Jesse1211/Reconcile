@@ -2,7 +2,8 @@ import SwiftUI
 
 /// The FROZEN theme token contract (ADR-036).
 ///
-/// Both themes (Ledger, Day Arc) MUST supply EVERY named token. Screens read tokens
+/// The theme (Ledger — the only theme after Day Arc's removal) MUST supply EVERY named
+/// token. Screens read tokens
 /// **by role** and NEVER hard-code a color or font. A screen that reads a role not in
 /// this contract is a build/compile error (the property simply does not exist), not a
 /// silent fallback — the type system is the enforcement.
@@ -22,20 +23,20 @@ public struct ThemeColors: Sendable {
     public let accent: Color
     /// The ledger-red / rolled-over "carried" color (ADR-036).
     public let accentCarried: Color
-    /// Fill color for solid buttons & selected chips (ADR-037e). On Day Arc this is a
-    /// near-white; the label on top MUST stay `background` (dark) so it never vanishes.
+    /// Fill color for solid buttons & selected chips (ADR-037e). On Ledger this is the
+    /// ledger-red fill. (Day Arc used a near-white; that theme is removed.)
     public let accentFill: Color
-    /// Adaptive accent for glyphs/charts painted on the sky (ADR-037e): dark on a light
-    /// background, light on a dark one — reuses `isLightBackground`. Never flat white
-    /// (which disappears on a bright daytime sky).
+    /// Accent for glyphs/charts painted on the background (ADR-037e). On Ledger this is the
+    /// ink-red on paper. (Day Arc adapted it to the sky's brightness; that theme is removed.)
     public let accentOnBackground: Color
     /// The "liked / favorited" hue — kept a saturated color so the state reads at a glance
     /// (ADR-037e); does NOT go white/adaptive.
     public let likedAccent: Color
     public let divider: Color
 
-    // Day-Arc gradient-anchor set (ADR-036/037). The Day Arc theme selects these per
-    // `screenRole`; the Ledger theme supplies flat/neutral values so the set is total.
+    // Gradient-anchor set (ADR-036/037). Formerly driven per-hour by the Day Arc theme
+    // (removed, ADR-022); Ledger supplies flat/neutral (paper) values so the set is total
+    // and the background paints as a solid paper fill.
     public let gradientTop: Color
     public let gradientMid: Color
     public let gradientBottom: Color
@@ -108,8 +109,8 @@ public struct ThemeTokens: Sendable {
     public let colors: ThemeColors
     public let typography: ThemeTypography
     /// Whether the current background is LIGHT (high luminance). Fonts and the nav bar read
-    /// this to pick dark-on-light vs light-on-dark treatment as the Day Arc background drifts
-    /// from bright midday to deep night (ADR-037d). Ledger sets it from its fixed paper.
+    /// this to pick dark-on-light vs light-on-dark treatment (ADR-037d). Ledger — the only
+    /// theme — sets it `true` from its fixed light paper. (Day Arc varied it by the hour.)
     public let isLightBackground: Bool
 
     public init(

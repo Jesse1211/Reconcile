@@ -71,7 +71,7 @@ final class WidgetSnapshotTests: XCTestCase {
 
         w.todaysQuoteResolved(text: "Keep going", author: "Marcus")
         w.focusSessionStarted(startedAt: clock.now())
-        w.themeChanged(.dayArc)
+        w.themeChanged(.ledger)
 
         // Read back through a FRESH loader over the SAME real suite (extension-side path).
         let loader = WidgetSnapshotLoader(store: AppGroupSnapshotStore(defaults: realGroupDefaults))
@@ -81,7 +81,7 @@ final class WidgetSnapshotTests: XCTestCase {
         XCTAssertEqual(loaded?.quoteText, "Keep going")
         XCTAssertEqual(loaded?.quoteAuthor, "Marcus")
         XCTAssertEqual(loaded?.runningStartedAt, clock.now())
-        XCTAssertEqual(loaded?.theme, .dayArc)
+        XCTAssertEqual(loaded?.theme, .ledger)
         XCTAssertEqual(loaded?.day, clock.today())
     }
 
@@ -230,18 +230,11 @@ final class WidgetSnapshotTests: XCTestCase {
     }
 
     // MARK: - Theme transition (ADR-042 (c) / ADR-044)
-
-    func testThemeChangeMirrorsToSnapshot() throws {
-        let store = InMemorySnapshotStore()
-        let defaults = UserDefaults(suiteName: "theme.\(UUID().uuidString)")!
-        let settings = AppSettings(defaults: defaults, widgetWriter: writer(store: store))
-
-        settings.theme = .dayArc
-
-        let snap = try XCTUnwrap(store.read())
-        XCTAssertEqual(snap.theme, .dayArc, "theme change mirrors to the Home widget (ADR-044)")
-        defaults.removePersistentDomain(forName: defaults.description)
-    }
+    //
+    // The theme-change → widget-mirror test was removed with the Day Arc theme (ADR-022):
+    // Ledger is now the only theme, so an actual theme transition can no longer occur and
+    // the `AppSettings.theme` didSet mirror only fires on a real change. The snapshot still
+    // carries the persisted theme (see the App Group round-trip test above).
 
     // MARK: - Layout decision (ADR-041) — the core the views switch on
 

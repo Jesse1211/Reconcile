@@ -54,17 +54,15 @@ final class SummaryScreenRenderTests: XCTestCase {
         return container
     }
 
-    func testRendersPopulatedUnderBothThemes() throws {
+    func testRendersPopulatedUnderLedger() throws {
         let clock = pinnedClock()
         let container = try populatedContainer(clock)
         render(theme: .ledger, clock: clock, container: container)
-        render(theme: .dayArc, clock: clock, container: container)
     }
 
-    func testRendersEmptyStateUnderBothThemes() throws {
+    func testRendersEmptyStateUnderLedger() throws {
         let clock = pinnedClock()
         let container = PersistenceController.makeInMemoryContainer()
         render(theme: .ledger, clock: clock, container: container)
-        render(theme: .dayArc, clock: clock, container: container)
     }
 }

@@ -21,11 +21,11 @@ Everything below MUST be verified by a human on a device/simulator before shippi
 3. **Home — idle layout (ADR-041)**: stop the session. Confirm the widget flips to
    the **quote filling the widget** (larger), author beneath, **NO time figure and NO
    divider**.
-4. **Home — both themes (ADR-044)**: switch the app Theme (Ledger ↔ Day Arc) and
-   confirm the Home widget re-renders in the selected theme after its next reload.
+4. **Home — Ledger theme (ADR-044)**: confirm the Home widget renders in the Ledger
+   paper/ink treatment (Ledger is the only theme; Day Arc removed, ADR-022).
 5. **Lock — both layouts (ADR-041/-044)**: add the Lock widget. Running → `time │
    quote` (quote clamped); idle → quote-only (no time, no divider). Confirm it is
-   **legible under the system tint** (theme-neutral, no Day-Arc gradient).
+   **legible under the system tint** (theme-neutral).
 6. **Empty state (ADR-045)**: with scope=`mine` and an empty library (no quote yet),
    confirm BOTH families show **"Open Reconcile to set today's quote"**, never a blank
    view.

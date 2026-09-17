@@ -69,7 +69,5 @@ final class LibraryScreenRenderTests: XCTestCase {
     }
 
     func testRendersEmptyStateLedger() { render(.ledger, populated: false) }
-    func testRendersEmptyStateDayArc() { render(.dayArc, populated: false) }
     func testRendersPopulatedLedger() { render(.ledger, populated: true) }
-    func testRendersPopulatedDayArc() { render(.dayArc, populated: true) }
 }

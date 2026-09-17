@@ -3,8 +3,8 @@ import SwiftData
 
 /// The Today screen (T7): quote area + MIT list (with intention ritual) + evening feeling.
 ///
-/// Theme-agnostic (ADR-022/-036): it declares `screenRole == .today` so Day Arc paints
-/// the dawn gradient (ADR-037) and reads every color/font by role from `\.theme`. It
+/// Theme-agnostic (ADR-022/-036): it declares `screenRole == .today` and reads every
+/// color/font by role from `\.theme` (Ledger, the only theme, paints flat paper). It
 /// wires the T4/T5/T11 services out of the environment into a ``TodayViewModel`` and
 /// renders its state. All feature logic lives in the view model; this view is the thin
 /// composition + presentation of the full-screen intention ritual (ADR-024) and the

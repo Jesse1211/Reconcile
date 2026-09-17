@@ -3,9 +3,9 @@ import SwiftData
 
 /// The bottom-tab shell: Today / Timer / Library / Summary / Settings (T1).
 ///
-/// Each screen resolves theme tokens via `.themed(_:role:)`, so Day Arc paints the correct
-/// per-screen gradient while the screens stay theme-agnostic. The active `Theme` comes from
-/// `AppSettings` (ADR-040), so switching theme re-styles the shell live without a restart.
+/// Each screen resolves theme tokens via `.themed(_:role:)` while staying theme-agnostic.
+/// The active `Theme` comes from `AppSettings` (ADR-040). Ledger is the only theme
+/// (Day Arc removed, ADR-022), so the shell renders the paper/ink treatment throughout.
 ///
 /// **Nav bar (ADR-037b, owner decision):** a FIXED light-grey capsule with dark icons and a
 /// darker "pill" behind the selected item — the SAME in every background, theme, and system
@@ -60,9 +60,10 @@ public struct RootTabView: View {
     public init() {}
 
     public var body: some View {
-        // A once-a-minute timeline re-renders the shell so the Day Arc background, nav-bar
-        // tint, and adaptive text keep pace with the REAL time of day (ADR-037c/d) even while
-        // a screen sits idle — not only when some other change forces a re-render.
+        // A once-a-minute timeline re-renders the shell. It formerly kept the Day Arc
+        // time-of-day background in step with the clock (ADR-037c/d); Ledger's paper tokens
+        // are time-independent, so the periodic tick is now effectively a no-op but is kept
+        // harmlessly (the resolution path still threads the hour through, unused).
         TimelineView(.periodic(from: .now, by: 60)) { _ in
             ZStack(alignment: .bottom) {
                 // A real TabView keeps EVERY tab's view (and @StateObject/@State) alive across
@@ -102,11 +103,11 @@ public struct RootTabView: View {
 
     // MARK: Capsule nav bar (ADR-037b/-037d)
 
-    /// The nav capsule tracks the current time-of-day gradient like the rest of Day Arc
-    /// (ADR-037d): its ground is the current gradient mid tone as a translucent glass, and
-    /// its icon colors ADAPT to that tone's brightness (dark icons over a light bar, light
-    /// icons over a dark bar) so it stays legible from midday to midnight. Ledger resolves to
-    /// its fixed paper tones. Colors come from the active theme's tokens at the current hour.
+    /// The nav capsule reads its ground and icon treatment from the active theme's tokens.
+    /// Its ground is the theme's gradient-mid tone as a translucent glass and its icon colors
+    /// adapt to that tone's brightness (dark icons over a light bar). Under Ledger — the only
+    /// theme — the tokens are the fixed paper tones, so the bar is a light capsule with dark
+    /// icons. (This machinery once tracked the Day Arc time-of-day gradient, ADR-037d.)
     private var navTokens: ThemeTokens {
         settings.theme.palette.tokens(for: .today, atHour: currentHour)
     }

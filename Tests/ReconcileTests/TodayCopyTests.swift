@@ -4,18 +4,16 @@ import XCTest
 /// T7 gate — the Today screen's theme-dressed copy (ADR-024/-033/-034).
 ///
 /// The intention ritual is DRESSED per theme (ADR-024): Ledger reads as a paper ledger
-/// ("Record entry"); Day Arc reads as a dawn invitation ("Set it"). The `mine`-empty
-/// guidance is pinned by ADR-034. Pinning the copy as pure values lets the gate assert
-/// intent without a UI harness while the SwiftUI view stays theme-agnostic (ADR-036).
+/// ("Record entry"). (Day Arc, the second theme, has been removed — Ledger is the only
+/// theme.) The `mine`-empty guidance is pinned by ADR-034. Pinning the copy as pure values
+/// lets the gate assert intent without a UI harness while the SwiftUI view stays
+/// theme-agnostic (ADR-036).
 final class TodayCopyTests: XCTestCase {
 
-    func testIntentionRitualIsDressedPerTheme() {
+    func testIntentionRitualCopyForLedger() {
         let ledger = IntentionRitualCopy.forTheme(.ledger)
-        let dayArc = IntentionRitualCopy.forTheme(.dayArc)
-        XCTAssertNotEqual(ledger.saveTitle, dayArc.saveTitle, "each theme dresses the save button (ADR-024)")
-        XCTAssertNotEqual(ledger.eyebrow, dayArc.eyebrow, "each theme dresses the guiding eyebrow (ADR-024)")
-        XCTAssertEqual(ledger.saveTitle, "Record entry")
-        XCTAssertEqual(dayArc.saveTitle, "Set it")
+        XCTAssertEqual(ledger.saveTitle, "Record entry", "Ledger dresses the save button (ADR-024)")
+        XCTAssertEqual(ledger.eyebrow, "TODAY'S ENTRY", "Ledger dresses the guiding eyebrow (ADR-024)")
     }
 
     func testBothThemesSupplyEveryRitualField() {

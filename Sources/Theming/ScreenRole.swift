@@ -3,11 +3,11 @@ import SwiftUI
 /// The screen a view belongs to, declared by the screen and consumed by the theme
 /// to vary presentation (ADR-037).
 ///
-/// Each screen SETS its `screenRole`. The **Day Arc** theme CONSUMES it to select
-/// per-screen gradient anchors (dawn on Today, midday on Timer, dusk on Summary,
-/// ADR-022). The **Ledger** theme IGNORES it — its neutrals are screen-independent.
-/// This keeps screens theme-agnostic: a screen only declares its role and the theme
-/// decides whether the role matters.
+/// Each screen SETS its `screenRole`. It was CONSUMED by the (removed) Day Arc theme to
+/// select per-screen gradient anchors (ADR-022); the **Ledger** theme — now the only
+/// theme — IGNORES it, since its neutrals are screen-independent. The role is retained so
+/// screens stay theme-agnostic: a screen only declares its role and the theme decides
+/// whether the role matters.
 public enum ScreenRole: String, CaseIterable, Sendable {
     case today
     case timer
@@ -29,7 +29,7 @@ public extension EnvironmentValues {
 }
 
 public extension View {
-    /// Declare this screen's `screenRole` (ADR-037). Day Arc consumes it; Ledger ignores it.
+    /// Declare this screen's `screenRole` (ADR-037). Ledger (the only theme) ignores it.
     func screenRole(_ role: ScreenRole) -> some View {
         environment(\.screenRole, role)
     }

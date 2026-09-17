@@ -1,14 +1,14 @@
 import SwiftUI
 
-/// The Settings screen: the single place the user changes the **visual theme**
-/// (Ledger / Day Arc, ADR-022) and the **today's quote source** (`TodayScope` mine /
-/// online, ADR-040).
+/// The Settings screen: the single place the user changes the **today's quote source**
+/// (`TodayScope` mine / online, ADR-040) and the online quote **category** (ADR-047).
 ///
-/// Theme-agnostic (ADR-022/-036): it declares `screenRole == .settings` so Day Arc paints
-/// its night gradient (ADR-037) and reads every color/font by role from `\.theme`. Both
-/// controls write straight to `AppSettings` — the single persisted source of truth
-/// (ADR-040): writing `theme` also mirrors to the widget (ADR-044) and writing
-/// `todayScope` re-points the next daily quote pick (T5 reads it). No view model needed.
+/// There is no theme picker: Ledger is the only theme (Day Arc removed, ADR-022).
+///
+/// Theme-agnostic (ADR-036): it declares `screenRole == .settings` and reads every
+/// color/font by role from `\.theme`. Its controls write straight to `AppSettings` — the
+/// single persisted source of truth (ADR-040): writing `todayScope` re-points the next
+/// daily quote pick (T5 reads it). No view model needed.
 public struct SettingsScreen: View {
     @Environment(\.theme) private var tokens
     @EnvironmentObject private var settings: AppSettings
@@ -22,20 +22,6 @@ public struct SettingsScreen: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
                     header
-
-                    settingBlock(
-                        eyebrow: "APPEARANCE",
-                        title: "Theme",
-                        caption: "Ledger is paper & ink; Day Arc shifts with the light of day."
-                    ) {
-                        Picker("Theme", selection: $settings.theme) {
-                            ForEach(Theme.allCases, id: \.self) { theme in
-                                Text(theme.displayName).tag(theme)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .accessibilityIdentifier("settings.theme")
-                    }
 
                     settingBlock(
                         eyebrow: "TODAY'S QUOTE",

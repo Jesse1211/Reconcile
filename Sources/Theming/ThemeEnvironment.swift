@@ -29,14 +29,14 @@ private struct ThemedModifier: ViewModifier {
     /// default `.today` role and share one gradient — the ordering trap this avoids.
     let role: ScreenRole
 
-    /// The injected clock (ADR-038) supplies the current instant so Day Arc can pick the
-    /// gradient for the REAL time of day (ADR-037, revised). Ledger ignores it.
+    /// The injected clock (ADR-038) supplies the current instant. It fed the (removed) Day
+    /// Arc time-of-day gradient (ADR-037); Ledger — the only theme — ignores the hour, but
+    /// the `atHour:` contract is kept so the resolution path is unchanged.
     @Environment(\.clock) private var clock
 
     func body(content: Content) -> some View {
         content
-            // Resolve tokens for (theme, role, current hour-of-day). Day Arc interpolates
-            // its whole-app gradient by the hour; Ledger ignores the hour.
+            // Resolve tokens for (theme, role, current hour-of-day). Ledger ignores the hour.
             .environment(\.theme, theme.palette.tokens(for: role, atHour: currentHour))
             .environment(\.screenRole, role)
     }
@@ -60,30 +60,15 @@ public extension View {
     }
 }
 
-/// The theme-aware background for a screen: Day Arc paints its per-screen gradient
-/// (from the resolved gradient-anchor tokens, ADR-037); Ledger paints its flat paper.
+/// The theme-aware background for a screen. The only theme, Ledger, paints its flat paper
+/// background (ADR-022; the Day Arc time-of-day gradient has been removed).
 public struct ThemeBackground: View {
     @Environment(\.theme) private var tokens
 
     public init() {}
 
     public var body: some View {
-        Group {
-            switch tokens.theme {
-            case .dayArc:
-                LinearGradient(
-                    colors: [
-                        tokens.colors.gradientTop,
-                        tokens.colors.gradientMid,
-                        tokens.colors.gradientBottom
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            case .ledger:
-                tokens.colors.background
-            }
-        }
-        .ignoresSafeArea()
+        tokens.colors.background
+            .ignoresSafeArea()
     }
 }
