@@ -140,20 +140,6 @@ public struct FocusSessionService {
 
     // MARK: - Live display (ADR-014 / ADR-032)
 
-    /// The live elapsed seconds for the currently-running session, as a single
-    /// undivided number `now − startedAt` (ADR-014), or `nil` if none is running.
-    ///
-    /// Never day-split: even a session that has been running across midnight (or
-    /// for more than 24h) reports its continuous total elapsed here (ADR-032 —
-    /// the day split is an AGGREGATION concern only, never the live figure).
-    /// Derived from `startedAt` so it is correct after an app kill/resume (INV-5).
-    ///
-    /// - Throws: any error raised by the context fetch.
-    public func liveElapsedSeconds() throws -> Int? {
-        guard let running = try runningSession() else { return nil }
-        return running.duration(now: clock.now())
-    }
-
     /// The single currently-running session, if any (ADR-014). There is at most
     /// one running session at a time in the intended UX, but this simply returns
     /// the earliest-started running record if several exist.

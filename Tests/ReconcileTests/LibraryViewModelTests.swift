@@ -2,13 +2,17 @@ import XCTest
 import SwiftData
 @testable import Reconcile
 
-/// T8 gate — Library screen logic (ADR-009/-010/-011/-012/-033/-035/-039/-040).
+/// T8 gate — Library screen logic (ADR-009/-010/-011/-033/-035/-052).
 ///
 /// The gate asserts these paths "via the service, not just UI", so the tests drive
 /// ``LibraryViewModel`` (which routes ALL persistence through the T5 ``QuoteService``)
 /// and read back the real on-disk store. REAL_STACK isolation (E4): a UNIQUE temporary
 /// on-disk SwiftData store per test, deleted in `tearDown`; the `Clock` is injected;
 /// ZenQuotes is a FAKE injected client.
+///
+/// The Library is Delete-only and has no in-screen Discover-online or source-picker UI
+/// (ADR-052); those flows — and their tests — were removed. Un-like remains a service /
+/// model concern (ADR-039), covered in QuoteServiceTests / ModelInvariantTests.
 @MainActor
 final class LibraryViewModelTests: XCTestCase {
 
@@ -18,11 +22,6 @@ final class LibraryViewModelTests: XCTestCase {
         var todayQuote: FetchedQuote
         var randomQuotes: [FetchedQuote]
         var throwsError: ZenQuotesError?
-        private(set) var todayCalls = 0
-        private(set) var randomCalls = 0
-        // ADR-047: last category requested per endpoint (recorded for assertions).
-        private(set) var lastTodayCategory: QuoteCategory?
-        private(set) var lastRandomCategory: QuoteCategory?
 
         init(
             today: FetchedQuote = FetchedQuote(text: "The daily one", author: "Daily"),
@@ -35,18 +34,13 @@ final class LibraryViewModelTests: XCTestCase {
         }
 
         func today(category: QuoteCategory) async throws -> FetchedQuote {
-            todayCalls += 1
-            lastTodayCategory = category
             if let e = throwsError { throw e }
             return todayQuote
         }
 
         func random(category: QuoteCategory) async throws -> FetchedQuote {
-            let idx = randomCalls
-            randomCalls += 1
-            lastRandomCategory = category
             if let e = throwsError { throw e }
-            return randomQuotes[idx % randomQuotes.count]
+            return randomQuotes[0]
         }
     }
 
@@ -94,11 +88,7 @@ final class LibraryViewModelTests: XCTestCase {
         client: FakeClient = FakeClient()
     ) -> LibraryViewModel {
         let service = makeService(scope: scope, client: client)
-        return LibraryViewModel(
-            service: service,
-            scope: { scope.scope },
-            setScope: { scope.scope = $0 }
-        )
+        return LibraryViewModel(service: service)
     }
 
     private func quoteCount() throws -> Int {
@@ -140,73 +130,7 @@ final class LibraryViewModelTests: XCTestCase {
         XCTAssertNil(row?.author, "blank author folds to nil (INV-4)")
     }
 
-    // MARK: - Browse-and-like inserts into the library (ADR-012/-010)
-
-    func testBrowseAndLikeInsertsIntoLibrary() async throws {
-        let client = FakeClient(random: [FetchedQuote(text: "Browsed gem", author: "B")])
-        let model = makeModel(scope: ScopeBox(.online), client: client)
-
-        // Browse a transient online quote via /random — NO row yet (ADR-013).
-        await model.browseNext()
-        XCTAssertEqual(model.browsing?.text, "Browsed gem")
-        XCTAssertEqual(client.randomCalls, 1, "browse uses /random (ADR-012)")
-        XCTAssertEqual(client.todayCalls, 0, "browse NEVER uses /today (ADR-012)")
-        XCTAssertEqual(try quoteCount(), 0, "browsing is transient — no row until liked (ADR-013)")
-
-        // ♡ like → persist into the library (ADR-010), verified via the store.
-        let row = model.likeBrowsed()
-        XCTAssertNotNil(row)
-        XCTAssertEqual(row?.source, .api, "liked online quote persists as source==api (ADR-010)")
-        XCTAssertNotNil(row?.likedAt, "likedAt set on like (INV-9)")
-        XCTAssertEqual(try quoteCount(), 1, "browse-and-like INSERTS into the library")
-        XCTAssertNil(model.browsing, "browse slot cleared after like")
-        XCTAssertTrue(model.quotes.contains { $0.id == row?.id }, "appears in the mine pool (ADR-011)")
-    }
-
-    func testBrowseErrorSurfacesRetry() async throws {
-        let client = FakeClient(throwsError: .offline)
-        let model = makeModel(scope: ScopeBox(.online), client: client)
-        await model.browseNext()
-        XCTAssertEqual(model.browseError, .offline, "browse failure → error+retry (ADR-013)")
-        XCTAssertNil(model.browsing)
-        XCTAssertEqual(try quoteCount(), 0)
-    }
-
-    func testDismissBrowsedDoesNotPersist() async throws {
-        let client = FakeClient(random: [FetchedQuote(text: "Not saved", author: nil)])
-        let model = makeModel(scope: ScopeBox(.online), client: client)
-        await model.browseNext()
-        model.dismissBrowsed()
-        XCTAssertNil(model.browsing)
-        XCTAssertEqual(try quoteCount(), 0, "dismiss without like → stays transient (ADR-013)")
-    }
-
-    // MARK: - Delete / un-like source-dependent (ADR-035/-039)
-
-    func testUnlikeApiRowRemovesIt() async throws {
-        let client = FakeClient(random: [FetchedQuote(text: "ApiGem", author: "A")])
-        let model = makeModel(scope: ScopeBox(.online), client: client)
-        await model.browseNext()
-        let api = model.likeBrowsed()!
-        XCTAssertEqual(try quoteCount(), 1)
-
-        // Un-liking an api row is a HARD delete (same action as delete, ADR-035).
-        model.unlike(api)
-        XCTAssertEqual(try quoteCount(), 0, "un-like api → row gone (ADR-035)")
-        XCTAssertTrue(model.isEmpty)
-    }
-
-    func testUnlikeUserRowRetainsIt() throws {
-        let model = makeModel(scope: ScopeBox(.mine))
-        let user = model.addUserQuote(text: "My words", author: "Me")!
-        user.like(at: clock.now())          // a user row that was ALSO liked
-        try context.save()
-
-        model.unlike(user)
-        XCTAssertEqual(try quoteCount(), 1, "un-like user → row RETAINED (ADR-039)")
-        XCTAssertNil(user.likedAt, "likedAt cleared")
-        XCTAssertTrue(model.quotes.contains { $0.id == user.id }, "still in Library/mine via source==user")
-    }
+    // MARK: - Delete (ADR-035 / ADR-052 Delete-only swipe)
 
     func testDeleteUserRowRemovesIt() throws {
         let model = makeModel(scope: ScopeBox(.mine))
@@ -216,56 +140,5 @@ final class LibraryViewModelTests: XCTestCase {
         model.delete(user)
         XCTAssertEqual(try quoteCount(), 0, "explicit delete of a user row removes it (ADR-035)")
         XCTAssertTrue(model.isEmpty)
-    }
-
-    func testRefetchSameDedupKeyIsTransientNotAutoReliked() async throws {
-        // Like then un-like (hard-delete) an api quote.
-        let client = FakeClient(random: [FetchedQuote(text: "Gone", author: "G")])
-        let model = makeModel(scope: ScopeBox(.online), client: client)
-        await model.browseNext()
-        let api = model.likeBrowsed()!
-        model.unlike(api)
-        XCTAssertEqual(try quoteCount(), 0)
-
-        // A subsequent identical browse is a fresh TRANSIENT quote — NOT auto-re-liked.
-        let refetchClient = FakeClient(random: [FetchedQuote(text: "Gone", author: "G")])
-        let refetch = makeModel(scope: ScopeBox(.online), client: refetchClient)
-        await refetch.browseNext()
-        XCTAssertEqual(refetch.browsing?.text, "Gone")
-        XCTAssertEqual(try quoteCount(), 0, "re-fetch same dedupKey → transient, no auto-re-like (ADR-035)")
-    }
-
-    // MARK: - Source picker WRITES the persisted scope (ADR-040)
-
-    func testSourcePickerWritesPersistedScopeAndServiceReadsIt() async throws {
-        // A shared scope box stands in for T1's persisted settings layer (single owner).
-        let box = ScopeBox(.online)
-        let model = makeModel(scope: box)
-        XCTAssertEqual(model.scope, .online, "reflects the persisted scope")
-
-        // The picker WRITES the scope (ADR-040).
-        model.setScope(.mine)
-        XCTAssertEqual(box.scope, .mine, "picker WROTE the persisted scope")
-        XCTAssertEqual(model.scope, .mine)
-
-        // T5 READS the SAME persisted scope on its next resolution (ADR-040).
-        let user = try context.fetch(FetchDescriptor<Quote>())   // sanity
-        XCTAssertTrue(user.isEmpty)
-        _ = model.addUserQuote(text: "Local pick", author: "Me")
-        let service = makeService(scope: box)
-        XCTAssertEqual(service.scope, .mine, "T5 reads the scope the picker wrote")
-        let resolved = await service.todaysQuote()
-        guard case let .quote(q) = resolved else {
-            return XCTFail("expected a mine pick after scope write")
-        }
-        XCTAssertEqual(q.source, .user, "T5's mine pick uses the library the picker's scope selected")
-        XCTAssertEqual(q.text, "Local pick")
-    }
-
-    func testSetSameScopeIsNoOp() {
-        let box = ScopeBox(.mine)
-        let model = makeModel(scope: box)
-        model.setScope(.mine)   // unchanged
-        XCTAssertEqual(box.scope, .mine)
     }
 }
