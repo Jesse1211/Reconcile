@@ -56,12 +56,14 @@ public struct TodayScreen: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     TodayQuoteCard(model: model)
+                    // Feeling sits ABOVE the MIT list so it stays put — adding goals grows
+                    // the list downward instead of pushing the feeling card off-position.
+                    EveningFeelingSection(model: model, onOpen: { showFeeling = true })
                     MITListSection(
                         model: model,
                         onOpenRitual: { showRitual = true },
                         onEdit: { editingMIT = $0 }
                     )
-                    EveningFeelingSection(model: model, onOpen: { showFeeling = true })
                 }
                 .padding(20)
             }
