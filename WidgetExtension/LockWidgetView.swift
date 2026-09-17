@@ -53,8 +53,8 @@ struct LockWidgetView: View {
                 .frame(width: 1)
             Text(snapshot?.quoteText ?? "")
                 .font(.footnote)
-                .lineLimit(2)               // clamped for the lock surface (ADR-041)
-                .minimumScaleFactor(0.7)
+                .lineLimit(3)               // clamped for the lock surface (ADR-041)
+                .minimumScaleFactor(0.55)   // shrink-to-fit before clipping (owner tweak)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -64,8 +64,8 @@ struct LockWidgetView: View {
     private var idleLayout: some View {
         Text(snapshot?.quoteText ?? "")
             .font(.footnote)
-            .lineLimit(3)                    // clamped for the lock surface (ADR-041)
-            .minimumScaleFactor(0.7)
+            .lineLimit(4)                    // clamped for the lock surface (ADR-041)
+            .minimumScaleFactor(0.5)         // shrink-to-fit before clipping (owner tweak)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 

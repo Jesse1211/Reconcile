@@ -23,6 +23,10 @@ struct HomeWidgetView: View {
     var body: some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            // Inner margin so text never crowds the widget edge (owner tweak). The
+            // adaptive quote sizing (below) measures against this padded area, so it
+            // fills the surface WITHOUT touching the rim.
+            .padding(16)
             .containerBackground(palette.background, for: .widget)
     }
 
@@ -57,11 +61,13 @@ struct HomeWidgetView: View {
                 .frame(width: 1)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(snapshot?.quoteText ?? "")
-                    .font(.system(.callout, design: .serif))
-                    .foregroundStyle(palette.textPrimary)
-                    .lineLimit(4)
-                    .minimumScaleFactor(0.7)
+                // Adaptive: picks the largest font size that fits the (narrower)
+                // running-layout column without truncating; long quotes shrink.
+                AdaptiveQuoteText(
+                    text: snapshot?.quoteText ?? "",
+                    sizes: [17, 15, 13, 11, 9],
+                    color: palette.textPrimary
+                )
                 if let author = snapshot?.quoteAuthor, !author.isEmpty {
                     Text("— \(author)")
                         .font(.system(.caption, design: .serif))
@@ -81,11 +87,13 @@ struct HomeWidgetView: View {
     private var idleLayout: some View {
         VStack(alignment: .leading, spacing: 8) {
             Spacer(minLength: 0)
-            Text(snapshot?.quoteText ?? "")
-                .font(.system(.title3, design: .serif))
-                .foregroundStyle(palette.textPrimary)
-                .lineLimit(5)
-                .minimumScaleFactor(0.6)
+            // Adaptive: the quote owns the whole surface when idle, so it can go
+            // large for a short quote and shrink for a long one — never truncated.
+            AdaptiveQuoteText(
+                text: snapshot?.quoteText ?? "",
+                sizes: [26, 22, 19, 16, 14, 12],
+                color: palette.textPrimary
+            )
             if let author = snapshot?.quoteAuthor, !author.isEmpty {
                 Text("— \(author)")
                     .font(.system(.subheadline, design: .serif))
@@ -111,5 +119,33 @@ struct HomeWidgetView: View {
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// A serif quote label that auto-sizes to FILL the available space without being
+/// truncated (owner tweak): short quotes render large, long quotes shrink.
+///
+/// `ViewThatFits` tries each size in `sizes` (largest → smallest) and renders the
+/// FIRST one whose fully-wrapped text fits the offered area; because each candidate
+/// has NO `lineLimit`, it wraps freely and "fits" means "no vertical overflow". The
+/// smallest candidate carries a `minimumScaleFactor` as a final safety net so an
+/// extreme-length quote still shrinks-to-fit rather than clipping.
+private struct AdaptiveQuoteText: View {
+    let text: String
+    /// Candidate point sizes, LARGEST first.
+    let sizes: [CGFloat]
+    let color: Color
+
+    var body: some View {
+        ViewThatFits(in: .vertical) {
+            ForEach(Array(sizes.enumerated()), id: \.offset) { index, size in
+                Text(text)
+                    .font(.system(size: size, design: .serif))
+                    .foregroundStyle(color)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    // Only the smallest candidate scales further, so nothing ever clips.
+                    .minimumScaleFactor(index == sizes.count - 1 ? 0.5 : 1.0)
+            }
+        }
     }
 }
