@@ -43,8 +43,4 @@ public struct IntentionRitualCopy: Equatable, Sendable {
         case .ledger: return "Set today's most important…"
         }
     }
-
-    /// The gentle first-run invitation shown when today's MIT list is empty (ADR-033).
-    public static let firstRunInvitation =
-        "Nothing set yet — name the one thing that would make today count."
 }

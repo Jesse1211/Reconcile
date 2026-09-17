@@ -26,17 +26,4 @@ public enum TodayCopy {
         case .badResponse: return "Couldn't read today's quote. Try again."
         }
     }
-
-    // MARK: - Evening feeling (ADR-019/-020)
-
-    /// The evening feeling section eyebrow (ADR-019).
-    public static let feelingEyebrow = "This evening"
-    /// The mood picker label (0-5 scale, ADR-019/-020).
-    public static let moodLabel = "Mood"
-    /// The stress picker label (0-5 scale, ADR-019/-020).
-    public static let stressLabel = "Stress"
-    /// The optional "why" field prompt (ADR-019/-020).
-    public static let whyPrompt = "Why? (optional)"
-    /// The feeling save button title.
-    public static let feelingSaveTitle = "Save how today felt"
 }

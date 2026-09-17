@@ -111,27 +111,17 @@ public struct RootTabView: View {
 
     // MARK: Capsule nav bar (ADR-037b/-037d)
 
-    /// The nav capsule reads its ground and icon treatment from the active theme's tokens.
-    /// Its ground is the theme's gradient-mid tone as a translucent glass and its icon colors
-    /// adapt to that tone's brightness (dark icons over a light bar). Under Ledger — the only
-    /// theme — the tokens are the fixed paper tones, so the bar is a light capsule with dark
-    /// icons. (This machinery once tracked the Day Arc time-of-day gradient, ADR-037d.)
-    private var navTokens: ThemeTokens {
-        settings.theme.palette.tokens(for: .today, atHour: currentHour)
-    }
-    private var currentHour: Double {
-        let c = clock.calendar.dateComponents([.hour, .minute], from: clock.now())
-        return Double(c.hour ?? 0) + Double(c.minute ?? 0) / 60
-    }
-
+    /// The nav capsule is a FIXED light paper capsule with dark icons (ADR-037b, owner
+    /// decision): the SAME in every background, theme, and system light/dark mode. Its ground
+    /// is the theme's background (paper) surface as a translucent glass; the icon treatment is
+    /// intentionally hard-fixed dark chrome, not a screen text color, so the bar reads
+    /// identically regardless of theme.
     private var navBar: some View {
-        let t = navTokens
-        // Glass capsule tinted by the current sky; icons adapt to its brightness.
-        let capsule = t.colors.gradientMid.opacity(0.72)
-        let onDark = !t.isLightBackground
-        let icon = (onDark ? Color.white : Color.black).opacity(0.55)
-        let iconSelected = (onDark ? Color.white : Color.black).opacity(0.95)
-        let selectedPill = (onDark ? Color.white : Color.black).opacity(0.16)
+        // Translucent paper glass capsule; dark icons fixed for the chrome.
+        let capsule = settings.theme.tokens(for: .today).colors.background.opacity(0.72)
+        let icon = Color.black.opacity(0.55)
+        let iconSelected = Color.black.opacity(0.95)
+        let selectedPill = Color.black.opacity(0.16)
 
         return HStack(spacing: 0) {
             ForEach(Tab.allCases, id: \.self) { tab in

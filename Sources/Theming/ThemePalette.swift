@@ -3,22 +3,13 @@ import SwiftUI
 /// Resolves the frozen token contract (ADR-036) for a concrete theme and screen role.
 ///
 /// Each theme has exactly one palette. `tokens(for:)` returns a fully-populated
-/// `ThemeTokens`, so both themes are guaranteed to supply every token role.
+/// `ThemeTokens`, so a theme is guaranteed to supply every token role. `role` is the
+/// single seam a future theme uses to vary presentation per screen (ADR-037); Ledger —
+/// the only theme today — ignores it, but the parameter stays so screens can declare a
+/// role a new palette can honour without touching call sites.
 public protocol ThemePalette: Sendable {
     var theme: Theme { get }
     func tokens(for role: ScreenRole) -> ThemeTokens
-    /// Resolve tokens for a role AND a fractional hour-of-day (0..<24). The contract is kept
-    /// (Day Arc once interpolated a whole-app gradient by the hour, ADR-037); the only
-    /// remaining theme, Ledger, has a time-independent background and ignores it. Defaults
-    /// to `tokens(for:)`.
-    func tokens(for role: ScreenRole, atHour hour: Double) -> ThemeTokens
-}
-
-public extension ThemePalette {
-    /// Default: time-independent themes (e.g. Ledger) ignore the hour.
-    func tokens(for role: ScreenRole, atHour hour: Double) -> ThemeTokens {
-        tokens(for: role)
-    }
 }
 
 public extension Theme {
@@ -38,8 +29,7 @@ public extension Theme {
 // MARK: - Ledger (ADR-022)
 
 /// Paper/ink neutrals, serif + mono, a single ledger-red accent for carried items.
-/// Ignores `screenRole` entirely (ADR-037): its neutrals are screen-independent, and
-/// its gradient-anchor tokens are supplied as flat/neutral values so the set is total.
+/// Ignores `screenRole` entirely (ADR-037): its neutrals are screen-independent.
 public struct LedgerPalette: ThemePalette {
     public let theme: Theme = .ledger
     public init() {}
@@ -65,11 +55,7 @@ public struct LedgerPalette: ThemePalette {
         accentFill: ledgerRed,          // Ledger buttons stay the ledger-red fill…
         accentOnBackground: ledgerRed,  // …and glyphs/charts use the same ink-red on paper.
         likedAccent: ledgerRed,
-        divider: rule,
-        // Flat/neutral values so the gradient-anchor set is total in Ledger too.
-        gradientTop: paper,
-        gradientMid: paper,
-        gradientBottom: paper
+        divider: rule
     )
 
     private static let typography = ThemeTypography(
@@ -81,13 +67,12 @@ public struct LedgerPalette: ThemePalette {
     )
 
     public func tokens(for role: ScreenRole) -> ThemeTokens {
-        // Ledger IGNORES role and time (ADR-037): same paper tokens for every screen.
+        // Ledger IGNORES role (ADR-037): same paper tokens for every screen.
         ThemeTokens(
             theme: theme,
             screenRole: role,
             colors: Self.colors,
-            typography: Self.typography,
-            isLightBackground: true   // paper is always light → dark ink text
+            typography: Self.typography
         )
     }
 }

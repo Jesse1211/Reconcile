@@ -52,18 +52,7 @@ struct FeelingSheetView: View {
 
             VStack(alignment: .leading, spacing: 28) {
                 // Masthead: eyebrow + date, mirroring the intention ritual (ADR-024).
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("How today felt".uppercased())
-                        .font(tokens.typography.eyebrow)
-                        .foregroundStyle(tokens.colors.textMuted)
-                    Text(date, format: .dateTime.weekday(.wide).month(.wide).day())
-                        .font(tokens.typography.title)
-                        .foregroundStyle(tokens.colors.textSecondary)
-                    Rectangle()
-                        .fill(tokens.colors.divider)
-                        .frame(height: 1)
-                        .padding(.top, 4)
-                }
+                SheetMasthead(eyebrow: "How today felt", date: date)
 
                 slider(label: "Mood", value: $mood)
                 slider(label: "Stress", value: $stress)
@@ -90,12 +79,7 @@ struct FeelingSheetView: View {
                     onSave(Int(mood.rounded()), Int(stress.rounded()), why)
                     dismiss()
                 } label: {
-                    Text("Save how today felt")
-                        .font(tokens.typography.title)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .foregroundStyle(tokens.colors.background)
-                        .background(tokens.colors.accentFill, in: RoundedRectangle(cornerRadius: 12))
+                    SheetSaveLabel(title: "Save how today felt")
                 }
                 .disabled(!editable)
                 .opacity(editable ? 1 : 0.5)
