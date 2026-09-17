@@ -189,6 +189,61 @@ final class TodayViewModelTests: XCTestCase {
         XCTAssertNil(liked, "nothing transient to persist")
     }
 
+    func testRemoveCurrentSavedQuoteInSavedScope() async throws {
+        // In the Saved (mine) scope the ♥ UN-SAVES the shown saved quote (after confirm).
+        let only = Quote(text: "Delete me", author: "X", source: .user)
+        context.insert(only)
+        try context.save()
+        scope = .mine
+        let model = makeModel()
+        await model.resolveQuote()
+
+        XCTAssertTrue(model.currentQuoteIsSaved, "Saved scope shows a saved library row")
+        guard case .quote = model.quoteState else { return XCTFail("expected a saved quote") }
+
+        await model.removeCurrentSavedQuote()
+
+        // The row is gone (HARD delete, ADR-035) and, as it was the only one, the pool is
+        // now empty → the guiding "Add one in library" empty state (ADR-034).
+        let remaining = try context.fetch(FetchDescriptor<Quote>())
+        XCTAssertEqual(remaining.count, 0, "the saved quote was hard-deleted")
+        XCTAssertEqual(model.quoteState, .empty, "empty Saved pool → guiding empty state")
+    }
+
+    func testRemoveSavedMovesToAnotherSavedQuote() async throws {
+        // With ≥2 saved quotes, removing the shown one re-resolves to a remaining one.
+        context.insert(Quote(text: "First", author: "A", source: .user))
+        context.insert(Quote(text: "Second", author: "B", source: .user))
+        try context.save()
+        scope = .mine
+        let model = makeModel()
+        await model.resolveQuote()
+        guard case .quote(let shown) = model.quoteState else { return XCTFail("expected a quote") }
+
+        await model.removeCurrentSavedQuote()
+
+        let remaining = try context.fetch(FetchDescriptor<Quote>())
+        XCTAssertEqual(remaining.count, 1, "one saved quote removed, one remains")
+        guard case .quote(let next) = model.quoteState else { return XCTFail("expected a remaining quote") }
+        XCTAssertNotEqual(next.text, shown.text, "moves to the other saved quote")
+    }
+
+    func testRemoveSavedInOnlineScopeUnsavesByDedupKey() async throws {
+        // Online scope: a displayed quote that was liked before reads as saved; the ♥
+        // un-saves it by dedupKey (INV-4) — same confirm-gated remove path.
+        scope = .online
+        let model = makeModel(client: FakeClient(today: FetchedQuote(text: "Persist me", author: "Zed")))
+        await model.resolveQuote()
+        _ = await model.likeCurrentQuote()               // now saved
+        XCTAssertTrue(model.currentQuoteIsSaved)
+
+        await model.removeCurrentSavedQuote()
+
+        let remaining = try context.fetch(FetchDescriptor<Quote>())
+        XCTAssertEqual(remaining.count, 0, "the liked online quote was removed by dedupKey")
+        XCTAssertFalse(model.currentQuoteIsSaved, "heart empties — ready to save again")
+    }
+
     // MARK: - Refresh + degenerate pool (ADR-025/-027)
 
     func testRefreshDisabledOnDegenerateMinePool() async throws {

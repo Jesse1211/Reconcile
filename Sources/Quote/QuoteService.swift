@@ -234,7 +234,7 @@ public final class QuoteService {
         return ResolvedQuote(text: text, author: override.inlineAuthor, source: .api, persistedID: nil)
     }
 
-    private func fetchQuote(id: PersistentIdentifier) -> Quote? {
+    func fetchQuote(id: PersistentIdentifier) -> Quote? {
         let all = (try? context.fetch(FetchDescriptor<Quote>())) ?? []
         return all.first { $0.persistentModelID == id }
     }

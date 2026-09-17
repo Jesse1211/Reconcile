@@ -10,6 +10,10 @@ struct TodayQuoteCard: View {
     @Environment(\.theme) private var tokens
     @ObservedObject var model: TodayViewModel
 
+    /// Confirm dialog before UN-SAVING (removing) the current quote — required for ANY
+    /// un-save, in either source (owner decision).
+    @State private var showRemoveConfirm = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             header
@@ -17,6 +21,14 @@ struct TodayQuoteCard: View {
         }
         .padding(20)
         .background(tokens.colors.surface, in: RoundedRectangle(cornerRadius: 16))
+        .alert("Remove from saved?", isPresented: $showRemoveConfirm) {
+            Button("Remove", role: .destructive) {
+                Task { await model.removeCurrentSavedQuote() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This quote will be removed from your library.")
+        }
     }
 
     // MARK: Header — source indicator + controls (ADR-010/-025/-027)
@@ -35,19 +47,27 @@ struct TodayQuoteCard: View {
     @ViewBuilder
     private var controls: some View {
         HStack(spacing: 16) {
-            // ♡ save — only meaningful for a transient online quote (ADR-010).
-            if model.canLikeCurrentQuote || model.currentQuoteIsSaved {
+            // ♥ heart. If the current quote is SAVED (either source), tapping UN-SAVES it
+            // — but that ALWAYS goes through a confirm dialog (owner decision). If it's an
+            // unsaved transient online quote, tapping SAVES it directly (no confirm needed —
+            // adding is not destructive, ADR-010).
+            if model.currentQuoteIsSaved {
+                Button {
+                    showRemoveConfirm = true
+                } label: {
+                    Image(systemName: "heart.fill")
+                        .foregroundStyle(tokens.colors.likedAccent)
+                }
+                .accessibilityLabel("Remove from saved")
+                .accessibilityIdentifier("quote.unsave")
+            } else if model.canLikeCurrentQuote {
                 Button {
                     Task { await model.likeCurrentQuote() }
                 } label: {
-                    Image(systemName: model.currentQuoteIsSaved ? "heart.fill" : "heart")
-                        // Saved → the "liked" hue (a real color so favorited reads);
-                        // unsaved → adaptive ink like the other glyphs.
-                        .foregroundStyle(model.currentQuoteIsSaved
-                                         ? tokens.colors.likedAccent
-                                         : tokens.colors.accentOnBackground)
+                    Image(systemName: "heart")
+                        .foregroundStyle(tokens.colors.accentOnBackground)
                 }
-                .disabled(!model.canLikeCurrentQuote)
+                .accessibilityLabel("Save quote")
                 .accessibilityIdentifier("quote.like")
             }
 

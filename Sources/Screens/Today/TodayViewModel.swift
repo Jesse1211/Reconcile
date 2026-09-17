@@ -176,6 +176,25 @@ public final class TodayViewModel: ObservableObject {
         return row
     }
 
+    /// Remove (un-save) the currently-shown quote from the library — HARD delete
+    /// (ADR-035). Un-liking and deleting are the same "remove it" action, and it works in
+    /// EITHER scope: in `Saved` the shown quote is a library row; in `Online` a displayed
+    /// quote whose equivalent was liked before is removed by `dedupKey` (INV-4). After
+    /// removal, re-resolves today's quote — in `Saved` this moves to another saved quote
+    /// or shows the "Add one in library" guidance if the pool is now empty (ADR-034).
+    ///
+    /// This is only ever invoked AFTER the confirm dialog (any un-save is confirmed, both
+    /// sources — owner decision); the view gates the call on ``currentQuoteIsSaved``.
+    public func removeCurrentSavedQuote() async {
+        guard case .quote(let resolved) = quoteState else { return }
+        try? quoteService.removeSavedQuote(text: resolved.text, author: resolved.author)
+        // Re-resolve. In `online` the same transient quote reappears (now with an empty
+        // heart, ready to save again); in `mine` the pick moves on / falls to empty. The
+        // dangling-override fallthrough (ADR-026 C3) handles a same-day override that
+        // pointed at the removed row.
+        await resolveQuote()
+    }
+
     // MARK: - MIT intents (ADR-004/-005/-008/-024/-030)
 
     /// Run rollover (ADR-005) then reload today's open MIT list (ADR-017).
