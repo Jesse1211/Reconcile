@@ -64,29 +64,28 @@ public struct RootTabView: View {
     public init() {}
 
     public var body: some View {
-        // A once-a-minute timeline re-renders the shell. It formerly kept the Day Arc
-        // time-of-day background in step with the clock (ADR-037c/d); Ledger's paper tokens
-        // are time-independent, so the periodic tick is now effectively a no-op but is kept
-        // harmlessly (the resolution path still threads the hour through, unused).
-        TimelineView(.periodic(from: .now, by: 60)) { _ in
-            ZStack(alignment: .bottom) {
-                // A real TabView keeps EVERY tab's view (and @StateObject/@State) alive across
-                // switches — no teardown, no re-running .task, no repeat network fetch. The
-                // system bar is hidden; our own capsule is overlaid instead.
-                TabView(selection: $selection) {
-                    tabScreen(.today) {
-                        TodayScreen(context: modelContext, clock: clock,
-                                    settings: settings, client: LiveZenQuotesClient(),
-                                    widgetWriter: widgetWriter)
-                    }
-                    tabScreen(.library) { LibraryScreen(model: makeLibraryModel()) }
-                    tabScreen(.summary) { SummaryScreen() }
-                    tabScreen(.settings) { SettingsScreen() }
+        // PERF: no wrapping once-a-minute TimelineView. It formerly kept the Day Arc
+        // time-of-day background in step with the clock (ADR-037c/d), but Day Arc is
+        // removed (ADR-048) and Ledger's paper tokens are time-independent — so the tick
+        // did nothing except rebuild the whole 4-tab shell every minute and add churn
+        // that made the Today pager swipe feel laggy. Dropped entirely.
+        ZStack(alignment: .bottom) {
+            // A real TabView keeps EVERY tab's view (and @StateObject/@State) alive across
+            // switches — no teardown, no re-running .task, no repeat network fetch. The
+            // system bar is hidden; our own capsule is overlaid instead.
+            TabView(selection: $selection) {
+                tabScreen(.today) {
+                    TodayScreen(context: modelContext, clock: clock,
+                                settings: settings, client: LiveZenQuotesClient(),
+                                widgetWriter: widgetWriter)
                 }
-
-                // Our own fixed nav bar, overlaid at the bottom.
-                navBar
+                tabScreen(.library) { LibraryScreen(model: makeLibraryModel()) }
+                tabScreen(.summary) { SummaryScreen() }
+                tabScreen(.settings) { SettingsScreen() }
             }
+
+            // Our own fixed nav bar, overlaid at the bottom.
+            navBar
         }
     }
 

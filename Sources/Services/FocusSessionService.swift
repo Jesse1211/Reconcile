@@ -130,7 +130,10 @@ public struct FocusSessionService {
     /// Today's total STOPPED focus seconds — the pre-computed portion of
     /// `dailyTotals()` (ADR-032) attributed to today's canonical day key (ADR-038).
     /// Running sessions are excluded (ADR-032). Zero when today has no stopped focus.
-    private func todaysAccumulatedSeconds() -> Int {
+    ///
+    /// Exposed so the Timer pane can show a "Today · <total>" line (ADR-048b, which
+    /// revises ADR-032/E3): the pane adds the live running-session seconds on top.
+    public func todaysAccumulatedSeconds() -> Int {
         let totals = (try? dailyTotals()) ?? [:]
         return totals[clock.today()] ?? 0
     }
