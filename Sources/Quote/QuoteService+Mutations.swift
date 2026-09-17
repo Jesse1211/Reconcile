@@ -65,16 +65,6 @@ public extension QuoteService {
         try context.save()
     }
 
-    /// Delete a library quote by its persistent identifier — HARD delete (ADR-035).
-    /// No-op if the id no longer resolves (already deleted). Returns `true` if removed.
-    @discardableResult
-    func deleteQuote(id: PersistentIdentifier) throws -> Bool {
-        guard let quote = fetchQuote(id: id) else { return false }
-        context.delete(quote)
-        try context.save()
-        return true
-    }
-
     /// Remove the saved library row matching this text/author (by `dedupKey`, INV-4) —
     /// HARD delete (ADR-035). Used by the Today card's ♥ to un-save/remove the currently-
     /// shown quote in EITHER scope: in `Saved` the shown quote IS a library row; in

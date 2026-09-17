@@ -5,8 +5,9 @@ import Combine
 /// selected `Theme` (ADR-022) AND the current `TodayScope` (ADR-040/ADR-034).
 ///
 /// Both selections persist across launch (UserDefaults-backed). The scope defaults to
-/// `online` on first run (ADR-034). Later tasks: T5 READS `todayScope`; T8 WRITES it;
-/// the settings UI writes `theme`. No other component persists these.
+/// `online` on first run (ADR-034). T5 (QuoteService) READS `todayScope`; the **Settings
+/// screen WRITES** it and the category (ADR-046 — the writer moved off the Library, ADR-052).
+/// No other component persists these.
 @MainActor
 public final class AppSettings: ObservableObject {
     private enum Keys {

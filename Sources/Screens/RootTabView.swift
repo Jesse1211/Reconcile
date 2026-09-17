@@ -182,7 +182,11 @@ public struct RootTabView: View {
         return LibraryViewModel(
             service: service,
             scope: { settings.todayScope },
-            setScope: { settings.todayScope = $0 }   // ADR-040: the Library is the scope writer
+            // NOTE: the scope WRITER moved to the Settings screen (ADR-046) — the Library no
+            // longer renders a source picker (ADR-052), so this setter is now wired but not
+            // invoked by any Library UI (only exercised by tests). Kept to satisfy the
+            // LibraryViewModel init; not a live write path.
+            setScope: { settings.todayScope = $0 }
         )
     }
 }
