@@ -28,11 +28,15 @@ public struct TodayScreen: View {
         context: ModelContext,
         clock: Clock,
         settings: AppSettings,
-        client: ZenQuotesClient
+        client: ZenQuotesClient,
+        widgetWriter: WidgetSnapshotWriter? = nil
     ) {
         let quoteService = QuoteService(
             context: context, clock: clock, client: client,
-            scope: { settings.todayScope }, category: { settings.quoteCategory }   // ADR-047
+            scope: { settings.todayScope }, category: { settings.quoteCategory },   // ADR-047
+            // T12/ADR-042 (b): mirror today's resolved quote into the App Group snapshot
+            // so the widget shows the SAME quote the app shows (not the empty placeholder).
+            widgetWriter: widgetWriter
         )
         let vm = TodayViewModel(
             context: context,

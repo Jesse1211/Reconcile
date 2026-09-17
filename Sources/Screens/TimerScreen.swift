@@ -31,6 +31,9 @@ struct TimerScreen: View {
     @Environment(\.theme) private var tokens
     @Environment(\.clock) private var clock
     @Environment(\.modelContext) private var modelContext
+    /// The app-side widget snapshot writer (T12/ADR-042), injected by `ReconcileApp`,
+    /// so focus start/stop mirrors the running/accumulated figure to the widget.
+    @Environment(\.widgetSnapshotWriter) private var widgetWriter
 
     /// The single currently-running session, if any (drives the live stopwatch).
     @State private var running: FocusSession?
@@ -38,7 +41,7 @@ struct TimerScreen: View {
     @State private var todaysSessions: [FocusSession] = []
 
     private var service: FocusSessionService {
-        FocusSessionService(context: modelContext, clock: clock)
+        FocusSessionService(context: modelContext, clock: clock, widgetWriter: widgetWriter)
     }
 
     var body: some View {

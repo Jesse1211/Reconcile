@@ -15,6 +15,11 @@ public struct RootTabView: View {
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.modelContext) private var modelContext
     @Environment(\.clock) private var clock
+    /// The app-side widget snapshot writer (T12/ADR-042), injected by `ReconcileApp`.
+    /// Threaded into the quote (T5) and focus (T6) services so today's quote and the
+    /// running/accumulated focus figure actually reach the App Group snapshot — without
+    /// this, the widget only ever sees an empty snapshot (the ADR-045 placeholder).
+    @Environment(\.widgetSnapshotWriter) private var widgetWriter
 
     /// The bottom tabs, in order.
     private enum Tab: CaseIterable {
@@ -72,7 +77,8 @@ public struct RootTabView: View {
                 TabView(selection: $selection) {
                     tabScreen(.today) {
                         TodayScreen(context: modelContext, clock: clock,
-                                    settings: settings, client: LiveZenQuotesClient())
+                                    settings: settings, client: LiveZenQuotesClient(),
+                                    widgetWriter: widgetWriter)
                     }
                     tabScreen(.timer) { TimerScreen() }
                     tabScreen(.library) { LibraryScreen(model: makeLibraryModel()) }
