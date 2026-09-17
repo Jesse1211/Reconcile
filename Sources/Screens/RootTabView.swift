@@ -78,7 +78,6 @@ public struct RootTabView: View {
                     tabScreen(.summary) { SummaryScreen() }
                     tabScreen(.settings) { SettingsScreen() }
                 }
-                .toolbar(.hidden, for: .tabBar)
 
                 // Our own fixed nav bar, overlaid at the bottom.
                 navBar
@@ -97,6 +96,12 @@ public struct RootTabView: View {
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 Color.clear.frame(height: Self.navBarReservedHeight)
             }
+            // Hide the system tab bar so ONLY our custom capsule shows. This MUST sit on the
+            // tab's content (a descendant of the TabView), not on the TabView itself: on iOS 26
+            // the `.tabBar` visibility is resolved from the selected tab's hierarchy, so the
+            // modifier is a no-op when attached to the TabView container — which left the system
+            // glass bar rendering UNDER our capsule (the "two nav bars" bug). (ADR-037b/-037f.)
+            .toolbar(.hidden, for: .tabBar)
             .tag(tab)
     }
 
