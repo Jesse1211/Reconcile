@@ -67,6 +67,8 @@ struct HomeWidgetView: View {
                         .font(.system(.caption, design: .serif))
                         .foregroundStyle(palette.textSecondary)
                         .lineLimit(1)
+                        // Author right-aligned (quote stays left) per owner tweak.
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
                 Spacer(minLength: 0)
             }
@@ -89,6 +91,8 @@ struct HomeWidgetView: View {
                     .font(.system(.subheadline, design: .serif))
                     .foregroundStyle(palette.textSecondary)
                     .lineLimit(1)
+                    // Author right-aligned (quote stays left) per owner tweak.
+                    .frame(maxWidth: .infinity, alignment: .trailing)
             }
             Spacer(minLength: 0)
         }
