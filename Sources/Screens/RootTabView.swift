@@ -23,11 +23,12 @@ public struct RootTabView: View {
 
     /// The bottom tabs, in order.
     private enum Tab: CaseIterable {
-        case today, timer, library, summary, settings
+        // Timer is no longer a tab — it lives as the second page of Today's lower pager
+        // (swipe right from Feeling+goals), sharing the pinned quote card above.
+        case today, library, summary, settings
         var title: String {
             switch self {
             case .today: return "Today"
-            case .timer: return "Timer"
             case .library: return "Library"
             case .summary: return "Summary"
             case .settings: return "Settings"
@@ -36,7 +37,6 @@ public struct RootTabView: View {
         var systemImage: String {
             switch self {
             case .today: return "sun.max"
-            case .timer: return "timer"
             case .library: return "books.vertical"
             case .summary: return "chart.bar"
             case .settings: return "gearshape"
@@ -45,7 +45,6 @@ public struct RootTabView: View {
         var screenRole: ScreenRole {
             switch self {
             case .today: return .today
-            case .timer: return .timer
             case .library: return .library
             case .summary: return .summary
             case .settings: return .settings
@@ -80,7 +79,6 @@ public struct RootTabView: View {
                                     settings: settings, client: LiveZenQuotesClient(),
                                     widgetWriter: widgetWriter)
                     }
-                    tabScreen(.timer) { TimerScreen() }
                     tabScreen(.library) { LibraryScreen(model: makeLibraryModel()) }
                     tabScreen(.summary) { SummaryScreen() }
                     tabScreen(.settings) { SettingsScreen() }

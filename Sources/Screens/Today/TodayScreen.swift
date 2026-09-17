@@ -20,6 +20,9 @@ public struct TodayScreen: View {
     @State private var showRitual = false
     @State private var showFeeling = false
     @State private var editingMIT: MIT?
+    /// Lower-pager selection: 0 = tasks (Feeling + MIT list), 1 = the timer pane. The
+    /// quote card sits ABOVE the pager, so swiping between these two never re-renders it.
+    @State private var lowerPage = 0
 
     /// Build the screen, constructing the view model from the environment's context,
     /// clock and settings. `client` is injectable so previews/tests supply a fake
@@ -53,19 +56,22 @@ public struct TodayScreen: View {
         ZStack {
             ThemeBackground()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    TodayQuoteCard(model: model)
-                    // Feeling sits ABOVE the MIT list so it stays put — adding goals grows
-                    // the list downward instead of pushing the feeling card off-position.
-                    EveningFeelingSection(model: model, onOpen: { showFeeling = true })
-                    MITListSection(
-                        model: model,
-                        onOpenRitual: { showRitual = true },
-                        onEdit: { editingMIT = $0 }
-                    )
+            VStack(spacing: 0) {
+                // TOP — the daily quote card, PINNED above the pager. It sits outside the
+                // horizontal pager, so swiping the lower half (tasks ↔ timer) never
+                // re-renders or re-fetches the quote — it literally stays in place.
+                TodayQuoteCard(model: model)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+
+                // LOWER — a horizontal pager (page dots) with two pages that share the
+                // quote above: page 0 = Feeling + the MIT/goal list; page 1 = the timer.
+                TabView(selection: $lowerPage) {
+                    tasksPage.tag(0)
+                    timerPage.tag(1)
                 }
-                .padding(20)
+                .tabViewStyle(.page(indexDisplayMode: .always))
+                .indexViewStyle(.page(backgroundDisplayMode: .always))
             }
 
             if let undo = model.pendingUndo {
@@ -108,6 +114,42 @@ public struct TodayScreen: View {
                 }
             }
             .themed(settings.theme, role: .today)
+        }
+    }
+
+    // MARK: Lower pager pages (shared quote above)
+
+    /// Page 0 — Feeling (above) + the MIT/goal list. Scrolls internally when the list
+    /// grows so the page dots + nav stay put.
+    private var tasksPage: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                // Feeling sits ABOVE the MIT list so it stays put — adding goals grows
+                // the list downward instead of pushing the feeling card off-position.
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("FEELING")
+                        .font(tokens.typography.eyebrow)
+                        .foregroundStyle(tokens.colors.textMuted)
+                    EveningFeelingSection(model: model, onOpen: { showFeeling = true })
+                }
+                MITListSection(
+                    model: model,
+                    onOpenRitual: { showRitual = true },
+                    onEdit: { editingMIT = $0 }
+                )
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+        }
+    }
+
+    /// Page 1 — the timer pane (stopwatch + today's sessions), the former standalone
+    /// Timer tab folded in here (nav no longer has a Timer tab).
+    private var timerPage: some View {
+        ScrollView {
+            TimerPaneView()
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
         }
     }
 

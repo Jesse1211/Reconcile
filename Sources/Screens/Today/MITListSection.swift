@@ -18,7 +18,7 @@ struct MITListSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("TODAY")
+            Text("CONQUER")
                 .font(tokens.typography.eyebrow)
                 .foregroundStyle(tokens.colors.textMuted)
 

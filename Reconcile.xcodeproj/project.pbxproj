@@ -47,6 +47,7 @@
 		582E655D7E4097C1B9E2F4DE /* WidgetSnapshotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD74CF353C6B475B299C103 /* WidgetSnapshotStore.swift */; };
 		5D71DAF573EC3DEFCDB59F65 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9543B94157F92F1BDEE222B4 /* AppSettings.swift */; };
 		5D8A95407FCB8D191BDE8C51 /* WidgetSnapshotLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503896317B32D24B7548775D /* WidgetSnapshotLoader.swift */; };
+		648629CC3D9D947CD8F4B02D /* TimerPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 468F7900D93FD749DA0B03AB /* TimerPaneView.swift */; };
 		65AF075B4A02DFF2D744376E /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036300C4A1C343908CA2C8FD /* Clock.swift */; };
 		6AEC52BB2F62C33007BFD690 /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A812E27F0F461B0C61ED29F /* LibraryViewModel.swift */; };
 		6F4F177A29250C4F6E6F9A26 /* SummaryScreenRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DBCFE1D7BEAC704F279C94 /* SummaryScreenRenderTests.swift */; };
@@ -148,6 +149,7 @@
 		3DA3E5676CF41C2D52DCC4DA /* ThemeTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTokens.swift; sourceTree = "<group>"; };
 		3EA41B3F57D6EA336B18DAD7 /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
 		40085B6A90B848BA21AB502D /* ThemeTokenContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTokenContractTests.swift; sourceTree = "<group>"; };
+		468F7900D93FD749DA0B03AB /* TimerPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerPaneView.swift; sourceTree = "<group>"; };
 		479E8E5D339EE93A7305EE21 /* ReconcileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconcileApp.swift; sourceTree = "<group>"; };
 		485F4D4A88A71E4CB7F6E8C4 /* MITStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MITStatus.swift; sourceTree = "<group>"; };
 		4D81C80B0A3FF15563E48F26 /* MIT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIT.swift; sourceTree = "<group>"; };
@@ -418,6 +420,7 @@
 				8E724DD7675A8BD13DC8784B /* IntentionRitualCopy.swift */,
 				9DC166DE241402732F979F30 /* IntentionRitualView.swift */,
 				B33BA96BF3B9492E5D4FDB82 /* MITListSection.swift */,
+				468F7900D93FD749DA0B03AB /* TimerPaneView.swift */,
 				96B2C7BF410696E698A7BA87 /* TodayCopy.swift */,
 				8EE0D864956D233AE39CD7FD /* TodayQuoteCard.swift */,
 				DED582E374E3F2322A40C559 /* TodayScreen.swift */,
@@ -576,6 +579,7 @@
 				EBF7B7388D5EBED7D455E874 /* ThemeEnvironment.swift in Sources */,
 				04129C8E6EAC77659BD93909 /* ThemePalette.swift in Sources */,
 				B3C57CEFFD179B7A615A069F /* ThemeTokens.swift in Sources */,
+				648629CC3D9D947CD8F4B02D /* TimerPaneView.swift in Sources */,
 				EEE282386DE6BEF0892C7770 /* TimerScreen.swift in Sources */,
 				195314576569C16E0F447411 /* TodayCopy.swift in Sources */,
 				019312FA1A8ACB7F5172D530 /* TodayQuoteCard.swift in Sources */,
