@@ -6,7 +6,7 @@ import WidgetKit
 /// Mirrors the two Home layouts (ADR-041) but for the tiny lock surface: the quote
 /// is CLAMPED/truncated to fit, and the treatment is THEME-NEUTRAL and legible under
 /// the OS tint/monochrome rendering mode (ADR-044) — it does NOT read the persisted
-/// theme and paints NO Day-Arc gradient; legibility under system tint wins.
+/// theme; legibility under system tint wins.
 ///
 ///   * RUNNING — `time │ quote` (a divider; live timer left; short quote right).
 ///   * IDLE — quote-only (no time, no divider).

@@ -48,7 +48,10 @@ public final class AppSettings: ObservableObject {
         self.defaults = defaults
         self.widgetWriter = widgetWriter
 
-        // Theme default: Ledger on first run.
+        // Theme default: Ledger on first run. Ledger is now the ONLY theme (Day Arc
+        // removed, ADR-022): an old persisted "dayArc" raw value no longer decodes, so
+        // `Theme(rawValue:)` returns nil and we fall back to `.ledger` — no crash, no
+        // migration step needed.
         if let raw = defaults.string(forKey: Keys.theme), let stored = Theme(rawValue: raw) {
             self.theme = stored
         } else {

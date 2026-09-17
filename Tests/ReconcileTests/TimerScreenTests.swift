@@ -173,10 +173,10 @@ final class TimerScreenTests: XCTestCase {
 
     // MARK: - Empty state exists in both themes (ADR-033 / ADR-022)
 
-    /// The Timer screen resolves its tokens for BOTH themes at `screenRole = .timer`
-    /// so its empty/populated states render themed under Ledger and Day Arc (ADR-022).
-    /// (The empty-state COPY lives in the screen; here we assert the token vocabulary
-    /// the screen reads is total in both themes at the timer role.)
+    /// The Timer screen resolves its tokens for every theme at `screenRole = .timer` so its
+    /// empty/populated states render themed (ADR-022). Ledger is now the only theme (Day Arc
+    /// removed), so this iterates the single case. (The empty-state COPY lives in the screen;
+    /// here we assert the token vocabulary the screen reads is total at the timer role.)
     func testTimerRoleTokensResolveInBothThemes() {
         for theme in Theme.allCases {
             let tokens = theme.tokens(for: .timer)

@@ -10,8 +10,8 @@ import SwiftData
 /// persisted current `TodayScope`).
 ///
 /// Theme-agnostic (ADR-036/-037): declares `screenRole == .library` and reads every color/
-/// font BY ROLE from the `\.theme` token set — no hard-coded color or font. Day Arc paints
-/// its `.library` gradient; Ledger paints flat paper. All logic lives in ``LibraryViewModel``
+/// font BY ROLE from the `\.theme` token set — no hard-coded color or font. Ledger (the
+/// only theme) paints flat paper. All logic lives in ``LibraryViewModel``
 /// so persistence goes through the T5 service (verified via the service, not just UI).
 public struct LibraryScreen: View {
     @Environment(\.theme) private var tokens

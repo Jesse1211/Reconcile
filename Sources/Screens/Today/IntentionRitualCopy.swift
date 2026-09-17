@@ -2,11 +2,11 @@ import Foundation
 
 /// The per-theme copy for the full-screen intention ritual (ADR-024).
 ///
-/// ADR-024 pins that each theme DRESSES the ritual: Ledger reads as a paper ledger
-/// masthead ("Record entry"); Day Arc reads as a dawn invitation ("Begin where the
-/// light is" / "Set it"). Keeping the copy in a pure, `Theme`-keyed value type makes
-/// the wording testable and keeps the SwiftUI view theme-agnostic — it reads copy by
-/// role, exactly as it reads color/type tokens by role (ADR-036/-037).
+/// ADR-024 pins that the theme DRESSES the ritual: Ledger reads as a paper ledger
+/// masthead ("Record entry"). (Day Arc, which read as a dawn invitation, has been
+/// removed — Ledger is the only theme.) Keeping the copy in a pure, `Theme`-keyed value
+/// type makes the wording testable and keeps the SwiftUI view theme-agnostic — it reads
+/// copy by role, exactly as it reads color/type tokens by role (ADR-036/-037).
 public struct IntentionRitualCopy: Equatable, Sendable {
     /// The guiding eyebrow above the date (ADR-024).
     public let eyebrow: String
@@ -24,7 +24,7 @@ public struct IntentionRitualCopy: Equatable, Sendable {
         self.saveTitle = saveTitle
     }
 
-    /// Resolve the ritual copy for a theme (ADR-024). Both themes supply every field.
+    /// Resolve the ritual copy for a theme (ADR-024). The (only) theme supplies every field.
     public static func forTheme(_ theme: Theme) -> IntentionRitualCopy {
         switch theme {
         case .ledger:
@@ -34,13 +34,6 @@ public struct IntentionRitualCopy: Equatable, Sendable {
                 reasonPrompt: "Why does it matter today?",
                 saveTitle: "Record entry"
             )
-        case .dayArc:
-            return IntentionRitualCopy(
-                eyebrow: "Begin where the light is",
-                inputPrompt: "The one thing…",
-                reasonPrompt: "Why does it matter today?",
-                saveTitle: "Set it"
-            )
         }
     }
 
@@ -48,7 +41,6 @@ public struct IntentionRitualCopy: Equatable, Sendable {
     public static func placeholderRowTitle(for theme: Theme) -> String {
         switch theme {
         case .ledger: return "Set today's most important…"
-        case .dayArc: return "Set today's most important…"
         }
     }
 
