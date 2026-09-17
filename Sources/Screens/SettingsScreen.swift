@@ -16,13 +16,9 @@ public struct SettingsScreen: View {
     public init() {}
 
     public var body: some View {
-        ZStack {
-            ThemeBackground()
-
+        ScreenScaffold("Settings") {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
-                    header
-
                     settingBlock(
                         eyebrow: "TODAY'S QUOTE",
                         title: "Source",
@@ -61,20 +57,8 @@ public struct SettingsScreen: View {
         }
     }
 
-    // MARK: Header
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text("SETTINGS")
-                .font(tokens.typography.eyebrow)
-                .foregroundStyle(tokens.colors.textMuted)
-            Text("Settings")
-                .font(tokens.typography.display)
-                .foregroundStyle(tokens.colors.textPrimary)
-        }
-    }
-
     // MARK: A titled setting block — eyebrow + title + caption + control
+    // (the "Settings" page title is the pinned ScreenScaffold header)
 
     @ViewBuilder
     private func settingBlock<Control: View>(

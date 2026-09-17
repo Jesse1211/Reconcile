@@ -25,11 +25,16 @@ public struct LibraryScreen: View {
     }
 
     public var body: some View {
-        ZStack {
-            ThemeBackground()
-
+        ScreenScaffold("Quotes") {
+            Button {
+                showingAdd = true
+            } label: {
+                Image(systemName: "plus")
+                    .foregroundStyle(tokens.colors.accentOnBackground)
+            }
+            .accessibilityLabel("Add a quote")
+        } content: {
             VStack(spacing: 0) {
-                header
                 Divider().background(tokens.colors.divider)
                 content
             }
@@ -43,26 +48,7 @@ public struct LibraryScreen: View {
         }
     }
 
-    // MARK: Header + actions
-
-    private var header: some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text("Quotes")
-                .font(tokens.typography.title)
-                .foregroundStyle(tokens.colors.textPrimary)
-            Spacer()
-            Button {
-                showingAdd = true
-            } label: {
-                Image(systemName: "plus")
-                    .foregroundStyle(tokens.colors.accentOnBackground)
-            }
-            .accessibilityLabel("Add a quote")
-        }
-        .padding(.horizontal)
-        .padding(.top)
-        .padding(.bottom, 8)
-    }
+    // The "Quotes" page title + the "+" add button are the pinned ScreenScaffold header.
 
     // Note: the "today's quote source" (`TodayScope`) picker moved to the Settings screen
     // (ADR-040) — it is the single place the user changes theme + quote source. The Library

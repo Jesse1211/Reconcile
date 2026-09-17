@@ -33,12 +33,9 @@ public struct SummaryScreen: View {
     public init() {}
 
     public var body: some View {
-        ZStack {
-            ThemeBackground()
-
+        ScreenScaffold("Summary") {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    header
                     rangeSwitcher
 
                     if model.hasNoData {
@@ -58,18 +55,7 @@ public struct SummaryScreen: View {
         .onChange(of: range) { _, _ in reload() }
     }
 
-    // MARK: - Header & range switcher
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("SUMMARY")
-                .font(tokens.typography.eyebrow)
-                .foregroundStyle(tokens.colors.textMuted)
-            Text("Summary")
-                .font(tokens.typography.display)
-                .foregroundStyle(tokens.colors.textPrimary)
-        }
-    }
+    // MARK: - Range switcher (the "Summary" title is the pinned ScreenScaffold header)
 
     private var rangeSwitcher: some View {
         HStack(spacing: 8) {

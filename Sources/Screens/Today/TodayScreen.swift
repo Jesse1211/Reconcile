@@ -53,16 +53,13 @@ public struct TodayScreen: View {
     }
 
     public var body: some View {
-        ZStack {
-            ThemeBackground()
-
+        ScreenScaffold("Today") {
             VStack(spacing: 0) {
                 // TOP — the daily quote card, PINNED above the pager. It sits outside the
                 // horizontal pager, so swiping the lower half (tasks ↔ timer) never
                 // re-renders or re-fetches the quote — it literally stays in place.
                 TodayQuoteCard(model: model)
                     .padding(.horizontal, 20)
-                    .padding(.top, 20)
 
                 // LOWER — a horizontal pager (page dots) with two pages that share the
                 // quote above: page 0 = Feeling + the MIT/goal list; page 1 = the timer.
@@ -73,7 +70,8 @@ public struct TodayScreen: View {
                 .tabViewStyle(.page(indexDisplayMode: .always))
                 .indexViewStyle(.page(backgroundDisplayMode: .always))
             }
-
+        }
+        .overlay(alignment: .bottom) {
             if let undo = model.pendingUndo {
                 undoSnackbar(undo)
             }

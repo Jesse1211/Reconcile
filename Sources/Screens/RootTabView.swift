@@ -136,15 +136,13 @@ public struct RootTabView: View {
                         }
                     }
                 } label: {
-                    VStack(spacing: 3) {
-                        Image(systemName: tab.systemImage)
-                            .font(.system(size: 18, weight: .semibold))
-                        Text(tab.title)
-                            .font(.system(size: 10, weight: .medium))
-                    }
-                    .foregroundStyle(isSelected ? iconSelected : icon)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
+                    // Icon only — the page name lives in each screen's pinned header now,
+                    // not as a nav label (owner tweak).
+                    Image(systemName: tab.systemImage)
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(isSelected ? iconSelected : icon)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
                     .background {
                         if isSelected {
                             // The SAME pill view moves between tabs via matchedGeometry,

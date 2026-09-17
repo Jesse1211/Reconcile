@@ -13,6 +13,7 @@
 		04129C8E6EAC77659BD93909 /* ThemePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B10B24568BBE2505468093B /* ThemePalette.swift */; };
 		0BEC623A21095D391E40A972 /* WidgetSnapshotWriterEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C72FA0F009B490639818401 /* WidgetSnapshotWriterEnvironment.swift */; };
 		0C2C4322606A03E236C475A7 /* TodayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D0353BF273C2465683BDD86 /* TodayViewModel.swift */; };
+		0F66F77E19501B09742F3FE5 /* ScreenScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DC5F51E0A7500A8B4DC564 /* ScreenScaffold.swift */; };
 		11EF164159E22C44F00441C8 /* DailyFeeling.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65092E795F9B3E0C90AB5A0 /* DailyFeeling.swift */; };
 		1890C58DA27E9FA494F8C5B4 /* ReconcileWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 58A8B3137932F7D47BEB48A5 /* ReconcileWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		195314576569C16E0F447411 /* TodayCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B2C7BF410696E698A7BA87 /* TodayCopy.swift */; };
@@ -191,6 +192,7 @@
 		B65092E795F9B3E0C90AB5A0 /* DailyFeeling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFeeling.swift; sourceTree = "<group>"; };
 		B6F2EE42D3C7D4146FE2BA7C /* ClockEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockEnvironment.swift; sourceTree = "<group>"; };
 		B9561926B702AC88E065FB18 /* QuoteCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteCategory.swift; sourceTree = "<group>"; };
+		B9DC5F51E0A7500A8B4DC564 /* ScreenScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenScaffold.swift; sourceTree = "<group>"; };
 		BEAB125A7363F64FBA9FFEA3 /* LiveZenQuotesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveZenQuotesClient.swift; sourceTree = "<group>"; };
 		CCFC139189455BC4440926EB /* FeelingSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeelingSheetView.swift; sourceTree = "<group>"; };
 		D9B735283FDDB85E0F936D5F /* WidgetSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotTests.swift; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 				264874C7DC61E19471EBD86F /* LibraryScreen.swift */,
 				5A812E27F0F461B0C61ED29F /* LibraryViewModel.swift */,
 				FE048411577566FD3B33591C /* RootTabView.swift */,
+				B9DC5F51E0A7500A8B4DC564 /* ScreenScaffold.swift */,
 				3BDD4E903B06F869DCF8252C /* SettingsScreen.swift */,
 				6477DC7F03C75EC17D849A1F /* SummaryScreen.swift */,
 				9BB2F1B85F1F0D081968E19F /* TimerScreen.swift */,
@@ -575,6 +578,7 @@
 				88194526C36B0BBC17E923B8 /* ReconcileApp.swift in Sources */,
 				4AF805FFEBD7C16B82658287 /* RootTabView.swift in Sources */,
 				39F1336EABDB6A86185E8EB9 /* ScreenRole.swift in Sources */,
+				0F66F77E19501B09742F3FE5 /* ScreenScaffold.swift in Sources */,
 				FCA9894F07BA2AC59B8FEFFA /* SettingsScreen.swift in Sources */,
 				4F59348CC70409735BA0A525 /* SummaryScreen.swift in Sources */,
 				F51FE1378E06230D913343B1 /* SummaryService.swift in Sources */,
