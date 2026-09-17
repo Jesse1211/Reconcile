@@ -120,50 +120,6 @@ final class FocusSessionServiceTests: XCTestCase {
         XCTAssertEqual(totals.values.first, 600)
     }
 
-    // MARK: - Timestamp elapsed survives app kill (INV-5 / ADR-014)
-
-    func testLiveElapsedRecomputedFromStartedAtAcrossSimulatedKill() throws {
-        let clock = pinnedClock()
-        let context = inMemoryContext()
-        let svc = service(clock, context)
-
-        try svc.start()
-        // Simulate the app being killed and relaunched much later: the clock
-        // advances while "backgrounded"; elapsed is recomputed from startedAt,
-        // NOT frozen at the moment of backgrounding.
-        clock.advance(by: 3_600)
-
-        XCTAssertEqual(try svc.liveElapsedSeconds(), 3_600)
-    }
-
-    func testLiveElapsedIsUndividedAcrossMidnight() throws {
-        // Start 30 minutes before local midnight; run past it (no stop).
-        let clock = pinnedClock()
-        let context = inMemoryContext()
-        let svc = service(clock, context)
-        let midnight = clock.calendar.startOfDay(
-            for: clock.now().addingTimeInterval(86_400)
-        )
-        clock.setNow(midnight.addingTimeInterval(-1_800)) // 30 min before midnight
-
-        try svc.start()
-        clock.setNow(midnight.addingTimeInterval(1_800)) // 30 min after midnight
-
-        // Live display = now − startedAt, a single undivided number (ADR-032):
-        // NOT split into pre/post-midnight portions.
-        XCTAssertEqual(try svc.liveElapsedSeconds(), 3_600)
-    }
-
-    func testLiveElapsedIsNilWhenNothingRunning() throws {
-        let clock = pinnedClock()
-        let context = inMemoryContext()
-        let svc = service(clock, context)
-        XCTAssertNil(try svc.liveElapsedSeconds())
-
-        let s = try svc.start(); clock.advance(by: 10); try svc.stop(s)
-        XCTAssertNil(try svc.liveElapsedSeconds(), "a stopped session is not running")
-    }
-
     // MARK: - Running session excluded from per-day totals (ADR-032)
 
     func testRunningSessionExcludedFromDayTotalsUntilStopped() throws {

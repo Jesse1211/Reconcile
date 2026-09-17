@@ -46,7 +46,7 @@ final class LibraryScreenRenderTests: XCTestCase {
     private func makeModel(populated: Bool) -> LibraryViewModel {
         let box = ScopeBox(.mine)
         let service = QuoteService(context: context, clock: clock, client: FakeClient(), scope: { box.scope })
-        let model = LibraryViewModel(service: service, scope: { box.scope }, setScope: { box.scope = $0 })
+        let model = LibraryViewModel(service: service)
         if populated {
             _ = model.addUserQuote(text: "A rendered quote", author: "Author")
             _ = model.addUserQuote(text: "Another one", author: nil)

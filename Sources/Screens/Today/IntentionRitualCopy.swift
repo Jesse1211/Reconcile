@@ -36,11 +36,4 @@ public struct IntentionRitualCopy: Equatable, Sendable {
             )
         }
     }
-
-    /// The dashed placeholder row's prompt on the Today MIT list (ADR-024/-033).
-    public static func placeholderRowTitle(for theme: Theme) -> String {
-        switch theme {
-        case .ledger: return "Set today's most important…"
-        }
-    }
 }

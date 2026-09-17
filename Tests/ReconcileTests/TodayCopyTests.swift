@@ -26,13 +26,6 @@ final class TodayCopyTests: XCTestCase {
         }
     }
 
-    func testPlaceholderRowTitleExistsForBothThemes() {
-        for theme in Theme.allCases {
-            XCTAssertFalse(IntentionRitualCopy.placeholderRowTitle(for: theme).isEmpty,
-                           "dashed placeholder row has a prompt in both themes (ADR-024/-033)")
-        }
-    }
-
     func testMineEmptyGuidanceIsGuidingNotError() {
         // ADR-034 (owner copy): guiding empty state directs the user to the Library to
         // add a quote — not a blank view, not an error tone.
