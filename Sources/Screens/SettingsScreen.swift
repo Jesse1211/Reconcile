@@ -26,7 +26,7 @@ public struct SettingsScreen: View {
                     settingBlock(
                         eyebrow: "TODAY'S QUOTE",
                         title: "Source",
-                        caption: "Mine shows your saved & liked quotes; Online pulls a fresh one from the web."
+                        caption: "Saved shows your saved & liked quotes; Online pulls a fresh one from the web."
                     ) {
                         Picker("Today's quote source", selection: $settings.todayScope) {
                             ForEach(TodayScope.allCases, id: \.self) { scope in

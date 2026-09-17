@@ -11,10 +11,11 @@ public enum TodayScope: String, CaseIterable, Codable, Sendable {
     /// The online (ZenQuotes) pick.
     case online
 
-    /// Human-facing label for the source picker.
+    /// Human-facing label for the source picker. (The `.mine` case shows as "Saved"
+    /// — the user's saved/liked quotes — while the code case stays `mine`.)
     public var displayName: String {
         switch self {
-        case .mine: return "Mine"
+        case .mine: return "Saved"
         case .online: return "Online"
         }
     }

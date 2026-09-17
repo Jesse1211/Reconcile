@@ -34,10 +34,11 @@ final class TodayCopyTests: XCTestCase {
     }
 
     func testMineEmptyGuidanceIsGuidingNotError() {
-        // ADR-034: guiding empty state invites write-or-switch, never an error tone.
+        // ADR-034 (owner copy): guiding empty state directs the user to the Library to
+        // add a quote — not a blank view, not an error tone.
         let g = TodayCopy.mineEmptyGuidance
-        XCTAssertTrue(g.lowercased().contains("empty"))
-        XCTAssertTrue(g.lowercased().contains("online"), "invites switching to Online (ADR-034)")
+        XCTAssertFalse(g.isEmpty)
+        XCTAssertTrue(g.lowercased().contains("library"), "directs the user to the Library")
     }
 
     func testSourceIndicatorPerScope() {
