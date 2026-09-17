@@ -29,26 +29,10 @@ private struct ThemedModifier: ViewModifier {
     /// default `.today` role and share one gradient — the ordering trap this avoids.
     let role: ScreenRole
 
-    /// The injected clock (ADR-038) supplies the current instant. It fed the (removed) Day
-    /// Arc time-of-day gradient (ADR-037); Ledger — the only theme — ignores the hour, but
-    /// the `atHour:` contract is kept so the resolution path is unchanged.
-    @Environment(\.clock) private var clock
-
     func body(content: Content) -> some View {
         content
-            // Resolve tokens for (theme, role, current hour-of-day). Ledger ignores the hour.
-            .environment(\.theme, theme.palette.tokens(for: role, atHour: currentHour))
+            .environment(\.theme, theme.palette.tokens(for: role))
             .environment(\.screenRole, role)
-    }
-
-    /// Fractional hour-of-day (0..<24) from the injected clock's calendar.
-    private var currentHour: Double {
-        let now = clock.now()
-        let c = clock.calendar.dateComponents([.hour, .minute, .second], from: now)
-        let h = Double(c.hour ?? 0)
-        let m = Double(c.minute ?? 0)
-        let s = Double(c.second ?? 0)
-        return h + m / 60 + s / 3600
     }
 }
 

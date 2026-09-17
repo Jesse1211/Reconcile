@@ -24,22 +24,15 @@ public struct ThemeColors: Sendable {
     /// The ledger-red / rolled-over "carried" color (ADR-036).
     public let accentCarried: Color
     /// Fill color for solid buttons & selected chips (ADR-037e). On Ledger this is the
-    /// ledger-red fill. (Day Arc used a near-white; that theme is removed.)
+    /// ledger-red fill.
     public let accentFill: Color
     /// Accent for glyphs/charts painted on the background (ADR-037e). On Ledger this is the
-    /// ink-red on paper. (Day Arc adapted it to the sky's brightness; that theme is removed.)
+    /// ink-red on paper.
     public let accentOnBackground: Color
     /// The "liked / favorited" hue — kept a saturated color so the state reads at a glance
     /// (ADR-037e); does NOT go white/adaptive.
     public let likedAccent: Color
     public let divider: Color
-
-    // Gradient-anchor set (ADR-036/037). Formerly driven per-hour by the Day Arc theme
-    // (removed, ADR-022); Ledger supplies flat/neutral (paper) values so the set is total
-    // and the background paints as a solid paper fill.
-    public let gradientTop: Color
-    public let gradientMid: Color
-    public let gradientBottom: Color
 
     public init(
         background: Color,
@@ -53,10 +46,7 @@ public struct ThemeColors: Sendable {
         accentFill: Color,
         accentOnBackground: Color,
         likedAccent: Color,
-        divider: Color,
-        gradientTop: Color,
-        gradientMid: Color,
-        gradientBottom: Color
+        divider: Color
     ) {
         self.background = background
         self.surface = surface
@@ -70,9 +60,6 @@ public struct ThemeColors: Sendable {
         self.accentOnBackground = accentOnBackground
         self.likedAccent = likedAccent
         self.divider = divider
-        self.gradientTop = gradientTop
-        self.gradientMid = gradientMid
-        self.gradientBottom = gradientBottom
     }
 }
 
@@ -108,22 +95,16 @@ public struct ThemeTokens: Sendable {
     public let screenRole: ScreenRole
     public let colors: ThemeColors
     public let typography: ThemeTypography
-    /// Whether the current background is LIGHT (high luminance). Fonts and the nav bar read
-    /// this to pick dark-on-light vs light-on-dark treatment (ADR-037d). Ledger — the only
-    /// theme — sets it `true` from its fixed light paper. (Day Arc varied it by the hour.)
-    public let isLightBackground: Bool
 
     public init(
         theme: Theme,
         screenRole: ScreenRole,
         colors: ThemeColors,
-        typography: ThemeTypography,
-        isLightBackground: Bool
+        typography: ThemeTypography
     ) {
         self.theme = theme
         self.screenRole = screenRole
         self.colors = colors
         self.typography = typography
-        self.isLightBackground = isLightBackground
     }
 }

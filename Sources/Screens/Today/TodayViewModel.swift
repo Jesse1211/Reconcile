@@ -245,11 +245,6 @@ public final class TodayViewModel: ObservableObject {
         rolloverAndReloadMITs()
     }
 
-    /// Clear the pending-undo offer (the snackbar timed out / was dismissed).
-    public func dismissUndo() {
-        pendingUndo = nil
-    }
-
     // MARK: - Empty / first-run (ADR-033/-034)
 
     /// Whether Today's MIT list is empty — drives the gentle first-run invitation line

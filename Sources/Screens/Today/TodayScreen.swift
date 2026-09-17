@@ -220,12 +220,7 @@ struct MITEditSheet: View {
                     onSave(text, r.isEmpty ? nil : r)
                     dismiss()
                 } label: {
-                    Text("Save")
-                        .font(tokens.typography.title)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .foregroundStyle(tokens.colors.background)
-                        .background(tokens.colors.accentFill, in: RoundedRectangle(cornerRadius: 12))
+                    SheetSaveLabel(title: "Save")
                 }
             }
             .padding(24)

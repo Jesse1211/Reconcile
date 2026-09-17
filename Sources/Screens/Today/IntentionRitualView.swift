@@ -35,18 +35,7 @@ struct IntentionRitualView: View {
 
             VStack(alignment: .leading, spacing: 24) {
                 // Masthead: guiding eyebrow + date (ADR-024).
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(copy.eyebrow.uppercased())
-                        .font(tokens.typography.eyebrow)
-                        .foregroundStyle(tokens.colors.textMuted)
-                    Text(date, format: .dateTime.weekday(.wide).month(.wide).day())
-                        .font(tokens.typography.title)
-                        .foregroundStyle(tokens.colors.textSecondary)
-                    Rectangle()
-                        .fill(tokens.colors.divider)
-                        .frame(height: 1)
-                        .padding(.top, 4)
-                }
+                SheetMasthead(eyebrow: copy.eyebrow, date: date)
 
                 // The one thing — large serif input (ADR-024).
                 TextField(copy.inputPrompt, text: $text, axis: .vertical)
@@ -90,12 +79,7 @@ struct IntentionRitualView: View {
                     onSave(text, trimmedReason.isEmpty ? nil : trimmedReason)
                     dismiss()
                 } label: {
-                    Text(copy.saveTitle)
-                        .font(tokens.typography.title)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .foregroundStyle(tokens.colors.background)
-                        .background(tokens.colors.accentFill, in: RoundedRectangle(cornerRadius: 12))
+                    SheetSaveLabel(title: copy.saveTitle)
                 }
                 .disabled(!canSave)
                 .opacity(canSave ? 1 : 0.5)
