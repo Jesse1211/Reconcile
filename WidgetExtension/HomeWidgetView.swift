@@ -65,12 +65,13 @@ struct HomeWidgetView: View {
                 // running-layout column without truncating; long quotes shrink.
                 AdaptiveQuoteText(
                     text: snapshot?.quoteText ?? "",
-                    sizes: [17, 15, 13, 11, 9],
+                    sizes: [21, 18, 16, 14, 12, 10],
                     color: palette.textPrimary
                 )
                 if let author = snapshot?.quoteAuthor, !author.isEmpty {
                     Text("— \(author)")
-                        .font(.system(.caption, design: .serif))
+                        // Author kept deliberately SMALL so the quote is the hero (owner tweak).
+                        .font(.system(size: 10, design: .serif))
                         .foregroundStyle(palette.textSecondary)
                         .lineLimit(1)
                         // Author right-aligned (quote stays left) per owner tweak.
@@ -91,12 +92,13 @@ struct HomeWidgetView: View {
             // large for a short quote and shrink for a long one — never truncated.
             AdaptiveQuoteText(
                 text: snapshot?.quoteText ?? "",
-                sizes: [26, 22, 19, 16, 14, 12],
+                sizes: [32, 28, 24, 21, 18, 15],
                 color: palette.textPrimary
             )
             if let author = snapshot?.quoteAuthor, !author.isEmpty {
                 Text("— \(author)")
-                    .font(.system(.subheadline, design: .serif))
+                    // Author kept deliberately SMALL so the quote is the hero (owner tweak).
+                    .font(.system(size: 12, design: .serif))
                     .foregroundStyle(palette.textSecondary)
                     .lineLimit(1)
                     // Author right-aligned (quote stays left) per owner tweak.
