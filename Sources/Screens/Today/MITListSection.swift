@@ -18,16 +18,9 @@ struct MITListSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("TODAY'S MOST IMPORTANT")
+            Text("TODAY")
                 .font(tokens.typography.eyebrow)
                 .foregroundStyle(tokens.colors.textMuted)
-
-            if model.mitListIsEmpty {
-                Text(IntentionRitualCopy.firstRunInvitation)
-                    .font(tokens.typography.body)
-                    .foregroundStyle(tokens.colors.textSecondary)
-                    .accessibilityIdentifier("mit.firstRun")
-            }
 
             ForEach(model.mits, id: \.id) { mit in
                 row(mit)
@@ -81,8 +74,8 @@ struct MITListSection: View {
     private var placeholderRow: some View {
         Button(action: onOpenRitual) {
             HStack {
+                Spacer()
                 Image(systemName: "plus")
-                Text(IntentionRitualCopy.placeholderRowTitle(for: tokens.theme))
                 Spacer()
             }
             .font(tokens.typography.body)

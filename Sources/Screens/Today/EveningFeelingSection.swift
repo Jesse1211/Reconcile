@@ -26,15 +26,12 @@ struct EveningFeelingSection: View {
                                      : tokens.colors.likedAccent)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(TodayCopy.feelingEyebrow.uppercased())
-                        .font(tokens.typography.eyebrow)
-                        .foregroundStyle(tokens.colors.textMuted)
                     if let f = logged {
                         Text("Mood \(f.mood) · Stress \(f.stress)")
                             .font(tokens.typography.body)
                             .foregroundStyle(tokens.colors.textPrimary)
                     } else {
-                        Text("Tap to log how today felt")
+                        Text("Feeling")
                             .font(tokens.typography.body)
                             .foregroundStyle(tokens.colors.textSecondary)
                     }
