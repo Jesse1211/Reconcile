@@ -90,12 +90,19 @@ public struct SettingsScreen: View {
             Text(title)
                 .font(tokens.typography.title)
                 .foregroundStyle(tokens.colors.textPrimary)
+            // Controls fill the block's width so a menu picker (intrinsic-width) and a
+            // segmented picker (full-width) both produce the SAME card size. The menu's
+            // button aligns to the trailing edge for a tidy row.
             control()
+                .frame(maxWidth: .infinity, alignment: .trailing)
             Text(caption)
                 .font(tokens.typography.body)
                 .foregroundStyle(tokens.colors.textSecondary)
         }
         .padding(16)
+        // Every setting card fills the available width → all cards are the same size,
+        // regardless of the control inside (owner tweak).
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(tokens.colors.surface, in: RoundedRectangle(cornerRadius: 14))
     }
 }
