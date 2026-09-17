@@ -18,7 +18,6 @@ public struct LibraryScreen: View {
     @StateObject private var model: LibraryViewModel
 
     @State private var showingAdd = false
-    @State private var showingBrowse = false
 
     /// Construct the screen with a ready-made view model (used by tests/previews).
     public init(model: LibraryViewModel) {
@@ -42,32 +41,16 @@ public struct LibraryScreen: View {
             }
             .themed(tokens.theme, role: .library)
         }
-        .sheet(isPresented: $showingBrowse) {
-            BrowseQuoteSheet(model: model)
-                .themed(tokens.theme, role: .library)
-        }
     }
 
     // MARK: Header + actions
 
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("LIBRARY")
-                    .font(tokens.typography.eyebrow)
-                    .foregroundStyle(tokens.colors.textMuted)
-                Text("Your quotes")
-                    .font(tokens.typography.title)
-                    .foregroundStyle(tokens.colors.textPrimary)
-            }
+            Text("Quotes")
+                .font(tokens.typography.title)
+                .foregroundStyle(tokens.colors.textPrimary)
             Spacer()
-            Button {
-                showingBrowse = true
-            } label: {
-                Image(systemName: "sparkles")
-                    .foregroundStyle(tokens.colors.accentOnBackground)
-            }
-            .accessibilityLabel("Browse online quotes")
             Button {
                 showingAdd = true
             } label: {
@@ -96,30 +79,13 @@ public struct LibraryScreen: View {
         }
     }
 
-    /// The purposeful, themed empty/first-run state (ADR-033): an invitation to save a
-    /// quote, NOT a blank view. Renders in BOTH themes (reads tokens by role).
+    /// The empty state — just a single "Write one" action, nothing else (owner tweak).
     private var emptyState: some View {
-        VStack(spacing: 12) {
+        VStack {
             Spacer()
-            Image(systemName: "quote.opening")
-                .font(.system(size: 40))
-                .foregroundStyle(tokens.colors.textMuted)
-            Text("Your library is empty")
+            Button("Write one") { showingAdd = true }
                 .font(tokens.typography.title)
-                .foregroundStyle(tokens.colors.textPrimary)
-            Text("Save a quote you like — write your own, or discover one online.")
-                .font(tokens.typography.body)
-                .foregroundStyle(tokens.colors.textSecondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-            HStack(spacing: 12) {
-                Button("Write one") { showingAdd = true }
-                    .foregroundStyle(tokens.colors.accentOnBackground)
-                Button("Discover online") { showingBrowse = true }
-                    .foregroundStyle(tokens.colors.accentOnBackground)
-            }
-            .font(tokens.typography.body)
-            .padding(.top, 4)
+                .foregroundStyle(tokens.colors.accentOnBackground)
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -237,105 +203,3 @@ private struct AddQuoteSheet: View {
     }
 }
 
-/// The browse-online-and-like sheet (ADR-012/-010/-013): fetches a transient quote via
-/// `/random`, shows it, and ♡ persists it into the library (dedup by INV-4). Discover /
-/// error+retry states per ADR-013.
-private struct BrowseQuoteSheet: View {
-    @Environment(\.theme) private var tokens
-    @Environment(\.dismiss) private var dismiss
-    @ObservedObject var model: LibraryViewModel
-
-    var body: some View {
-        ZStack {
-            ThemeBackground()
-            VStack(spacing: 20) {
-                Text("DISCOVER ONLINE")
-                    .font(tokens.typography.eyebrow)
-                    .foregroundStyle(tokens.colors.textMuted)
-
-                Spacer()
-
-                if model.isBrowsing {
-                    ProgressView()
-                        .tint(tokens.colors.accentOnBackground)
-                } else if let error = model.browseError {
-                    errorState(error)
-                } else if let quote = model.browsing {
-                    quoteCard(quote)
-                } else {
-                    Text("Tap discover to find a quote you like.")
-                        .font(tokens.typography.body)
-                        .foregroundStyle(tokens.colors.textSecondary)
-                        .multilineTextAlignment(.center)
-                }
-
-                Spacer()
-
-                actions
-            }
-            .padding()
-        }
-        .task {
-            if model.browsing == nil && model.browseError == nil {
-                await model.browseNext()
-            }
-        }
-    }
-
-    private func quoteCard(_ quote: FetchedQuote) -> some View {
-        VStack(spacing: 10) {
-            Text(quote.text)
-                .font(tokens.typography.title)
-                .foregroundStyle(tokens.colors.textPrimary)
-                .multilineTextAlignment(.center)
-            if let author = quote.author, !author.isEmpty {
-                Text(author)
-                    .font(tokens.typography.eyebrow)
-                    .foregroundStyle(tokens.colors.textSecondary)
-            }
-        }
-        .padding()
-    }
-
-    /// Error + retry (ADR-013): online has no local fallback, so a failure surfaces retry.
-    private func errorState(_ error: ZenQuotesError) -> some View {
-        VStack(spacing: 8) {
-            Image(systemName: "wifi.slash")
-                .foregroundStyle(tokens.colors.textMuted)
-            Text("Couldn't reach the quote source.")
-                .font(tokens.typography.body)
-                .foregroundStyle(tokens.colors.textSecondary)
-            Button("Retry") { Task { await model.browseNext() } }
-                .foregroundStyle(tokens.colors.accentOnBackground)
-        }
-    }
-
-    private var actions: some View {
-        HStack {
-            Button("Close") {
-                model.dismissBrowsed()
-                dismiss()
-            }
-            .foregroundStyle(tokens.colors.textSecondary)
-            Spacer()
-            Button {
-                Task { await model.browseNext() }
-            } label: {
-                Label("Next", systemImage: "arrow.clockwise")
-            }
-            .foregroundStyle(tokens.colors.accentOnBackground)
-            .disabled(model.isBrowsing)
-            Spacer()
-            // ♡ like → persist the transient quote (ADR-010). Enabled only when browsing one.
-            Button {
-                model.likeBrowsed()
-                dismiss()
-            } label: {
-                Label("Like", systemImage: "heart")
-            }
-            .foregroundStyle(model.browsing == nil ? tokens.colors.textMuted : tokens.colors.accentOnBackground)
-            .disabled(model.browsing == nil)
-        }
-        .font(tokens.typography.body)
-    }
-}
