@@ -99,21 +99,15 @@ public struct LibraryScreen: View {
             ForEach(model.quotes, id: \.id) { quote in
                 LibraryRow(quote: quote, tokens: tokens)
                     .listRowBackground(tokens.colors.surface)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        // Explicit delete — HARD delete for either source (ADR-035).
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        // Swipe = Delete only (owner tweak): to the user, un-liking and
+                        // deleting are the same "remove it from my library" action, so the
+                        // separate Un-like swipe is gone. HARD delete for either source
+                        // (ADR-035).
                         Button(role: .destructive) {
                             model.delete(quote)
                         } label: {
                             Label("Delete", systemImage: "trash")
-                        }
-                        // Un-like — source-dependent (ADR-035/-039). Offered when liked.
-                        if quote.liked {
-                            Button {
-                                model.unlike(quote)
-                            } label: {
-                                Label("Un-like", systemImage: "heart.slash")
-                            }
-                            .tint(tokens.colors.textSecondary)
                         }
                     }
             }
