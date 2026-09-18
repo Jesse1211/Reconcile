@@ -142,6 +142,10 @@ private struct AddQuoteSheet: View {
 
     @State private var text: String = ""
     @State private var author: String = ""
+    /// Which field is focused. Tapping ANYWHERE on a field's card focuses it (so the
+    /// keyboard opens even when the tap lands on the padding, not the text line).
+    @FocusState private var focus: Field?
+    private enum Field { case quote, author }
 
     /// Called with the entered text + author on save (blank author folds to nil upstream).
     let onSave: (String, String?) -> Void
@@ -157,13 +161,30 @@ private struct AddQuoteSheet: View {
                 Text("WRITE A QUOTE")
                     .font(tokens.typography.eyebrow)
                     .foregroundStyle(tokens.colors.textMuted)
+                // The quote — a large, obviously-tappable field. The whole padded card is
+                // the hit target (a bare TextField only responds on the text line itself,
+                // which was tiny and hard to tap). `contentShape` makes the full card focus
+                // the field on tap.
                 TextField("The quote", text: $text, axis: .vertical)
                     .font(tokens.typography.body)
                     .foregroundStyle(tokens.colors.textPrimary)
                     .lineLimit(3...8)
+                    .focused($focus, equals: .quote)
+                    .padding(14)
+                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
+                    .background(tokens.colors.surface, in: RoundedRectangle(cornerRadius: 12))
+                    .contentShape(RoundedRectangle(cornerRadius: 12))
+                    .onTapGesture { focus = .quote }
+
                 TextField("Author (optional)", text: $author)
                     .font(tokens.typography.body)
                     .foregroundStyle(tokens.colors.textSecondary)
+                    .focused($focus, equals: .author)
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(tokens.colors.surface, in: RoundedRectangle(cornerRadius: 12))
+                    .contentShape(RoundedRectangle(cornerRadius: 12))
+                    .onTapGesture { focus = .author }
                 Spacer()
                 HStack {
                     Button("Cancel") { dismiss() }
@@ -180,6 +201,9 @@ private struct AddQuoteSheet: View {
             }
             .padding()
         }
+        // Focus the quote field the moment the sheet opens — the keyboard is ready
+        // immediately, no hunting for the small text line (owner tweak).
+        .onAppear { focus = .quote }
     }
 }
 
