@@ -51,10 +51,10 @@ struct FeelingSheetView: View {
             ThemeBackground()
 
             VStack(alignment: .leading, spacing: 28) {
-                // Masthead: eyebrow + date, mirroring the intention ritual (ADR-024).
-                SheetMasthead(eyebrow: "How today felt", date: date)
-
+                // No masthead — the eyebrow "how today felt" + date are redundant here
+                // (owner tweak); the sliders/save carry the meaning.
                 slider(label: "Mood", value: $mood)
+                    .padding(.top, 8)
                 slider(label: "Stress", value: $stress)
 
                 // Optional note.
@@ -79,10 +79,18 @@ struct FeelingSheetView: View {
                     onSave(Int(mood.rounded()), Int(stress.rounded()), why)
                     dismiss()
                 } label: {
-                    SheetSaveLabel(title: "Save how today felt")
+                    // Save shows only a ✓ (owner tweak) — the ledger-red fill is kept for
+                    // consistency with the other sheets, just with a checkmark instead of copy.
+                    Image(systemName: "checkmark")
+                        .font(tokens.typography.title)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .foregroundStyle(tokens.colors.background)
+                        .background(tokens.colors.accentFill, in: RoundedRectangle(cornerRadius: 12))
                 }
                 .disabled(!editable)
                 .opacity(editable ? 1 : 0.5)
+                .accessibilityLabel("Save")
                 .accessibilityIdentifier("feeling.save")
             }
             .padding(24)
