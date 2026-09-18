@@ -37,45 +37,48 @@ struct LockWidgetView: View {
         }
     }
 
-    // RUNNING (ADR-041): time │ quote (quote clamped).
+    // RUNNING (ADR-041): time │ quote. Fills the whole rectangle — the quote column
+    // stretches to the full height, and its text scales up to use the space.
     @ViewBuilder
     private var runningLayout: some View {
         HStack(alignment: .center, spacing: 6) {
             if let startedAt = snapshot?.runningStartedAt {
                 Text(startedAt, style: .timer)
-                    .font(.system(.footnote, design: .monospaced))
+                    .font(.system(.body, design: .monospaced))
+                    .minimumScaleFactor(0.5)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.6)
                     .frame(minWidth: 40, alignment: .leading)
             }
             Rectangle()
                 .fill(.secondary)
                 .frame(width: 1)
             Text(snapshot?.quoteText ?? "")
-                .font(.footnote)
-                .lineLimit(3)               // clamped for the lock surface (ADR-041)
-                .minimumScaleFactor(0.55)   // shrink-to-fit before clipping (owner tweak)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.body)                // larger base; scales down only if needed
+                .lineLimit(4)
+                .minimumScaleFactor(0.4)    // shrink-to-fit; long quotes still fit
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    // IDLE (ADR-041): quote-only, no time, no divider.
+    // IDLE (ADR-041): quote-only, no time, no divider. Fills the whole rectangle —
+    // a short quote goes large, a long one shrinks; vertically centred, no wasted space.
     @ViewBuilder
     private var idleLayout: some View {
         Text(snapshot?.quoteText ?? "")
-            .font(.footnote)
-            .lineLimit(4)                    // clamped for the lock surface (ADR-041)
-            .minimumScaleFactor(0.5)         // shrink-to-fit before clipping (owner tweak)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .font(.body)                     // larger base font (was .footnote)
+            .lineLimit(5)                    // more lines allowed before clamping
+            .minimumScaleFactor(0.35)        // shrink hard before clipping
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     }
 
     // EMPTY (ADR-045): short placeholder, never blank.
     @ViewBuilder
     private var emptyLayout: some View {
         Text(WidgetPlaceholder.lock)
-            .font(.footnote)
+            .font(.body)
             .lineLimit(2)
-            .minimumScaleFactor(0.7)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .minimumScaleFactor(0.6)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     }
 }
