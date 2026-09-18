@@ -31,7 +31,7 @@ public struct IntentionRitualCopy: Equatable, Sendable {
             return IntentionRitualCopy(
                 eyebrow: "TODAY'S ENTRY",
                 inputPrompt: "Set today's most important…",
-                reasonPrompt: "Why does it matter today?",
+                reasonPrompt: "Reasons",
                 saveTitle: "Record entry"
             )
         }

@@ -34,15 +34,15 @@ struct IntentionRitualView: View {
             ThemeBackground()
 
             VStack(alignment: .leading, spacing: 24) {
-                // Masthead: guiding eyebrow + date (ADR-024).
-                SheetMasthead(eyebrow: copy.eyebrow, date: date)
-
+                // No masthead — the "TODAY'S ENTRY" eyebrow + date are redundant here
+                // (owner tweak), matching the feeling sheet; open straight to the input.
                 // The one thing — large serif input (ADR-024).
                 TextField(copy.inputPrompt, text: $text, axis: .vertical)
                     .font(tokens.typography.display)
                     .foregroundStyle(tokens.colors.textPrimary)
                     .lineLimit(1...4)
                     .textFieldStyle(.plain)
+                    .padding(.top, 8)
                     .accessibilityIdentifier("intention.text")
 
                 // Optional collapsible reason (persists to MIT.reason, ADR-024).
@@ -73,16 +73,23 @@ struct IntentionRitualView: View {
 
                 Spacer()
 
-                // Theme-dressed save (ADR-024).
+                // Save shows only a ✓ (owner tweak), matching the feeling sheet — the
+                // ledger-red fill is kept, just a checkmark instead of "Record entry".
                 Button {
                     let trimmedReason = reason.trimmingCharacters(in: .whitespacesAndNewlines)
                     onSave(text, trimmedReason.isEmpty ? nil : trimmedReason)
                     dismiss()
                 } label: {
-                    SheetSaveLabel(title: copy.saveTitle)
+                    Image(systemName: "checkmark")
+                        .font(tokens.typography.title)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .foregroundStyle(tokens.colors.background)
+                        .background(tokens.colors.accentFill, in: RoundedRectangle(cornerRadius: 12))
                 }
                 .disabled(!canSave)
                 .opacity(canSave ? 1 : 0.5)
+                .accessibilityLabel("Save")
                 .accessibilityIdentifier("intention.save")
             }
             .padding(24)
