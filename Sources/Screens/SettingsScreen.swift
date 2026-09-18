@@ -32,14 +32,7 @@ public struct SettingsScreen: View {
                     // ADR-047: the online quote CATEGORY. Applies to the Online source only
                     // (Mine ignores it) — disabled unless the source is Online.
                     settingBlock(eyebrow: "ONLINE QUOTE CATEGORY") {
-                        Picker("Online quote category", selection: $settings.quoteCategory) {
-                            ForEach(QuoteCategory.allCases, id: \.self) { category in
-                                Text(category.displayName).tag(category)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .disabled(settings.todayScope != .online)
-                        .accessibilityIdentifier("settings.category")
+                        categoryDropdown
                     }
 
                     Spacer(minLength: 0)
@@ -47,6 +40,51 @@ public struct SettingsScreen: View {
                 .padding(24)
             }
         }
+    }
+
+    // MARK: Ledger-styled category dropdown (ADR-047)
+    //
+    // Replaces the system `.menu` picker (which rendered a jarring system-blue "Any"
+    // control) with a theme-native dropdown: a paper/ink trigger button showing the current
+    // category + a ledger-red chevron, over a native `Menu` whose items tick the selection.
+    // Disabled (dimmed) unless the source is Online.
+
+    private var categoryDropdown: some View {
+        let isOnline = settings.todayScope == .online
+        return Menu {
+            ForEach(QuoteCategory.allCases, id: \.self) { category in
+                Button {
+                    settings.quoteCategory = category
+                } label: {
+                    // A tick appears next to the current selection in the menu list.
+                    if settings.quoteCategory == category {
+                        Label(category.displayName, systemImage: "checkmark")
+                    } else {
+                        Text(category.displayName)
+                    }
+                }
+            }
+        } label: {
+            HStack {
+                Text(settings.quoteCategory.displayName)
+                    .font(tokens.typography.body)
+                    .foregroundStyle(tokens.colors.textPrimary)
+                Spacer()
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(tokens.colors.accentOnBackground)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity)
+            .background(tokens.colors.surfaceRaised, in: RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(tokens.colors.divider, lineWidth: 1)
+            )
+        }
+        .disabled(!isOnline)
+        .accessibilityIdentifier("settings.category")
     }
 
     // MARK: A titled setting block — eyebrow + title + caption + control
