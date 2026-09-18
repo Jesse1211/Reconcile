@@ -21,7 +21,6 @@ struct IntentionRitualView: View {
 
     @State private var text: String = ""
     @State private var reason: String = ""
-    @State private var showReason: Bool = false
 
     private var copy: IntentionRitualCopy { IntentionRitualCopy.forTheme(tokens.theme) }
 
@@ -45,30 +44,20 @@ struct IntentionRitualView: View {
                     .padding(.top, 8)
                     .accessibilityIdentifier("intention.text")
 
-                // Optional collapsible reason (persists to MIT.reason, ADR-024).
+                // Optional reason (persists to MIT.reason, ADR-024). Always shown — the
+                // same pattern as the feeling sheet's "Why? (optional)", no collapse.
                 VStack(alignment: .leading, spacing: 8) {
-                    Button {
-                        withAnimation { showReason.toggle() }
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: showReason ? "chevron.down" : "chevron.right")
-                            Text(copy.reasonPrompt)
-                        }
+                    Text("\(copy.reasonPrompt) (optional)")
+                        .font(tokens.typography.eyebrow)
+                        .foregroundStyle(tokens.colors.textMuted)
+                    TextField("\(copy.reasonPrompt) (optional)", text: $reason, axis: .vertical)
                         .font(tokens.typography.body)
-                        .foregroundStyle(tokens.colors.textSecondary)
-                    }
-                    .accessibilityIdentifier("intention.reason.toggle")
-
-                    if showReason {
-                        TextField(copy.reasonPrompt, text: $reason, axis: .vertical)
-                            .font(tokens.typography.body)
-                            .foregroundStyle(tokens.colors.textPrimary)
-                            .lineLimit(1...4)
-                            .textFieldStyle(.plain)
-                            .padding(12)
-                            .background(tokens.colors.surface, in: RoundedRectangle(cornerRadius: 10))
-                            .accessibilityIdentifier("intention.reason.field")
-                    }
+                        .foregroundStyle(tokens.colors.textPrimary)
+                        .lineLimit(1...4)
+                        .textFieldStyle(.plain)
+                        .padding(12)
+                        .background(tokens.colors.surface, in: RoundedRectangle(cornerRadius: 10))
+                        .accessibilityIdentifier("intention.reason.field")
                 }
 
                 Spacer()
