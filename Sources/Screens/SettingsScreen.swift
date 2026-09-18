@@ -19,12 +19,8 @@ public struct SettingsScreen: View {
         ScreenScaffold("Settings") {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
-                    settingBlock(
-                        eyebrow: "TODAY'S QUOTE",
-                        title: "Source",
-                        caption: "Saved shows your saved & liked quotes; Online pulls a fresh one from the web."
-                    ) {
-                        Picker("Today's quote source", selection: $settings.todayScope) {
+                    settingBlock(eyebrow: "QUOTE SOURCE") {
+                        Picker("Quote source", selection: $settings.todayScope) {
                             ForEach(TodayScope.allCases, id: \.self) { scope in
                                 Text(scope.displayName).tag(scope)
                             }
@@ -35,12 +31,8 @@ public struct SettingsScreen: View {
 
                     // ADR-047: the online quote CATEGORY. Applies to the Online source only
                     // (Mine ignores it) — disabled unless the source is Online.
-                    settingBlock(
-                        eyebrow: "TODAY'S QUOTE",
-                        title: "Category",
-                        caption: "Filters the Online quote by theme. Applies to Online only."
-                    ) {
-                        Picker("Today's quote category", selection: $settings.quoteCategory) {
+                    settingBlock(eyebrow: "ONLINE QUOTE CATEGORY") {
+                        Picker("Online quote category", selection: $settings.quoteCategory) {
                             ForEach(QuoteCategory.allCases, id: \.self) { category in
                                 Text(category.displayName).tag(category)
                             }
@@ -63,29 +55,23 @@ public struct SettingsScreen: View {
     @ViewBuilder
     private func settingBlock<Control: View>(
         eyebrow: String,
-        title: String,
-        caption: String,
         @ViewBuilder control: () -> Control
     ) -> some View {
+        // One consistent design language for every setting: a single small-caps eyebrow
+        // label above its control — no large title, no description caption (owner tweak).
         VStack(alignment: .leading, spacing: 10) {
             Text(eyebrow)
                 .font(tokens.typography.eyebrow)
                 .foregroundStyle(tokens.colors.textMuted)
-            Text(title)
-                .font(tokens.typography.title)
-                .foregroundStyle(tokens.colors.textPrimary)
             // Controls fill the block's width so a menu picker (intrinsic-width) and a
             // segmented picker (full-width) both produce the SAME card size. The menu's
             // button aligns to the trailing edge for a tidy row.
             control()
                 .frame(maxWidth: .infinity, alignment: .trailing)
-            Text(caption)
-                .font(tokens.typography.body)
-                .foregroundStyle(tokens.colors.textSecondary)
         }
         .padding(16)
         // Every setting card fills the available width → all cards are the same size,
-        // regardless of the control inside (owner tweak).
+        // regardless of the control inside.
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(tokens.colors.surface, in: RoundedRectangle(cornerRadius: 14))
     }
