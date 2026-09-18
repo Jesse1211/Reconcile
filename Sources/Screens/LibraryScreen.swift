@@ -126,9 +126,8 @@ private struct LibraryRow: View {
                 }
             }
             Spacer()
-            Image(systemName: quote.liked ? "heart.fill" : "heart")
-                .foregroundStyle(quote.liked ? tokens.colors.likedAccent : tokens.colors.textMuted)
-                .accessibilityLabel(quote.liked ? "Liked" : "Not liked")
+            // No heart indicator: everything in the library is already saved/liked, so a
+            // heart on every row carries no info. Removal is the left-swipe Delete (ADR-052).
         }
         .padding(.vertical, 4)
     }
