@@ -30,7 +30,7 @@ public struct IntentionRitualCopy: Equatable, Sendable {
         case .ledger:
             return IntentionRitualCopy(
                 eyebrow: "TODAY'S ENTRY",
-                inputPrompt: "Set today's most important…",
+                inputPrompt: "Goal",
                 reasonPrompt: "Reasons",
                 saveTitle: "Record entry"
             )
